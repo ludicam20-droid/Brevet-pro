@@ -16,3 +16,17 @@ self.addEventListener('fetch', (e) => {
     caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
+// Ce code force le nouveau Service Worker à prendre le contrôle tout de suite
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME) {
+          console.log('[Service Worker] Suppression de l\'ancien cache', key);
+          return caches.delete(key);
+        }
+      }));
+    })
+  );
+  return self.clients.claim();
+});
