@@ -1,10 +1,8 @@
-const CACHE_NAME = 'brevet-v1';
+const CACHE_NAME = 'brevetpro-v2';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
@@ -13,11 +11,8 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// CETTE PARTIE EST OBLIGATOIRE POUR ANDROID
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
