@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrévetPro — Toutes Matières — 3ème</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== ROOT VARIABLES ========== */
+:root {
+  --navy:        #0f1535;
+  --navy2:       #1a2254;
+  --navy3:       #243070;
+  --gold:        #e8b84b;
+  --gold2:       #f5d07a;
+  --red:         #e85d5d;
+  --green:       #4ecb8d;
+  --blue-light:  #4a9eff;
+  --purple:      #b48aff;
+  --pink:        #ff6b9d;
+  --teal:        #00c9a7;
+  --orange:      #ff8c42;
+  --white:       #f8f9ff;
+  --gray:        #9ba3c0;
+  --card-bg:     rgba(255,255,255,0.04);
+  --card-border: rgba(255,255,255,0.08);
+  --shadow:      0 20px 60px rgba(0,0,0,0.4);
+  --radius:      16px;
+  --transition:  all 0.3s cubic-bezier(0.4,0,0.2,1);
+  --feedback-text: rgba(255,255,255,0.85);
+}
+[data-theme="light"] {
+  --navy:        #f0f4f8;
+  --navy2:       #ffffff;
+  --navy3:       #e2e8f0;
+  --white:       #1a202c;
+  --gray:        #4a5568;
+  --feedback-text: #2d3748;
+  --card-bg:     #ffffff;
+  --card-border: #cbd5e0;
+  --shadow:      0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden;line-height:1.6;transition:background .3s ease,color .3s ease}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(74,158,255,.07) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(232,184,75,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+[data-theme="light"] body::before,[data-theme="light"] body::after{display:none}
+
+/* ========== SCREENS ========== */
+.screen{position:relative;z-index:1;min-height:100vh;display:none;flex-direction:column;align-items:center;padding:24px 16px 60px}
+.screen.active{display:flex}
+
+/* ========== HEADER ========== */
+.site-header{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;padding:0 0 28px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--white)}
+.logo-text span{color:var(--gold)}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.nav-btn{background:var(--card-bg);border:1px solid var(--card-border);color:var(--gray);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;transition:var(--transition)}
+.nav-btn:hover{color:var(--white);border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08)}
+
+/* ========== HERO ========== */
+.hero{text-align:center;max-width:700px;margin:16px auto 36px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);color:var(--gold);padding:6px 14px;border-radius:100px;font-size:.78rem;font-weight:500;margin-bottom:18px;letter-spacing:.05em}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;line-height:1.1;margin-bottom:12px;background:linear-gradient(135deg,var(--white) 0%,var(--gold2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:.97rem;color:var(--gray);font-weight:300;max-width:500px;margin:0 auto}
+
+/* ========== BREVET BLANC CTA ========== */
+.brevet-blanc-cta{width:100%;max-width:1000px;margin:0 0 28px}
+.brevet-blanc-btn{width:100%;background:linear-gradient(135deg,#1a2254,#243070);border:2px solid rgba(232,184,75,.5);border-radius:var(--radius);padding:22px 32px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:var(--transition);position:relative;overflow:hidden}
+.brevet-blanc-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,184,75,.06),transparent);pointer-events:none}
+.brevet-blanc-btn:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 12px 40px rgba(232,184,75,.25)}
+.bb-left{display:flex;align-items:center;gap:16px}
+.bb-icon{font-size:2.4rem}
+.bb-text{}
+.bb-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--gold);display:block;margin-bottom:3px}
+.bb-sub{font-size:.82rem;color:var(--gray)}
+.bb-badge{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);padding:8px 20px;border-radius:100px;font-weight:700;font-size:.88rem;white-space:nowrap;flex-shrink:0}
+
+/* ========== CARDS GRID ========== */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;width:100%;max-width:1000px}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.02));pointer-events:none}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18);box-shadow:var(--shadow)}
+.card-icon{font-size:2rem;margin-bottom:10px;display:block}
+.card h3{font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:5px;color:var(--white)}
+.card p{font-size:.8rem;color:var(--gray);line-height:1.5}
+.card .card-arrow{position:absolute;bottom:16px;right:16px;color:var(--gray);font-size:1rem;transition:var(--transition)}
+.card:hover .card-arrow{color:var(--white);transform:translateX(4px)}
+.card.histoire  { border-top:3px solid var(--gold); }
+.card.geo       { border-top:3px solid var(--blue-light); }
+.card.emc       { border-top:3px solid var(--purple); }
+.card.francais  { border-top:3px solid var(--pink); }
+.card.maths     { border-top:3px solid var(--teal); }
+.card.sciences  { border-top:3px solid var(--orange); }
+.card.flash     { border-top:3px solid var(--green); }
+.card.stats-card{ border-top:3px solid #ff8a65; }
+
+/* ========== SECTION TITLE ========== */
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:700;margin-bottom:8px;text-align:center}
+.section-subtitle{color:var(--gray);text-align:center;margin-bottom:26px;font-size:.9rem}
+
+/* ========== CHAPTER LIST ========== */
+.chapter-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;width:100%;max-width:1000px}
+.chapter-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:16px 18px;cursor:pointer;text-align:left;transition:var(--transition);display:flex;align-items:center;gap:12px;color:var(--white);font-family:'DM Sans',sans-serif}
+.chapter-btn:hover{border-color:var(--gold);background:rgba(232,184,75,.07);transform:translateX(3px)}
+.chapter-btn.selected{border-color:var(--gold);background:rgba(232,184,75,.12)}
+.chapter-btn.emc-ch:hover{border-color:var(--purple);background:rgba(180,138,255,.07)}
+.chapter-btn.emc-ch.selected{border-color:var(--purple);background:rgba(180,138,255,.12)}
+.chapter-btn.francais-ch:hover{border-color:var(--pink);background:rgba(255,107,157,.07)}
+.chapter-btn.francais-ch.selected{border-color:var(--pink);background:rgba(255,107,157,.12)}
+.chapter-btn.maths-ch:hover{border-color:var(--teal);background:rgba(0,201,167,.07)}
+.chapter-btn.maths-ch.selected{border-color:var(--teal);background:rgba(0,201,167,.12)}
+.chapter-btn.sciences-ch:hover{border-color:var(--orange);background:rgba(255,140,66,.07)}
+.chapter-btn.sciences-ch.selected{border-color:var(--orange);background:rgba(255,140,66,.12)}
+.chapter-num{width:34px;height:34px;border-radius:8px;background:var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:var(--gold);flex-shrink:0}
+.emc-ch .chapter-num{color:var(--purple)}
+.francais-ch .chapter-num{color:var(--pink)}
+.maths-ch .chapter-num{color:var(--teal)}
+.sciences-ch .chapter-num{color:var(--orange)}
+.chapter-info{flex:1}
+.chapter-info strong{display:block;font-size:.9rem;margin-bottom:2px}
+.chapter-info span{font-size:.74rem;color:var(--gray)}
+
+/* ========== DIFFICULTY ========== */
+.diff-grid{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;width:100%;max-width:560px}
+.diff-btn{flex:1;min-width:120px;padding:16px 12px;border-radius:12px;border:2px solid var(--card-border);background:var(--card-bg);color:var(--white);cursor:pointer;text-align:center;transition:var(--transition);font-family:'DM Sans',sans-serif}
+.diff-btn .diff-emoji{font-size:1.7rem;display:block;margin-bottom:5px}
+.diff-btn .diff-name{font-weight:600;font-size:.9rem}
+.diff-btn .diff-desc{font-size:.72rem;color:var(--gray);margin-top:3px}
+.diff-btn:hover,.diff-btn.selected{border-color:var(--gold);background:rgba(232,184,75,.1)}
+.diff-btn.selected .diff-name{color:var(--gold)}
+.options-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.toggle-btn{display:flex;align-items:center;gap:7px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:8px 14px;cursor:pointer;color:var(--gray);font-family:'DM Sans',sans-serif;font-size:.8rem;transition:var(--transition)}
+.toggle-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(232,184,75,.1)}
+
+/* ========== BUTTONS ========== */
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;padding:13px 34px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:var(--transition);box-shadow:0 4px 18px rgba(232,184,75,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,184,75,.4)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:transparent;color:var(--gray);border:1px solid var(--card-border);padding:10px 22px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;transition:var(--transition)}
+.btn-secondary:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
+.all-chapters-btn{background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.3);color:var(--gold);border-radius:8px;padding:8px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;margin-bottom:12px;transition:var(--transition)}
+.all-chapters-btn:hover{background:rgba(232,184,75,.18)}
+.back-row{width:100%;max-width:1000px;margin-bottom:16px}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--gray);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;padding:0;transition:var(--transition)}
+.back-btn:hover{color:var(--white)}
+
+/* ========== QUIZ ========== */
+.quiz-header{width:100%;max-width:720px;display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.quiz-meta{display:flex;gap:7px;flex:1;flex-wrap:wrap}
+.quiz-tag{background:var(--card-bg);border:1px solid var(--card-border);border-radius:100px;padding:4px 11px;font-size:.73rem;color:var(--gray)}
+.quiz-tag.gold  {border-color:rgba(232,184,75,.4);color:var(--gold);background:rgba(232,184,75,.08)}
+.quiz-tag.purple{border-color:rgba(180,138,255,.4);color:var(--purple);background:rgba(180,138,255,.08)}
+.quiz-tag.blue  {border-color:rgba(74,158,255,.4);color:var(--blue-light);background:rgba(74,158,255,.08)}
+.quiz-tag.pink  {border-color:rgba(255,107,157,.4);color:var(--pink);background:rgba(255,107,157,.08)}
+.quiz-tag.teal  {border-color:rgba(0,201,167,.4);color:var(--teal);background:rgba(0,201,167,.08)}
+.quiz-tag.orange{border-color:rgba(255,140,66,.4);color:var(--orange);background:rgba(255,140,66,.08)}
+
+.progress-wrap{width:100%;max-width:720px;margin-bottom:22px}
+.progress-info{display:flex;justify-content:space-between;font-size:.77rem;color:var(--gray);margin-bottom:6px}
+.progress-bar{height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;transition:width .5s ease}
+
+.timer-display{display:flex;align-items:center;gap:5px;font-size:.95rem;font-weight:600;color:var(--white);font-variant-numeric:tabular-nums}
+.timer-display.warning{color:var(--red);animation:pulse 1s infinite}
+
+/* Global timer for Brevet Blanc */
+.global-timer-bar{width:100%;max-width:720px;margin-bottom:14px;padding:10px 18px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.global-timer-bar .gtimer-label{font-size:.8rem;color:var(--gray)}
+.global-timer-bar .gtimer-val{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold)}
+.global-timer-bar.warning .gtimer-val{color:var(--red);animation:pulse 1s infinite}
+.gtimer-progress{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.gtimer-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:100px;transition:width 1s linear}
+.gtimer-fill.low{background:linear-gradient(90deg,var(--red),#ff8c42)}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.question-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:30px;width:100%;max-width:720px;margin-bottom:14px;animation:slideUp .35s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.q-type-badge{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.question-text{font-family:'Playfair Display',serif;font-size:clamp(.97rem,2.5vw,1.2rem);line-height:1.4;margin-bottom:22px;color:var(--white)}
+
+.options-list{display:flex;flex-direction:column;gap:8px}
+.option-btn{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:11px;padding:13px 16px;text-align:left;cursor:pointer;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;transition:var(--transition);display:flex;align-items:center;gap:12px}
+.option-btn:hover:not(:disabled){border-color:rgba(232,184,75,.4);background:rgba(232,184,75,.06)}
+.option-letter{width:28px;height:28px;border-radius:7px;background:var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;color:var(--gray);flex-shrink:0;transition:var(--transition)}
+.option-btn:hover:not(:disabled) .option-letter{background:rgba(232,184,75,.2);color:var(--gold)}
+.option-btn.correct{border-color:var(--green)!important;background:rgba(78,203,141,.1)!important}
+.option-btn.correct .option-letter{background:rgba(78,203,141,.2);color:var(--green)}
+.option-btn.wrong{border-color:var(--red)!important;background:rgba(232,93,93,.1)!important}
+.option-btn.wrong .option-letter{background:rgba(232,93,93,.2);color:var(--red)}
+.option-btn:disabled{cursor:default}
+
+.tf-row{display:flex;gap:12px}
+.tf-btn{flex:1;padding:16px;border-radius:12px;border:2px solid var(--card-border);background:var(--card-bg);color:var(--white);font-family:'DM Sans',sans-serif;font-size:.97rem;font-weight:600;cursor:pointer;transition:var(--transition);text-align:center}
+.tf-btn:hover:not(:disabled){border-color:var(--gold);background:rgba(232,184,75,.07)}
+.tf-btn.correct{border-color:var(--green)!important;background:rgba(78,203,141,.1)!important;color:var(--green)}
+.tf-btn.wrong{border-color:var(--red)!important;background:rgba(232,93,93,.1)!important;color:var(--red)}
+.tf-btn:disabled{cursor:default}
+
+.open-input-wrap{display:flex;flex-direction:column;gap:10px}
+.open-input{background:rgba(255,255,255,.04);border:1.5px solid var(--card-border);border-radius:11px;padding:13px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;resize:none;min-height:76px;transition:var(--transition)}
+.open-input:focus{border-color:rgba(232,184,75,.5);background:rgba(232,184,75,.03)}
+.open-input::placeholder{color:var(--gray)}
+
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.match-col{display:flex;flex-direction:column;gap:7px}
+.match-col-title{font-size:.72rem;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.match-item{background:rgba(255,255,255,.04);border:1.5px solid var(--card-border);border-radius:9px;padding:10px 13px;cursor:pointer;transition:var(--transition);font-size:.85rem;text-align:center}
+.match-item:hover:not(.matched){border-color:var(--gold);background:rgba(232,184,75,.07)}
+.match-item.selected-a{border-color:var(--gold);background:rgba(232,184,75,.12);color:var(--gold)}
+.match-item.matched{border-color:var(--green);background:rgba(78,203,141,.08);color:var(--green)}
+.match-item.wrong-match{border-color:var(--red);background:rgba(232,93,93,.08);animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.feedback-box{border-radius:12px;padding:16px 20px;margin-top:14px;animation:slideUp .3s ease;display:none}
+.feedback-box.correct{background:rgba(78,203,141,.08);border:1px solid rgba(78,203,141,.25)}
+.feedback-box.wrong{background:rgba(232,93,93,.08);border:1px solid rgba(232,93,93,.25)}
+.feedback-title{font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:7px}
+.feedback-box.correct .feedback-title{color:var(--green)}
+.feedback-box.wrong .feedback-title{color:var(--red)}
+.feedback-text{font-size:.84rem;color:var(--feedback-text);line-height:1.55}
+.next-btn-wrap{display:flex;justify-content:flex-end;margin-top:12px;width:100%;max-width:720px}
+
+/* ========== RESULTS ========== */
+.results-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:34px;width:100%;max-width:720px;text-align:center;margin-bottom:18px}
+.score-ring{width:140px;height:140px;margin:0 auto 20px;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:8}
+.score-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.score-ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-number{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1}
+.score-label{font-size:.7rem;color:var(--gray)}
+.results-title{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:7px}
+.results-subtitle{color:var(--gray);margin-bottom:26px;font-size:.86rem}
+.stats-row{display:flex;gap:12px;justify-content:center;margin-bottom:26px;flex-wrap:wrap}
+.stat-box{background:var(--navy2);border-radius:12px;padding:13px 20px;text-align:center;min-width:90px}
+.stat-box .stat-val{font-size:1.4rem;font-weight:700}
+.stat-box .stat-lbl{font-size:.7rem;color:var(--gray);margin-top:2px}
+.stat-box.green .stat-val{color:var(--green)}
+.stat-box.red   .stat-val{color:var(--red)}
+
+/* Brevet Blanc results detail */
+.bb-subject-breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;text-align:left}
+.bb-subj-stat{background:var(--navy2);border-radius:10px;padding:12px 14px}
+.bb-subj-stat .bss-name{font-size:.75rem;color:var(--gray);margin-bottom:4px}
+.bb-subj-stat .bss-score{font-size:1.1rem;font-weight:700}
+
+/* ========== ERROR REVIEW ========== */
+.errors-list{width:100%;max-width:720px;display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.error-item{background:var(--card-bg);border:1px solid rgba(232,93,93,.2);border-left:3px solid var(--red);border-radius:12px;padding:16px 20px}
+.error-q{font-weight:500;margin-bottom:7px;font-size:.9rem}
+.error-your{color:var(--red);font-size:.82rem;margin-bottom:3px}
+.error-correct{color:var(--green);font-size:.82rem;margin-bottom:7px}
+.error-explain{font-size:.78rem;color:var(--gray);line-height:1.5}
+
+/* ========== FLASHCARDS ========== */
+.flashcard-scene{perspective:1000px;width:100%;max-width:580px;height:280px;cursor:pointer;margin-bottom:20px}
+.flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.flashcard.flipped{transform:rotateY(180deg)}
+.flashcard-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;border:1px solid var(--card-border)}
+.flashcard-front{background:linear-gradient(135deg,var(--navy2),var(--navy3))}
+.flashcard-back{background:linear-gradient(135deg,rgba(78,203,141,.1),var(--navy2));transform:rotateY(180deg);border-color:rgba(78,203,141,.2)}
+.flashcard-hint{font-size:.7rem;color:var(--gray);margin-bottom:13px}
+.flashcard-question{font-family:'Playfair Display',serif;font-size:1.2rem}
+.flashcard-answer{font-size:.97rem;color:var(--green);font-weight:500}
+.flashcard-explain{font-size:.78rem;color:var(--gray);margin-top:9px;line-height:1.5}
+.fc-controls{display:flex;gap:10px;align-items:center}
+.fc-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:11px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:var(--transition);color:var(--white)}
+.fc-btn:hover{border-color:var(--gold);background:rgba(232,184,75,.1)}
+.fc-counter{color:var(--gray);font-size:.86rem;min-width:70px;text-align:center}
+
+/* Flash select grid */
+.flash-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:100%;max-width:800px}
+.flash-subj-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:18px 16px;cursor:pointer;text-align:center;transition:var(--transition);font-family:'DM Sans',sans-serif;color:var(--white)}
+.flash-subj-btn .fsb-icon{font-size:1.8rem;margin-bottom:8px;display:block}
+.flash-subj-btn .fsb-name{font-weight:600;font-size:.9rem}
+.flash-subj-btn .fsb-count{font-size:.72rem;color:var(--gray);margin-top:3px}
+.flash-subj-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.flash-subj-btn.f-histoire{border-top:3px solid var(--gold)}
+.flash-subj-btn.f-geo{border-top:3px solid var(--blue-light)}
+.flash-subj-btn.f-emc{border-top:3px solid var(--purple)}
+.flash-subj-btn.f-francais{border-top:3px solid var(--pink)}
+.flash-subj-btn.f-maths{border-top:3px solid var(--teal)}
+.flash-subj-btn.f-sciences{border-top:3px solid var(--orange)}
+.flash-subj-btn.f-all{border-top:3px solid var(--green)}
+
+/* ========== HISTORY ========== */
+.history-list{width:100%;max-width:740px;display:flex;flex-direction:column;gap:10px}
+.history-avg-banner{background:linear-gradient(135deg,var(--navy2),var(--navy3));border:1px solid rgba(232,184,75,.3);border-radius:14px;padding:18px 22px;margin-bottom:6px}
+.avg-main{font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:12px;text-align:center}
+.avg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.avg-subj-box{background:rgba(255,255,255,.04);border:1px solid var(--card-border);border-radius:10px;padding:10px 12px;text-align:center}
+.avg-subj-box .avg-pct{font-size:1.3rem;font-weight:700}
+.avg-subj-box .avg-pct.good{color:var(--green)}
+.avg-subj-box .avg-pct.mid{color:var(--gold)}
+.avg-subj-box .avg-pct.bad{color:var(--red)}
+.avg-subj-box .avg-name{font-size:.74rem;color:var(--gray);margin-top:2px}
+.avg-subj-box .avg-count{font-size:.68rem;color:var(--gray)}
+.history-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.history-score-badge{width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0}
+.history-score-badge.good{background:rgba(78,203,141,.15);color:var(--green)}
+.history-score-badge.mid{background:rgba(232,184,75,.15);color:var(--gold)}
+.history-score-badge.bad{background:rgba(232,93,93,.15);color:var(--red)}
+.history-info{flex:1;min-width:0}
+.history-info strong{display:block;font-size:.9rem}
+.history-info .h-detail{font-size:.74rem;color:var(--gray);margin-top:2px}
+.history-info .h-chapters{font-size:.7rem;color:var(--gray);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.history-date{font-size:.7rem;color:var(--gray);flex-shrink:0}
+.history-empty{text-align:center;color:var(--gray);padding:48px 20px;line-height:1.8}
+
+/* ========== TOAST ========== */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy2);border:1px solid var(--gold);border-radius:100px;padding:10px 20px;font-size:.86rem;color:var(--white);z-index:1000;transition:transform .4s ease;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:600px){
+  .quiz-header{flex-direction:column;align-items:flex-start}
+  .match-grid{grid-template-columns:1fr}
+  .tf-row{flex-direction:column}
+  .question-card{padding:20px 16px}
+  .results-card{padding:24px 16px}
+  .nav-links{gap:4px}
+  .nav-btn{padding:6px 10px;font-size:.76rem}
+  .diff-btn{min-width:100%}
+  .history-date{display:none}
+  .bb-badge{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ======== HOME ======== -->
+<div id="screen-home" class="screen active">
+  <header class="site-header">
+    <div class="logo"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="toggleTheme()">🌓 Thème</button>
+      <button class="nav-btn" onclick="showScreen('screen-history')">📊 Historique</button>
+      <button class="nav-btn" onclick="showScreen('screen-flash-select')">⚡ Flashcards</button>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="hero-badge">✨ Révision Brevet 2025 — Toutes Matières — 3ème</div>
+    <h1>Votre révision complète du Brevet</h1>
+    <p>Quiz adaptatifs pour toutes les matières, flashcards et suivi de progression.</p>
+  </div>
+
+  <!-- BREVET BLANC CTA -->
+  <div class="brevet-blanc-cta">
+    <button class="brevet-blanc-btn" onclick="startBrevetBlanc()">
+      <div class="bb-left">
+        <div class="bb-icon">🎓</div>
+        <div class="bb-text">
+          <span class="bb-title">Simuler un Brevet Blanc</span>
+          <span class="bb-sub">30 questions · Toutes matières · Chrono 15 minutes · Conditions d'examen</span>
+        </div>
+      </div>
+      <div class="bb-badge">🚀 Lancer</div>
+    </button>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card histoire"   onclick="startSubject('histoire')"><span class="card-icon">🏛️</span><h3>Histoire</h3><p>Grande Guerre, régimes totalitaires, Guerre froide, Ve République…</p><span class="card-arrow">→</span></div>
+    <div class="card geo"        onclick="startSubject('geo')">      <span class="card-icon">🌍</span><h3>Géographie</h3><p>Mondialisation, développement durable, espaces et inégalités…</p><span class="card-arrow">→</span></div>
+    <div class="card emc"        onclick="startSubject('emc')">      <span class="card-icon">⚖️</span><h3>EMC</h3><p>Droits, citoyenneté, démocratie, laïcité, justice…</p><span class="card-arrow">→</span></div>
+    <div class="card francais"   onclick="startSubject('francais')"> <span class="card-icon">📝</span><h3>Français</h3><p>Grammaire, conjugaison, figures de style, méthodologie du brevet…</p><span class="card-arrow">→</span></div>
+    <div class="card maths"      onclick="startSubject('maths')">    <span class="card-icon">📐</span><h3>Mathématiques</h3><p>Calcul mental, théorèmes, probabilités, algèbre…</p><span class="card-arrow">→</span></div>
+    <div class="card sciences"   onclick="startSubject('sciences')"> <span class="card-icon">🔬</span><h3>Sciences</h3><p>SVT, Physique-Chimie, Technologie — notions clés du programme…</p><span class="card-arrow">→</span></div>
+    <div class="card flash"      onclick="showScreen('screen-flash-select')"><span class="card-icon">⚡</span><h3>Flashcards</h3><p>Révision rapide par cartes : dates, définitions, formules…</p><span class="card-arrow">→</span></div>
+    <div class="card stats-card" onclick="showScreen('screen-history')">     <span class="card-icon">📊</span><h3>Mes Résultats</h3><p>Suivez vos progrès par matière et repérez les points faibles.</p><span class="card-arrow">→</span></div>
+  </div>
+</div>
+
+<!-- ======== CHAPTERS ======== -->
+<div id="screen-chapters" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title" id="chapters-title">Choisissez un chapitre</div>
+  <div class="section-subtitle">Sélectionnez un ou plusieurs chapitres, ou révisez tout le programme</div>
+  <button class="all-chapters-btn" onclick="selectAllChapters()">✓ Tout le programme</button>
+  <div class="chapter-list" id="chapter-list"></div>
+  <div style="height:20px"></div>
+  <button class="btn-primary" onclick="goToDifficulty()">Continuer →</button>
+</div>
+
+<!-- ======== DIFFICULTY ======== -->
+<div id="screen-difficulty" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-chapters')">← Chapitres</button></div>
+  <div class="section-title">Paramètres du quiz</div>
+  <div class="section-subtitle">Adaptez le quiz à votre niveau et vos préférences</div>
+  <div style="font-size:.82rem;color:var(--gray);margin-bottom:10px">Niveau de difficulté</div>
+  <div class="diff-grid">
+    <button class="diff-btn" onclick="selectDiff('facile',this)"><span class="diff-emoji">🌱</span><span class="diff-name">Facile</span><span class="diff-desc">10 questions</span></button>
+    <button class="diff-btn selected" onclick="selectDiff('normal',this)"><span class="diff-emoji">🎯</span><span class="diff-name">Normal</span><span class="diff-desc">15 questions</span></button>
+    <button class="diff-btn" onclick="selectDiff('difficile',this)"><span class="diff-emoji">🔥</span><span class="diff-name">Difficile</span><span class="diff-desc">20 questions</span></button>
+  </div>
+  <div style="font-size:.82rem;color:var(--gray);margin-bottom:10px">Options</div>
+  <div class="options-row">
+    <button class="toggle-btn" id="btn-timer" onclick="toggleOption('timer',this)">⏱️ Minuteur (30s/question)</button>
+    <button class="toggle-btn active" id="btn-correction" onclick="toggleOption('correction',this)">✅ Correction immédiate</button>
+    <button class="toggle-btn" id="btn-mix" onclick="toggleOption('mix',this)">🔀 Types mixtes</button>
+  </div>
+  <button class="btn-primary" onclick="startQuiz()">🚀 Lancer le quiz</button>
+</div>
+
+<!-- ======== QUIZ ======== -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-meta">
+      <span class="quiz-tag" id="q-subject-tag">Matière</span>
+      <span class="quiz-tag" id="q-chapter-tag">Chapitre</span>
+      <span class="quiz-tag gold" id="q-diff-tag">Normal</span>
+    </div>
+    <div class="timer-display" id="timer-display" style="display:none">⏱️ <span id="timer-val">30</span>s</div>
+    <button class="btn-secondary" onclick="confirmQuit()" style="padding:7px 12px;font-size:.78rem">✕ Quitter</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-info"><span>Question <strong id="q-current">1</strong> / <strong id="q-total">15</strong></span><span id="q-score-live">Score : 0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="question-card" id="question-card"></div>
+  <div id="feedback-container"></div>
+  <div class="next-btn-wrap" id="next-btn-wrap" style="display:none"><button class="btn-primary" id="next-btn" onclick="nextQuestion()">Question suivante →</button></div>
+</div>
+
+<!-- ======== BREVET BLANC QUIZ ======== -->
+<div id="screen-bb-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-meta">
+      <span class="quiz-tag gold">🎓 Brevet Blanc</span>
+      <span class="quiz-tag" id="bb-subject-tag">Matière</span>
+    </div>
+    <button class="btn-secondary" onclick="confirmQuit(true)" style="padding:7px 12px;font-size:.78rem">✕ Quitter</button>
+  </div>
+  <!-- Global countdown bar -->
+  <div class="global-timer-bar" id="global-timer-bar">
+    <span class="gtimer-label">⏱️ Temps restant</span>
+    <div class="gtimer-progress"><div class="gtimer-fill" id="gtimer-fill" style="width:100%"></div></div>
+    <span class="gtimer-val" id="gtimer-val">15:00</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-info"><span>Question <strong id="bb-current">1</strong> / <strong>30</strong></span><span id="bb-score-live">Score : 0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="bb-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="question-card" id="bb-question-card"></div>
+  <div id="bb-feedback-container"></div>
+  <div class="next-btn-wrap" id="bb-next-btn-wrap" style="display:none"><button class="btn-primary" id="bb-next-btn" onclick="bbNextQuestion()">Question suivante →</button></div>
+</div>
+
+<!-- ======== RESULTS ======== -->
+<div id="screen-results" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="results-card">
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120" width="140" height="140">
+        <circle class="score-ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="score-ring-fill" id="score-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+      </svg>
+      <div class="score-ring-text">
+        <div class="score-number" id="result-percent">0%</div>
+        <div class="score-label">Score</div>
+      </div>
+    </div>
+    <div class="results-title" id="result-title">Bien joué !</div>
+    <div class="results-subtitle" id="result-subtitle">Continuez à progresser !</div>
+    <div class="stats-row">
+      <div class="stat-box green"><div class="stat-val" id="stat-correct">0</div><div class="stat-lbl">Bonnes réponses</div></div>
+      <div class="stat-box red">  <div class="stat-val" id="stat-wrong">0</div>  <div class="stat-lbl">Erreurs</div></div>
+      <div class="stat-box">      <div class="stat-val" id="stat-time">—</div>   <div class="stat-lbl">Temps</div></div>
+    </div>
+    <!-- Brevet Blanc breakdown (shown only for BB) -->
+    <div id="bb-breakdown-section" style="display:none">
+      <div style="font-size:.8rem;color:var(--gray);margin-bottom:10px;text-align:left">Résultats par matière :</div>
+      <div class="bb-subject-breakdown" id="bb-breakdown-grid"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-primary"   id="btn-restart" onclick="restartQuiz()">🔄 Recommencer</button>
+      <button class="btn-secondary" onclick="showErrors()">📋 Voir les erreurs</button>
+      <button class="btn-secondary" onclick="showScreen('screen-home')">🏠 Accueil</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== ERRORS ======== -->
+<div id="screen-errors" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-results')">← Résultats</button></div>
+  <div class="section-title">Révision des erreurs</div>
+  <div class="section-subtitle" id="error-count-subtitle"></div>
+  <div class="errors-list" id="errors-list"></div>
+  <button class="btn-primary" onclick="restartQuiz()">🔄 Recommencer</button>
+</div>
+
+<!-- ======== FLASH SELECT ======== -->
+<div id="screen-flash-select" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">⚡ Mode Flashcards</div>
+  <div class="section-subtitle">Choisissez une matière ou mélangez tout</div>
+  <div class="flash-select-grid">
+    <button class="flash-subj-btn f-histoire"  onclick="startFlash('histoire')"><span class="fsb-icon">🏛️</span><span class="fsb-name">Histoire</span><span class="fsb-count" id="fc-count-histoire">— cartes</span></button>
+    <button class="flash-subj-btn f-geo"       onclick="startFlash('geo')">      <span class="fsb-icon">🌍</span><span class="fsb-name">Géographie</span><span class="fsb-count" id="fc-count-geo">— cartes</span></button>
+    <button class="flash-subj-btn f-emc"       onclick="startFlash('emc')">      <span class="fsb-icon">⚖️</span><span class="fsb-name">EMC</span><span class="fsb-count" id="fc-count-emc">— cartes</span></button>
+    <button class="flash-subj-btn f-francais"  onclick="startFlash('francais')"> <span class="fsb-icon">📝</span><span class="fsb-name">Français</span><span class="fsb-count" id="fc-count-francais">— cartes</span></button>
+    <button class="flash-subj-btn f-maths"     onclick="startFlash('maths')">    <span class="fsb-icon">📐</span><span class="fsb-name">Mathématiques</span><span class="fsb-count" id="fc-count-maths">— cartes</span></button>
+    <button class="flash-subj-btn f-sciences"  onclick="startFlash('sciences')"> <span class="fsb-icon">🔬</span><span class="fsb-name">Sciences</span><span class="fsb-count" id="fc-count-sciences">— cartes</span></button>
+    <button class="flash-subj-btn f-all"       onclick="startFlash('all')">      <span class="fsb-icon">🌟</span><span class="fsb-name">Tout mélanger</span><span class="fsb-count" id="fc-count-all">— cartes</span></button>
+  </div>
+</div>
+
+<!-- ======== FLASHCARDS ======== -->
+<div id="screen-flash" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-flash-select')">← Retour</button></div>
+  <div class="section-title">⚡ Flashcards</div>
+  <div class="section-subtitle">Cliquez ou appuyez sur Espace pour révéler la réponse</div>
+  <div class="flashcard-scene" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="flashcard-face flashcard-front">
+        <div class="flashcard-hint">Cliquez pour révéler →</div>
+        <div class="flashcard-question" id="fc-question">Question</div>
+      </div>
+      <div class="flashcard-face flashcard-back">
+        <div class="flashcard-hint">Réponse</div>
+        <div class="flashcard-answer" id="fc-answer">Réponse</div>
+        <div class="flashcard-explain" id="fc-explain"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-controls">
+    <button class="fc-btn" onclick="prevCard()">←</button>
+    <div class="fc-counter"><span id="fc-current">1</span> / <span id="fc-total">20</span></div>
+    <button class="fc-btn" onclick="nextCard()">→</button>
+  </div>
+  <div style="height:12px"></div>
+  <button class="btn-primary" onclick="shuffleCards()">🔀 Mélanger</button>
+</div>
+
+<!-- ======== HISTORY ======== -->
+<div id="screen-history" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">📊 Historique des résultats</div>
+  <div class="section-subtitle">Vos 20 dernières sessions</div>
+  <div class="history-list" id="history-list"></div>
+  <div style="height:12px"></div>
+  <button class="btn-secondary" onclick="clearHistory()">🗑️ Effacer l'historique</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   BASE DE DONNÉES COMPLÈTE — Toutes matières — Brevet 3ème
+   ============================================================ */
+const DB = {
+
+  /* ==================== HISTOIRE ==================== */
+  histoire: {
+    "Première Guerre mondiale": [
+      {type:"mcq",diff:"facile",q:"En quelle année débute la Première Guerre mondiale ?",opts:["1912","1914","1916","1918"],ans:1,explain:"La Première Guerre mondiale commence en août 1914, déclenchée par l'assassinat de l'archiduc François-Ferdinand à Sarajevo le 28 juin 1914."},
+      {type:"tf",diff:"facile",q:"La France et le Royaume-Uni sont alliés pendant la Première Guerre mondiale.",ans:true,explain:"Ils forment la Triple Entente avec la Russie, face aux Empires centraux (Allemagne, Autriche-Hongrie)."},
+      {type:"mcq",diff:"normal",q:"Quel événement déclenche la Première Guerre mondiale ?",opts:["La révolution russe","L'invasion de la Belgique","L'assassinat de l'archiduc François-Ferdinand","La chute de l'Empire ottoman"],ans:2,explain:"François-Ferdinand est assassiné le 28 juin 1914 à Sarajevo par Gavrilo Princip, déclenchant un engrenage d'alliances."},
+      {type:"mcq",diff:"normal",q:"Quelle bataille de 1916 symbolise le carnage de la Grande Guerre avec ~700 000 victimes ?",opts:["La Marne","La Somme","Verdun","Sedan"],ans:2,explain:"Verdun (fév.-déc. 1916) est le symbole de la boucherie de la Grande Guerre. Les deux camps perdent près de 700 000 hommes."},
+      {type:"date",diff:"normal",dates:["1914","1916","1917","1918"],events:["Début de la guerre","Bataille de Verdun","Entrée des USA","Armistice"],explain:"1914 : début ; 1916 : Verdun ; 1917 : USA entrent en guerre ; 1918 : armistice du 11 novembre."},
+      {type:"mcq",diff:"difficile",q:"Quel traité met fin à la Première Guerre mondiale en 1919 ?",opts:["Traité de Versailles","Traité de Paris","Traité de Brest-Litovsk","Traité de Locarno"],ans:0,explain:"Le Traité de Versailles (28 juin 1919) impose à l'Allemagne de lourdes réparations et des pertes territoriales."},
+      {type:"tf",diff:"difficile",q:"L'armistice de la Première Guerre mondiale est signé le 14 juillet 1918.",ans:false,explain:"Faux ! L'armistice est signé le 11 novembre 1918 à 11h. Le 14 juillet est la Fête nationale française."}
+    ],
+    "Les régimes totalitaires": [
+      {type:"mcq",diff:"facile",q:"Quel régime Adolf Hitler instaure-t-il en Allemagne dès 1933 ?",opts:["Communisme","Fascisme","Nazisme","Monarchie"],ans:2,explain:"Le nazisme est un régime totalitaire basé sur le racisme, l'antisémitisme et le nationalisme extrême."},
+      {type:"tf",diff:"facile",q:"Benito Mussolini est le chef du régime fasciste en Italie dans les années 1920.",ans:true,explain:"Mussolini prend le pouvoir en 1922 et instaure le premier régime fasciste d'Europe."},
+      {type:"mcq",diff:"normal",q:"Comment appelle-t-on le régime de Staline en URSS ?",opts:["Dictature militaire","Totalitarisme stalinien","Démocratie populaire","Régime fasciste"],ans:1,explain:"Le stalinisme repose sur le culte de la personnalité, les purges politiques, le Goulag et la collectivisation forcée."},
+      {type:"mcq",diff:"normal",q:"En quelle année Hitler devient-il chancelier d'Allemagne ?",opts:["1929","1931","1933","1936"],ans:2,explain:"Hitler est nommé chancelier le 30 janvier 1933, puis démantèle la démocratie pour instaurer la dictature."},
+      {type:"open",diff:"difficile",q:"Qu'est-ce que la propagande dans un régime totalitaire ?",key:["propagande","contrôle","information","masses","état","opinion"],correctAnswer:"Contrôle de l'information et des médias par l'État pour manipuler l'opinion publique.",explain:"Presse, radio, affiches, cinéma sont mis au service du pouvoir pour diffuser l'idéologie officielle et écraser toute opposition."},
+      {type:"tf",diff:"difficile",q:"Les lois de Nuremberg (1935) retirent la citoyenneté allemande aux Juifs.",ans:true,explain:"Ces lois institutionnalisent la persécution antisémite et interdisent les mariages mixtes."}
+    ],
+    "La Seconde Guerre mondiale": [
+      {type:"mcq",diff:"facile",q:"En quelle année la Seconde Guerre mondiale se termine-t-elle en Europe ?",opts:["1943","1944","1945","1946"],ans:2,explain:"Capitulation allemande le 8 mai 1945. Le conflit se termine en Asie le 2 septembre 1945."},
+      {type:"mcq",diff:"facile",q:"Qui lance l'Appel du 18 juin 1940 depuis Londres ?",opts:["Philippe Pétain","Charles de Gaulle","Jean Moulin","Henri Giraud"],ans:1,explain:"De Gaulle refuse l'armistice et appelle les Français à continuer le combat depuis la BBC."},
+      {type:"mcq",diff:"normal",q:"Quel terme désigne le génocide des Juifs par les nazis ?",opts:["La Résistance","La Shoah","La déportation","La colonisation"],ans:1,explain:"La Shoah (6 millions de Juifs exterminés) est le génocide systématique organisé par les nazis dans des camps d'extermination."},
+      {type:"tf",diff:"normal",q:"Le débarquement de Normandie (D-Day) a lieu le 6 juin 1944.",ans:true,explain:"Le 6 juin 1944, les Alliés débarquent sur les plages normandes. C'est le plus grand débarquement amphibie de l'histoire."},
+      {type:"date",diff:"normal",dates:["1939","1940","1941","1944"],events:["Début de la WWII","Appel du 18 juin","Pearl Harbor — USA en guerre","D-Day en Normandie"],explain:"Dates clés de la Seconde Guerre mondiale."},
+      {type:"tf",diff:"difficile",q:"Les bombes atomiques sont larguées sur Tokyo et Osaka en 1945.",ans:false,explain:"Faux ! Elles tombent sur Hiroshima (6 août) et Nagasaki (9 août 1945), causant 100 000–200 000 morts."}
+    ],
+    "La Guerre froide": [
+      {type:"mcq",diff:"facile",q:"Quels deux blocs s'affrontent durant la Guerre froide ?",opts:["France et Allemagne","États-Unis et URSS","OTAN et UE","Chine et Japon"],ans:1,explain:"La Guerre froide (1947-1991) oppose les USA (bloc occidental capitaliste) et l'URSS (bloc soviétique communiste)."},
+      {type:"tf",diff:"facile",q:"Le mur de Berlin est construit en 1961 pour empêcher les Allemands de l'Est de fuir à l'Ouest.",ans:true,explain:"Érigé dans la nuit du 12 au 13 août 1961, il tombe le 9 novembre 1989."},
+      {type:"mcq",diff:"normal",q:"Quelle crise de 1962 amène le monde au bord de la guerre nucléaire ?",opts:["Crise de Suez","Crise de Cuba","Guerre de Corée","Guerre du Viêtnam"],ans:1,explain:"L'URSS installe des missiles à Cuba. Kennedy impose un blocus. Après 13 jours de tension, Khrouchtchev recule."},
+      {type:"mcq",diff:"difficile",q:"En quelle année le mur de Berlin tombe-t-il ?",opts:["1985","1987","1989","1991"],ans:2,explain:"Le 9 novembre 1989, le mur tombe. L'URSS se dissout en décembre 1991."}
+    ],
+    "La décolonisation et la Ve République": [
+      {type:"mcq",diff:"facile",q:"En quelle année est fondée la Ve République ?",opts:["1944","1946","1958","1962"],ans:2,explain:"La Ve République est fondée en 1958. De Gaulle en rédige la Constitution renforçant l'exécutif."},
+      {type:"tf",diff:"facile",q:"La guerre d'Algérie se termine en 1962 avec les accords d'Évian.",ans:true,explain:"Les accords d'Évian (18 mars 1962) reconnaissent l'indépendance de l'Algérie après 8 ans de guerre."},
+      {type:"mcq",diff:"normal",q:"Quel leader indien mène la lutte pour l'indépendance par la non-violence ?",opts:["Nehru","Mandela","Gandhi","Nasser"],ans:2,explain:"Gandhi, par la désobéissance civile et les jeûnes, joue un rôle clé dans l'indépendance de l'Inde en 1947."},
+      {type:"mcq",diff:"difficile",q:"Quel traité transforme la CEE en Union européenne en 1992 ?",opts:["Traité de Rome","Traité de Maastricht","Traité de Lisbonne","Traité de Paris"],ans:1,explain:"Le Traité de Maastricht (1992) crée l'UE, instaure la citoyenneté européenne et prépare l'euro."}
+    ]
+  },
+
+  /* ==================== GÉOGRAPHIE ==================== */
+  geo: {
+    "La mondialisation": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce que la mondialisation ?",opts:["L'uniformisation des cultures","L'intensification des échanges à l'échelle mondiale","La création d'un gouvernement mondial","La fin des frontières"],ans:1,explain:"Processus d'intensification des échanges (marchandises, capitaux, personnes, informations) accéléré depuis les années 1990."},
+      {type:"tf",diff:"facile",q:"Les États-Unis sont la première puissance économique mondiale.",ans:true,explain:"Les USA ont le PIB le plus élevé du monde, suivis par la Chine."},
+      {type:"mcq",diff:"normal",q:"Que sont les FTN ?",opts:["Forces terrestres nationales","Firmes transnationales (multinationales)","Fonds de transformation numérique","Frontières terrestres nationales"],ans:1,explain:"Les Firmes Transnationales sont présentes dans plusieurs pays : Apple, Toyota, TotalEnergies... Acteurs clés de la mondialisation."},
+      {type:"open",diff:"difficile",q:"Qu'est-ce qu'un espace de production délocalisé ?",key:["délocalisation","main-d'œuvre","coût","pays","production"],correctAnswer:"Production transférée vers un pays à moindre coût de main-d'œuvre.",explain:"Les FTN délocalisent pour réduire les coûts en produisant dans des pays où la main-d'œuvre est moins chère."}
+    ],
+    "Développement durable": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce que le développement durable ?",opts:["Un développement économique rapide","Un développement qui satisfait les besoins présents sans compromettre l'avenir","Un développement limité aux pays riches","Un développement uniquement écologique"],ans:1,explain:"Définition du rapport Brundtland (1987). Trois piliers : économie, social, environnement."},
+      {type:"tf",diff:"facile",q:"Le réchauffement climatique est principalement dû aux activités humaines selon le GIEC.",ans:true,explain:"Le GIEC affirme avec un très haut niveau de certitude que les activités humaines en sont la cause principale."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce que l'IDH ?",opts:["Indice mesurant uniquement le PIB","Indice combinant espérance de vie, éducation et revenu","Indice de pollution atmosphérique","Indicateur de surface forestière"],ans:1,explain:"L'IDH (créé par le PNUD) va de 0 à 1 et mesure le développement humain sur 3 critères."},
+      {type:"mcq",diff:"difficile",q:"Lors de quelle conférence les accords de Paris sur le climat sont-ils signés ?",opts:["Rio 1992","Kyoto 1997","Copenhague 2009","Paris 2015 (COP21)"],ans:3,explain:"La COP21 à Paris (2015) vise à limiter le réchauffement à 1,5°C au-dessus des niveaux préindustriels."}
+    ],
+    "Espaces, échanges et inégalités": [
+      {type:"mcq",diff:"facile",q:"Quel pays est le plus peuplé du monde en 2024 ?",opts:["États-Unis","Inde","Chine","Indonésie"],ans:1,explain:"L'Inde a dépassé la Chine en 2023 avec plus de 1,4 milliard d'habitants."},
+      {type:"tf",diff:"normal",q:"Sydney est la capitale de l'Australie.",ans:false,explain:"Faux ! La capitale est Canberra. Sydney est la plus grande ville mais pas la capitale."},
+      {type:"mcq",diff:"normal",q:"Que sont les BRICS ?",opts:["Les pays les plus pauvres","Brésil, Russie, Inde, Chine, Afrique du Sud — pays émergents","Les fondateurs de l'ONU","Les pays du G7"],ans:1,explain:"Pays émergents à forte croissance représentant ~40% de la population mondiale."},
+      {type:"open",diff:"difficile",q:"Définissez la littoralisation.",key:["littoralisation","littoral","côte","concentration","populations","économie"],correctAnswer:"Concentration croissante des populations et des activités économiques sur les littoraux.",explain:"60% de la population mondiale vit à moins de 60 km d'une côte."}
+    ]
+  },
+
+  /* ==================== EMC ==================== */
+  emc: {
+    "Droits de l'Homme et du Citoyen": [
+      {type:"mcq",diff:"facile",q:"En quelle année est adoptée la Déclaration des Droits de l'Homme et du Citoyen ?",opts:["1776","1789","1830","1848"],ans:1,explain:"La DDHC est adoptée le 26 août 1789 pendant la Révolution française."},
+      {type:"tf",diff:"facile",q:"La DUDH est adoptée par l'ONU en 1948.",ans:true,explain:"La Déclaration universelle des droits de l'Homme est adoptée le 10 décembre 1948 après la Seconde Guerre mondiale."},
+      {type:"mcq",diff:"facile",q:"Quelle est la devise de la République française ?",opts:["Égalité, Justice, Fraternité","Liberté, Égalité, Fraternité","Liberté, Justice, Solidarité","Démocratie, Égalité, Liberté"],ans:1,explain:"'Liberté, Égalité, Fraternité' est issue de la Révolution française et inscrite dans la Constitution de 1958."},
+      {type:"open",diff:"difficile",q:"Expliquez ce qu'est un droit fondamental.",key:["droit","fondamental","universel","inaliénable","imprescriptible","humain"],correctAnswer:"Droit naturel, universel et inaliénable reconnu à tout être humain, qu'aucun État ne peut supprimer.",explain:"Les droits fondamentaux protègent la vie, la liberté, l'égalité. Ils sont garantis par la Constitution et les conventions internationales."}
+    ],
+    "La démocratie, la laïcité et la citoyenneté": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce que la démocratie ?",opts:["Un régime dirigé par un roi","Un régime où le peuple exerce le pouvoir via des représentants élus","Un régime militaire","Un régime théocratique"],ans:1,explain:"La démocratie (demos = peuple, kratos = pouvoir) : souveraineté appartient au peuple qui vote librement."},
+      {type:"tf",diff:"facile",q:"La laïcité interdit aux citoyens de pratiquer leur religion.",ans:false,explain:"Faux ! La laïcité garantit la liberté de conscience. Elle impose seulement la neutralité de l'État vis-à-vis des religions."},
+      {type:"mcq",diff:"normal",q:"En quelle année est adoptée la loi de séparation de l'Église et de l'État ?",opts:["1789","1848","1905","1958"],ans:2,explain:"La loi du 9 décembre 1905 instaure la séparation Église/État et organise la laïcité à la française."},
+      {type:"mcq",diff:"normal",q:"À quel âge vote-t-on en France ?",opts:["16 ans","17 ans","18 ans","21 ans"],ans:2,explain:"Le droit de vote est accordé à 18 ans depuis 1974 (abaissé de 21 ans)."},
+      {type:"tf",diff:"difficile",q:"En France, le Conseil constitutionnel peut censurer une loi contraire à la Constitution.",ans:true,explain:"Il vérifie la conformité des lois à la Constitution et peut les censurer avant promulgation ou via la QPC."}
+    ]
+  },
+
+  /* ==================== FRANÇAIS ==================== */
+  francais: {
+    "Grammaire": [
+      {type:"mcq",diff:"facile",q:"Quelle est la nature du mot 'rapidement' dans la phrase 'Il court rapidement' ?",opts:["Nom","Adjectif qualificatif","Adverbe","Verbe"],ans:2,explain:"'Rapidement' est un adverbe de manière. Il modifie le verbe 'court'. Les adverbes sont invariables."},
+      {type:"mcq",diff:"facile",q:"Quelle est la fonction du groupe nominal souligné : 'Le chat __ mange la souris.' ?",opts:["Complément d'objet direct","Sujet","Attribut du sujet","Complément d'objet indirect"],ans:1,explain:"Le groupe nominal 'Le chat' est sujet du verbe 'mange' : il répond à la question 'Qui mange ?'"},
+      {type:"tf",diff:"facile",q:"Un adjectif qualificatif s'accorde en genre et en nombre avec le nom qu'il qualifie.",ans:true,explain:"L'adjectif s'accorde avec le nom auquel il se rapporte. Ex : 'une belle fleur' (féminin singulier), 'de beaux enfants' (masculin pluriel)."},
+      {type:"mcq",diff:"normal",q:"Dans 'Je lui parle', quel est le rôle de 'lui' ?",opts:["Complément d'objet direct (COD)","Complément d'objet indirect (COI)","Sujet","Attribut"],ans:1,explain:"'Lui' est COI : il répond à 'à qui je parle ?' Le COI est lié au verbe par une préposition (à/de)."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce qu'une proposition subordonnée relative ?",opts:["Une proposition qui s'oppose à la principale","Une proposition introduite par un pronom relatif qui complète un nom","Une proposition indépendante","Une proposition infinitive"],ans:1,explain:"La subordonnée relative complète un nom (ou pronom) avec un pronom relatif (qui, que, dont, où...). Ex : 'Le livre que tu lis est passionnant.'"},
+      {type:"open",diff:"difficile",q:"Expliquez la différence entre COD et COI.",key:["COD","COI","direct","indirect","préposition","objet"],correctAnswer:"Le COD est relié directement au verbe (sans préposition). Le COI est relié au verbe par une préposition (à, de).",explain:"Ex : COD → 'Je mange une pomme' (quoi ?). COI → 'Je parle à Marie' (à qui ?)."},
+      {type:"tf",diff:"difficile",q:"Le participe passé employé avec l'auxiliaire 'être' s'accorde avec le sujet.",ans:true,explain:"Avec 'être', le participe passé s'accorde en genre et en nombre avec le sujet. Ex : 'Elle est partie', 'Ils sont arrivés'."}
+    ],
+    "Conjugaison": [
+      {type:"mcq",diff:"facile",q:"Quelle est la terminaison de la 1re personne du singulier du présent de l'indicatif pour les verbes en -er ?",opts:["-is","-e","-s","-ai"],ans:1,explain:"Les verbes en -er prennent '-e' à la 1re personne du singulier du présent : je mange, je joue, je parle."},
+      {type:"mcq",diff:"facile",q:"Conjuguez 'finir' à la 3e personne du pluriel du présent de l'indicatif.",opts:["Il finissent","Ils finit","Ils finissent","Ils finent"],ans:2,explain:"Les verbes en -ir (2e groupe) se conjuguent avec 'iss' au présent pour les formes du pluriel : nous finissons, vous finissez, ils finissent."},
+      {type:"tf",diff:"facile",q:"Le passé composé est formé avec l'auxiliaire avoir ou être + le participe passé.",ans:true,explain:"Passé composé = auxiliaire (avoir/être) + participe passé. Ex : 'j'ai mangé', 'je suis parti'."},
+      {type:"mcq",diff:"normal",q:"Quel temps exprime une action habituelle dans le passé ?",opts:["Passé composé","Imparfait","Passé simple","Plus-que-parfait"],ans:1,explain:"L'imparfait exprime une action habituelle, répétée ou une description dans le passé. Ex : 'Chaque matin, il lisait le journal.'"},
+      {type:"mcq",diff:"normal",q:"À quel temps appartient la forme verbale 'il eût chanté' ?",opts:["Conditionnel passé","Subjonctif plus-que-parfait","Passé antérieur","Futur antérieur"],ans:1,explain:"'Il eût chanté' est le subjonctif plus-que-parfait. Ce temps s'emploie dans des propositions subordonnées après certaines conjonctions."},
+      {type:"open",diff:"difficile",q:"Expliquez l'emploi du subjonctif présent.",key:["subjonctif","doute","souhait","sentiment","obligation","que","volonté"],correctAnswer:"Le subjonctif s'emploie pour exprimer un doute, un souhait, une obligation ou un sentiment, généralement après 'que'.",explain:"Ex : 'Je veux que tu viennes' (souhait), 'Il faut que tu réussisses' (obligation), 'Je doute qu'il soit là' (doute)."},
+      {type:"tf",diff:"difficile",q:"Le passé simple est un temps encore très utilisé à l'oral en français contemporain.",ans:false,explain:"Faux ! Le passé simple est presque exclusivement écrit (récits, littérature). À l'oral, on lui préfère le passé composé."}
+    ],
+    "Figures de style": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce qu'une métaphore ?",opts:["Une comparaison avec 'comme'","Une comparaison sans outil comparatif qui assimile deux réalités","Une exagération","Une répétition"],ans:1,explain:"La métaphore assimile deux réalités sans outil de comparaison. Ex : 'La vie est un long fleuve tranquille.' (≠ comparaison : 'La vie est comme un fleuve')."},
+      {type:"mcq",diff:"facile",q:"Identifiez la figure de style : 'Il est fort comme un lion.'",opts:["Métaphore","Comparaison","Hyperbole","Allitération"],ans:1,explain:"C'est une comparaison : on compare 'il' (comparé) et 'lion' (comparant) avec l'outil comparatif 'comme'."},
+      {type:"tf",diff:"facile",q:"L'hyperbole est une figure d'atténuation.",ans:false,explain:"Faux ! L'hyperbole est une figure d'exagération. Ex : 'Je t'ai attendu mille ans !' La litote est la figure d'atténuation."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce que la personnification ?",opts:["Décrire un lieu","Attribuer des caractéristiques humaines à un objet, un animal ou une idée abstraite","Faire une liste d'éléments","Répéter un son"],ans:1,explain:"La personnification prête des traits humains à ce qui n'est pas humain. Ex : 'Le vent gémit', 'La forêt murmure ses secrets'."},
+      {type:"mcq",diff:"normal",q:"Quelle figure de style consiste à répéter des sons consonantiques similaires ?",opts:["Assonance","Allitération","Anaphore","Antithèse"],ans:1,explain:"L'allitération est la répétition de sons consonantiques. Ex : 'Pour qui sont ces serpents qui sifflent sur vos têtes ?' (Racine)."},
+      {type:"open",diff:"difficile",q:"Définissez l'antithèse et donnez un exemple.",key:["antithèse","opposé","contraste","opposition","deux","idées"],correctAnswer:"L'antithèse oppose deux idées ou termes contraires pour créer un effet de contraste.",explain:"Ex : 'Viens, il fait si doux, si chaud… tu meurs de froid.' L'antithèse souligne une opposition pour renforcer le sens."},
+      {type:"tf",diff:"difficile",q:"L'anaphore est la répétition d'un même mot ou groupe de mots en début de plusieurs phrases ou vers.",ans:true,explain:"Ex : 'Je t'aime pour ta sagesse / Je t'aime pour ta douceur / Je t'aime pour ta tendresse.' La répétition de 'Je t'aime' crée un effet d'insistance."}
+    ],
+    "Méthodologie du Brevet": [
+      {type:"mcq",diff:"facile",q:"Quelle est la structure d'une introduction de texte argumentatif ?",opts:["Thèse → Arguments → Conclusion","Accroche → Présentation du sujet → Annonce du plan","Contexte → Problématique → Développement","Définition → Exemples → Synthèse"],ans:1,explain:"L'introduction comprend : une accroche (citation, question, fait), la présentation du sujet et l'annonce du plan. Elle 'accroche' le lecteur."},
+      {type:"mcq",diff:"facile",q:"Qu'est-ce qu'un texte narratif ?",opts:["Un texte qui décrit","Un texte qui argumente","Un texte qui raconte une histoire, des événements","Un texte qui explique un phénomène"],ans:2,explain:"Un texte narratif raconte une histoire (roman, conte, nouvelle). Il se caractérise par une chronologie, des personnages et une progression narrative."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce qu'un argument dans un texte argumentatif ?",opts:["Un fait inventé","Une raison qui soutient ou réfute une thèse, souvent illustrée d'un exemple","Une description","Une anecdote personnelle"],ans:1,explain:"L'argument soutient la thèse. Il doit être suivi d'un exemple concret (illustrer l'argument) pour être convaincant."},
+      {type:"tf",diff:"normal",q:"Dans un commentaire de texte, on peut donner son avis personnel sans le justifier.",ans:false,explain:"Faux ! Tout point de vue doit être argumenté et illustré par des exemples tirés du texte. Un avis non justifié n'a aucune valeur dans un devoir littéraire."},
+      {type:"open",diff:"difficile",q:"Qu'est-ce qu'une thèse dans un texte argumentatif ?",key:["thèse","point de vue","affirmation","défend","opinion","auteur"],correctAnswer:"La thèse est le point de vue, l'opinion que l'auteur défend dans son texte.",explain:"Dans un texte argumentatif, l'auteur soutient une thèse (sa position) avec des arguments et des exemples, pour convaincre le lecteur."}
+    ]
+  },
+
+  /* ==================== MATHÉMATIQUES ==================== */
+  maths: {
+    "Calcul et Nombres": [
+      {type:"mcq",diff:"facile",q:"Combien vaut 15 % de 200 ?",opts:["20","25","30","35"],ans:2,explain:"15 % de 200 = 200 × 15 ÷ 100 = 200 × 0,15 = 30."},
+      {type:"mcq",diff:"facile",q:"Quel est le résultat de ¾ + ½ ?",opts:["1","1 ¼","5/4","1 ½"],ans:1,explain:"¾ + ½ = ¾ + 2/4 = 5/4 = 1 ¼. Il faut réduire au même dénominateur."},
+      {type:"tf",diff:"facile",q:"0,5 est égal à ½.",ans:true,explain:"0,5 = 5/10 = 1/2. La conversion décimal ↔ fraction est fondamentale."},
+      {type:"mcq",diff:"normal",q:"Un article coûte 80 € après une réduction de 20 %. Quel était son prix initial ?",opts:["96 €","100 €","104 €","64 €"],ans:1,explain:"Si le prix final est 80 % du prix initial : prix initial = 80 ÷ 0,8 = 100 €."},
+      {type:"mcq",diff:"normal",q:"Quelle est la valeur de 2³ × 2² ?",opts:["2⁵","2⁶","4⁵","2⁸"],ans:0,explain:"Règle des puissances : aᵐ × aⁿ = aᵐ⁺ⁿ. Donc 2³ × 2² = 2^(3+2) = 2⁵ = 32."},
+      {type:"mcq",diff:"normal",q:"Simplifiez la fraction 18/24.",opts:["3/4","2/3","9/12","6/8"],ans:0,explain:"PGCD(18, 24) = 6. 18÷6 = 3, 24÷6 = 4. Donc 18/24 = 3/4."},
+      {type:"tf",diff:"difficile",q:"La racine carrée de 144 est 12.",ans:true,explain:"√144 = 12 car 12² = 144. Carré parfait à connaître."},
+      {type:"mcq",diff:"difficile",q:"Un véhicule consomme 6 L/100 km. Combien consomme-t-il sur 350 km ?",opts:["18 L","20 L","21 L","24 L"],ans:2,explain:"Consommation = 350 × 6 / 100 = 2100 / 100 = 21 L."}
+    ],
+    "Géométrie et Théorèmes": [
+      {type:"mcq",diff:"facile",q:"Qu'énonce le théorème de Pythagore ?",opts:["Dans tout triangle, la somme des angles est 180°","Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés","Deux triangles sont semblables si leurs angles sont égaux","L'aire d'un cercle est πr²"],ans:1,explain:"Pythagore : a² + b² = c² où c est l'hypoténuse (côté opposé à l'angle droit). S'applique uniquement aux triangles rectangles."},
+      {type:"mcq",diff:"facile",q:"Quelle est la formule de l'aire d'un triangle ?",opts:["base × hauteur","(base × hauteur) ÷ 2","base + hauteur","base² ÷ 2"],ans:1,explain:"Aire d'un triangle = (base × hauteur) ÷ 2. La hauteur est perpendiculaire à la base."},
+      {type:"tf",diff:"facile",q:"La somme des angles d'un triangle est toujours 180°.",ans:true,explain:"C'est une propriété fondamentale : la somme des trois angles d'un triangle vaut toujours 180°."},
+      {type:"mcq",diff:"normal",q:"Un triangle a des côtés 3, 4 et 5. Est-il rectangle ?",opts:["Non, impossible à dire","Oui, car 3² + 4² = 5²","Non, car 3 + 4 ≠ 5","Oui, car il a un angle droit visible"],ans:1,explain:"3² + 4² = 9 + 16 = 25 = 5². La réciproque du théorème de Pythagore confirme qu'il est rectangle."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce que le théorème de Thalès ?",opts:["Il relie angles et côtés d'un triangle","Si deux droites parallèles sont coupées par deux sécantes, les rapports de longueurs correspondants sont égaux","Il donne la formule de l'aire d'un trapèze","Il permet de calculer l'hypoténuse"],ans:1,explain:"Thalès : si (BC) // (DE) dans un triangle, alors AB/AD = AC/AE = BC/DE. Permet de calculer des longueurs par proportionnalité."},
+      {type:"tf",diff:"difficile",q:"Le périmètre d'un cercle de rayon r est 2πr.",ans:true,explain:"Périmètre (ou circonférence) = 2πr. L'aire du disque est πr². Ces deux formules sont fondamentales."},
+      {type:"mcq",diff:"difficile",q:"Dans un triangle ABC rectangle en A, avec AB = 6 cm et AC = 8 cm, quelle est la longueur BC ?",opts:["10 cm","14 cm","7 cm","√28 cm"],ans:0,explain:"BC² = AB² + AC² = 6² + 8² = 36 + 64 = 100. BC = √100 = 10 cm."}
+    ],
+    "Statistiques et Probabilités": [
+      {type:"mcq",diff:"facile",q:"On lance un dé à 6 faces. Quelle est la probabilité d'obtenir un 3 ?",opts:["1/3","1/6","1/2","1/4"],ans:1,explain:"Il y a 1 résultat favorable (le 3) sur 6 résultats possibles équiprobables. P(3) = 1/6."},
+      {type:"mcq",diff:"facile",q:"Dans la liste : 3, 5, 7, 7, 8 — quelle est la médiane ?",opts:["5","7","8","6"],ans:1,explain:"La médiane est la valeur centrale dans une liste ordonnée. Ici : 3, 5, 7, 7, 8 → 5 valeurs, la médiane est la 3e = 7."},
+      {type:"tf",diff:"facile",q:"La probabilité d'un événement est toujours comprise entre 0 et 1.",ans:true,explain:"P = 0 signifie impossible, P = 1 signifie certain. Toute probabilité est entre ces deux valeurs."},
+      {type:"mcq",diff:"normal",q:"Quelle est la moyenne de : 10, 12, 8, 14, 16 ?",opts:["10","12","13","11"],ans:1,explain:"Moyenne = (10 + 12 + 8 + 14 + 16) ÷ 5 = 60 ÷ 5 = 12."},
+      {type:"mcq",diff:"normal",q:"On tire une carte dans un jeu de 52 cartes. Quelle est la probabilité de tirer un roi ?",opts:["1/13","1/4","1/52","4/52"],ans:0,explain:"Il y a 4 rois dans 52 cartes. P(roi) = 4/52 = 1/13. On simplifie en divisant par 4."},
+      {type:"tf",diff:"difficile",q:"Dans une expérience aléatoire, la somme des probabilités de tous les événements élémentaires est 1.",ans:true,explain:"La somme de toutes les probabilités d'une expérience aléatoire vaut toujours 1 (loi des probabilités totales)."}
+    ],
+    "Algèbre et Équations": [
+      {type:"mcq",diff:"facile",q:"Que vaut x si 2x + 4 = 10 ?",opts:["2","3","4","5"],ans:1,explain:"2x + 4 = 10 → 2x = 10 - 4 → 2x = 6 → x = 3."},
+      {type:"mcq",diff:"facile",q:"Développez (x + 2)² ?",opts:["x² + 4","x² + 2x + 4","x² + 4x + 4","x² + 4x"],ans:2,explain:"(a + b)² = a² + 2ab + b². Donc (x + 2)² = x² + 2×x×2 + 2² = x² + 4x + 4."},
+      {type:"tf",diff:"normal",q:"L'équation 3x - 6 = 0 a pour solution x = 2.",ans:true,explain:"3x - 6 = 0 → 3x = 6 → x = 2. On isole x."},
+      {type:"mcq",diff:"normal",q:"Factorisez x² - 9.",opts:["(x-3)(x+3)","(x-9)(x+1)","(x-3)²","x(x-9)"],ans:0,explain:"x² - 9 = x² - 3². On utilise l'identité remarquable a² - b² = (a-b)(a+b). Donc x² - 9 = (x-3)(x+3)."},
+      {type:"mcq",diff:"difficile",q:"Quelle est la solution du système : x + y = 5 et x - y = 1 ?",opts:["x=3, y=2","x=4, y=1","x=2, y=3","x=1, y=4"],ans:0,explain:"Addition des deux équations : 2x = 6 → x = 3. Puis y = 5 - 3 = 2. Vérification : 3 - 2 = 1 ✓"}
+    ]
+  },
+
+  /* ==================== SCIENCES ==================== */
+  sciences: {
+    "SVT — Vivant, corps humain et Terre": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce que l'ADN ?",opts:["Une protéine musculaire","La molécule support de l'information génétique","Un acide gastrique","Une hormone de croissance"],ans:1,explain:"L'ADN (Acide DésoxyriboNucléique) est la molécule qui contient les informations génétiques de l'organisme. Il est localisé dans le noyau des cellules."},
+      {type:"mcq",diff:"facile",q:"Où a lieu la digestion des aliments dans le corps humain ?",opts:["Uniquement dans l'estomac","Dans le tube digestif (bouche, estomac, intestins)","Uniquement dans le foie","Dans les poumons"],ans:1,explain:"La digestion se déroule dans tout le tube digestif : bouche (mastication, salive), estomac (acidité), intestin grêle (absorption des nutriments), côlon (eau)."},
+      {type:"tf",diff:"facile",q:"Les chromosomes sont présents dans le noyau des cellules.",ans:true,explain:"Les chromosomes sont des structures composées d'ADN et de protéines, localisées dans le noyau cellulaire. L'être humain possède 46 chromosomes (23 paires)."},
+      {type:"mcq",diff:"normal",q:"Qu'appelle-t-on un gène ?",opts:["Une cellule nerveuse","Un segment d'ADN qui code pour une protéine ou un caractère héréditaire","Un chromosome entier","Un acide aminé"],ans:1,explain:"Un gène est une séquence d'ADN qui porte l'information pour fabriquer une protéine ou déterminer un caractère héréditaire. L'humain possède environ 20 000 à 25 000 gènes."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce que la tectonique des plaques ?",opts:["Le mouvement des océans","La théorie selon laquelle la lithosphère est divisée en plaques qui se déplacent","L'étude des tremblements de terre","La formation des nuages"],ans:1,explain:"La tectonique des plaques explique les séismes, les éruptions volcaniques et la formation des chaînes de montagnes par le mouvement des plaques lithosphériques."},
+      {type:"open",diff:"difficile",q:"Expliquez ce qu'est la mutation génétique.",key:["mutation","ADN","modification","gène","aléatoire","hérédité","caractère"],correctAnswer:"Modification spontanée ou provoquée de la séquence d'ADN d'un gène, pouvant entraîner un changement de caractère héréditaire.",explain:"Les mutations peuvent être bénéfiques (source de biodiversité), neutres ou nocives (maladies génétiques). Elles sont transmissibles si elles touchent les cellules reproductrices."},
+      {type:"tf",diff:"difficile",q:"La photosynthèse produit du dioxygène et du glucose à partir de CO2 et de lumière.",ans:true,explain:"6CO2 + 6H2O + lumière → C6H12O6 (glucose) + 6O2. La photosynthèse a lieu dans les chloroplastes des cellules végétales."}
+    ],
+    "Physique-Chimie": [
+      {type:"mcq",diff:"facile",q:"Quelle est la formule de la vitesse ?",opts:["v = m × a","v = d / t","v = F / m","v = P / V"],ans:1,explain:"Vitesse = distance / temps (v = d/t). Unités : m/s ou km/h. Conversion : 1 m/s = 3,6 km/h."},
+      {type:"mcq",diff:"facile",q:"Un pH de 7 correspond à une solution :",opts:["Acide","Neutre","Basique","Saturée"],ans:1,explain:"pH < 7 = acide, pH = 7 = neutre (eau pure), pH > 7 = basique. Le pH mesure la concentration en ions H⁺."},
+      {type:"tf",diff:"facile",q:"Un atome est électriquement neutre.",ans:true,explain:"L'atome a autant de protons (charges +) dans le noyau que d'électrons (charges −) autour du noyau. Il est donc électriquement neutre."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce que l'énergie cinétique ?",opts:["L'énergie stockée dans un ressort","L'énergie due au mouvement d'un objet","L'énergie chimique d'un carburant","L'énergie lumineuse"],ans:1,explain:"Ec = ½ × m × v². L'énergie cinétique dépend de la masse et de la vitesse. Plus un objet est lourd et rapide, plus son énergie cinétique est grande."},
+      {type:"mcq",diff:"normal",q:"Un objet a une masse de 2 kg et roule à 10 m/s. Quelle est son énergie cinétique ?",opts:["20 J","100 J","200 J","10 J"],ans:1,explain:"Ec = ½ × m × v² = ½ × 2 × 10² = 1 × 100 = 100 J."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce qu'un ion ?",opts:["Un atome stable","Un atome ayant perdu ou gagné un ou plusieurs électrons","Une molécule organique","Un neutron libre"],ans:1,explain:"Un ion est un atome (ou groupe d'atomes) qui a perdu (cation +) ou gagné (anion −) un ou plusieurs électrons."},
+      {type:"open",diff:"difficile",q:"Expliquez la différence entre un acide et une base.",key:["acide","base","pH","H+","OH-","ions","neutre"],correctAnswer:"Un acide libère des ions H⁺ en solution (pH < 7) ; une base libère des ions OH⁻ (pH > 7).",explain:"Ex. acide : vinaigre (acide acétique), citron (acide citrique). Ex. base : soude (NaOH), bicarbonate. La neutralisation acide + base → sel + eau."},
+      {type:"tf",diff:"difficile",q:"La réaction chimique entre un acide et une base s'appelle neutralisation.",ans:true,explain:"Acide + base → sel + eau. Ex : HCl + NaOH → NaCl + H2O. Le pH de la solution obtenue tend vers 7 (neutralité)."}
+    ],
+    "Technologie et Algorithmique": [
+      {type:"mcq",diff:"facile",q:"Qu'est-ce qu'un algorithme ?",opts:["Un programme informatique","Une suite d'instructions ordonnées permettant de résoudre un problème","Un type de processeur","Un langage de programmation"],ans:1,explain:"Un algorithme est une suite finie et ordonnée d'instructions permettant de résoudre un problème ou d'accomplir une tâche."},
+      {type:"mcq",diff:"facile",q:"Dans un programme, à quoi sert une boucle 'Pour' (for) ?",opts:["À prendre une décision","À répéter un bloc d'instructions un nombre déterminé de fois","À définir une variable","À afficher un résultat"],ans:1,explain:"La boucle 'Pour' (for) répète un bloc d'instructions un nombre de fois fixé à l'avance. Ex : 'Pour i de 1 à 10 : afficher i'."},
+      {type:"tf",diff:"facile",q:"Une instruction conditionnelle 'Si... Sinon' permet d'exécuter des instructions différentes selon une condition.",ans:true,explain:"Si (condition) alors [instructions A] sinon [instructions B]. Permet de prendre des décisions dans un programme."},
+      {type:"mcq",diff:"normal",q:"Qu'est-ce qu'une variable en programmation ?",opts:["Un bug","Un espace mémoire nommé qui peut stocker une valeur","Un type de boucle","Un fichier de données"],ans:1,explain:"Une variable est un espace mémoire identifié par un nom (ex : 'age', 'score') dans lequel on stocke une valeur qui peut évoluer au cours du programme."},
+      {type:"mcq",diff:"normal",q:"Quel matériau est un conducteur électrique ?",opts:["Bois","Plastique","Caoutchouc","Cuivre"],ans:3,explain:"Le cuivre est un excellent conducteur électrique, utilisé dans les fils électriques. Le bois, le plastique et le caoutchouc sont des isolants."},
+      {type:"open",diff:"difficile",q:"Qu'est-ce que le développement durable appliqué aux matériaux ?",key:["recyclage","matériaux","renouvelable","durable","écologie","ressource","impact"],correctAnswer:"Choisir des matériaux recyclables, renouvelables ou à faible impact environnemental pour concevoir des objets durables.",explain:"Ex : préférer l'aluminium recyclé au plastique vierge, utiliser le bois issu de forêts gérées durablement, concevoir des objets réparables (économie circulaire)."},
+      {type:"tf",diff:"difficile",q:"Le binaire est un système de numération en base 2 utilisant uniquement les chiffres 0 et 1.",ans:true,explain:"Les ordinateurs fonctionnent en binaire (base 2). Ex : 5 en binaire = 101 (1×4 + 0×2 + 1×1). Chaque chiffre binaire s'appelle un bit."}
+    ]
+  }
+};
+
+/* ============================================================
+   FLASHCARDS — Toutes matières
+   ============================================================ */
+const FLASHCARDS = {
+  histoire: [
+    {q:"Quand commence la Première Guerre mondiale ?",a:"1914",explain:"Déclenchée par l'assassinat de François-Ferdinand à Sarajevo"},
+    {q:"Quand se termine la Première Guerre mondiale ?",a:"11 novembre 1918",explain:"Armistice signé dans un wagon à Rethondes"},
+    {q:"Qu'est-ce que la Shoah ?",a:"Génocide des Juifs par les nazis (6 millions de victimes)",explain:"Exterminés dans les camps d'Auschwitz, Treblinka, Sobibor..."},
+    {q:"Qu'est-ce que l'Appel du 18 juin 1940 ?",a:"De Gaulle appelle depuis Londres à continuer le combat",explain:"Il refuse l'armistice signé par Pétain avec l'Allemagne nazie"},
+    {q:"Quand le mur de Berlin tombe-t-il ?",a:"9 novembre 1989",explain:"Symbole de la fin de la Guerre froide"},
+    {q:"Qu'est-ce que le Traité de Versailles (1919) ?",a:"Traité de paix mettant fin à la WWI",explain:"Impose de lourdes réparations à l'Allemagne — semence du nazisme"},
+    {q:"Quand est fondée la Ve République ?",a:"1958",explain:"De Gaulle rédige une Constitution renforçant le président"},
+    {q:"Qu'est-ce que le D-Day ?",a:"Débarquement allié en Normandie, 6 juin 1944",explain:"Plus grand débarquement amphibie de l'histoire"},
+    {q:"Quand l'Algérie obtient-elle son indépendance ?",a:"1962 (accords d'Évian)",explain:"Après 8 ans de guerre (1954-1962)"},
+    {q:"Qu'est-ce que la Guerre froide ?",a:"Affrontement indirect USA/URSS (1947-1991)",explain:"Sans conflit armé direct entre les deux superpuissances"}
+  ],
+  geo: [
+    {q:"Définissez la mondialisation.",a:"Intensification des échanges à l'échelle mondiale",explain:"Marchandises, capitaux, personnes, informations"},
+    {q:"Qu'est-ce que l'IDH ?",a:"Indice combinant espérance de vie, éducation et revenu (0 à 1)",explain:"Créé par le PNUD pour mesurer le développement humain"},
+    {q:"Quelle est la capitale de l'Australie ?",a:"Canberra",explain:"Souvent confondue avec Sydney, la plus grande ville"},
+    {q:"Qu'est-ce que le développement durable ?",a:"Développement répondant aux besoins présents sans compromettre l'avenir",explain:"3 piliers : économique, social, environnemental"},
+    {q:"Quelle est la capitale du Brésil ?",a:"Brasilia",explain:"Construite de 1956 à 1960, remplace Rio de Janeiro"},
+    {q:"Qu'est-ce que les BRICS ?",a:"Brésil, Russie, Inde, Chine, Afrique du Sud — pays émergents",explain:"~40% de la population mondiale"},
+    {q:"Qu'est-ce que la littoralisation ?",a:"Concentration des populations/activités sur les littoraux",explain:"60% des humains vivent à moins de 60 km d'une côte"},
+    {q:"Quel est le pays le plus peuplé du monde en 2024 ?",a:"L'Inde (devant la Chine depuis 2023)",explain:"Plus de 1,4 milliard d'habitants"}
+  ],
+  emc: [
+    {q:"Qu'est-ce que la DDHC ?",a:"Déclaration des Droits de l'Homme et du Citoyen — 1789",explain:"Liberté, propriété, sûreté, résistance à l'oppression"},
+    {q:"Quand est adoptée la DUDH ?",a:"10 décembre 1948 par l'ONU",explain:"Après la Seconde Guerre mondiale"},
+    {q:"Qu'est-ce que la laïcité ?",a:"Séparation Église/État, garantie de la liberté de conscience",explain:"Loi de 1905 — l'État est neutre religieusement"},
+    {q:"Quelle est la devise de la République ?",a:"Liberté, Égalité, Fraternité",explain:"Inscrite dans la Constitution de 1958"},
+    {q:"Qu'est-ce que la présomption d'innocence ?",a:"Tout accusé est considéré innocent jusqu'à preuve de culpabilité",explain:"Droit fondamental garanti par la DDHC et la CEDH"},
+    {q:"À quel âge vote-t-on en France ?",a:"18 ans (depuis 1974)",explain:"Abaissé de 21 ans sous Giscard d'Estaing"},
+    {q:"Quels sont les 3 pouvoirs dans une démocratie ?",a:"Exécutif, législatif, judiciaire",explain:"Séparation des pouvoirs — théorie de Montesquieu (1748)"}
+  ],
+  francais: [
+    {q:"Qu'est-ce qu'une métaphore ?",a:"Comparaison sans outil comparatif",explain:"Ex : 'La vie est un long fleuve tranquille'"},
+    {q:"Quelle est la différence entre métaphore et comparaison ?",a:"La comparaison utilise 'comme/tel/ainsi que', la métaphore non",explain:"Ex comparaison : 'Il est fort comme un lion'. Métaphore : 'Il est un lion.'"},
+    {q:"Qu'est-ce qu'une hyperbole ?",a:"Figure d'exagération pour produire un effet",explain:"Ex : 'Je t'ai attendu mille ans !'"},
+    {q:"Qu'est-ce qu'un COD ?",a:"Complément d'objet direct — lié au verbe sans préposition",explain:"Question : 'quoi ?' ou 'qui ?' — Ex : 'Je mange une pomme' (quoi ?)"},
+    {q:"Qu'est-ce qu'un COI ?",a:"Complément d'objet indirect — lié par une préposition (à, de...)",explain:"Question : 'à qui ? de quoi ?' — Ex : 'Je parle à Marie'"},
+    {q:"Qu'est-ce que l'imparfait exprime ?",a:"Une action habituelle, répétée ou une description dans le passé",explain:"Ex : 'Chaque matin, il lisait le journal'"},
+    {q:"Qu'est-ce que le subjonctif exprime ?",a:"Doute, souhait, obligation, sentiment — après 'que'",explain:"Ex : 'Il faut que tu viennes'"},
+    {q:"Qu'est-ce qu'une allitération ?",a:"Répétition de sons consonantiques dans un texte",explain:"Ex : 'Pour qui sont ces serpents qui sifflent sur vos têtes ?' (Racine)"},
+    {q:"Qu'est-ce qu'une anaphore ?",a:"Répétition d'un mot ou groupe en début de phrase",explain:"Ex : 'Je t'aime pour ta sagesse / Je t'aime pour ta douceur'"},
+    {q:"Qu'est-ce qu'une thèse dans un texte argumentatif ?",a:"Le point de vue que l'auteur défend",explain:"Elle est soutenue par des arguments et des exemples"}
+  ],
+  maths: [
+    {q:"Quelle est la formule de Pythagore ?",a:"a² + b² = c² (c = hypoténuse)",explain:"S'applique uniquement dans les triangles rectangles"},
+    {q:"Quelle est la formule de l'aire d'un triangle ?",a:"(base × hauteur) ÷ 2",explain:"La hauteur est perpendiculaire à la base"},
+    {q:"Quelle est la formule de l'aire d'un cercle ?",a:"A = π × r²",explain:"r = rayon du cercle"},
+    {q:"Quelle est la formule du périmètre d'un cercle ?",a:"P = 2 × π × r",explain:"Aussi appelée circonférence"},
+    {q:"Qu'est-ce que la médiane ?",a:"La valeur centrale d'une série ordonnée",explain:"Si nombre pair de valeurs : moyenne des deux valeurs centrales"},
+    {q:"Que vaut 15% de 200 ?",a:"30",explain:"200 × 15 / 100 = 30"},
+    {q:"Comment développer (a+b)² ?",a:"a² + 2ab + b²",explain:"Identité remarquable à connaître absolument"},
+    {q:"Qu'est-ce que le théorème de Thalès ?",a:"Si BC // DE, alors AB/AD = AC/AE = BC/DE",explain:"Permet de calculer des longueurs par proportionnalité"},
+    {q:"Comment calculer une probabilité simple ?",a:"P = nombre de cas favorables / nombre de cas possibles",explain:"Toujours comprise entre 0 (impossible) et 1 (certain)"},
+    {q:"Comment calculer une moyenne ?",a:"Somme des valeurs ÷ nombre de valeurs",explain:"Ex : moyenne de 4, 6, 8 → (4+6+8)/3 = 6"}
+  ],
+  sciences: [
+    {q:"Qu'est-ce que l'ADN ?",a:"Molécule support de l'information génétique",explain:"Localisée dans le noyau des cellules, composée de 4 bases"},
+    {q:"Qu'est-ce qu'un gène ?",a:"Segment d'ADN codant pour une protéine ou un caractère",explain:"L'humain possède ~20 000 à 25 000 gènes"},
+    {q:"Combien de chromosomes possède l'être humain ?",a:"46 (23 paires)",explain:"23 viennent du père, 23 de la mère"},
+    {q:"Quelle est la formule de la vitesse ?",a:"v = d / t (distance / temps)",explain:"Unités : m/s ou km/h — conversion : 1 m/s = 3,6 km/h"},
+    {q:"Qu'est-ce que le pH ?",a:"Mesure de l'acidité d'une solution (0 à 14)",explain:"pH < 7 = acide, pH = 7 = neutre, pH > 7 = basique"},
+    {q:"Qu'est-ce que l'énergie cinétique ?",a:"Énergie due au mouvement — Ec = ½mv²",explain:"Dépend de la masse et du carré de la vitesse"},
+    {q:"Qu'est-ce qu'un algorithme ?",a:"Suite d'instructions ordonnées pour résoudre un problème",explain:"À la base de tout programme informatique"},
+    {q:"Qu'est-ce que la photosynthèse ?",a:"Production de glucose et O2 par les végétaux à partir de CO2, H2O et lumière",explain:"A lieu dans les chloroplastes — base de la vie sur Terre"},
+    {q:"Qu'est-ce que la tectonique des plaques ?",a:"Théorie expliquant les mouvements des plaques de la lithosphère",explain:"Explique séismes, volcans et formation des montagnes"},
+    {q:"Qu'est-ce qu'un ion ?",a:"Atome ayant perdu (cation +) ou gagné (anion −) des électrons",explain:"Ex : Na⁺ (sodium), Cl⁻ (chlorure)"}
+  ]
+};
+
+/* ============================================================
+   ÉTAT
+   ============================================================ */
+let state = {
+  subject:'histoire', chapters:[], difficulty:'normal',
+  options:{timer:false,correction:true,mix:false},
+  questions:[], currentIdx:0, score:0, errors:[],
+  startTime:null, timerInterval:null, timerLeft:30, answered:false,
+  matchState:{selected:null,pairs:{},done:0,total:0},
+  isBrevetBlanc:false, bbGlobalTimerInterval:null,
+  bbTimeLeft:900, bbBySubject:{}
+};
+let flashState={cards:[],idx:0,flipped:false};
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='screen-history') renderHistory();
+  if(id==='screen-flash-select') updateFlashCounts();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function formatTime(s){
+  const m=Math.floor(s/60),sec=s%60;
+  return m>0?`${m}m ${sec<10?'0':''}${sec}s`:`${sec}s`;
+}
+
+function formatMMSS(s){
+  const m=Math.floor(s/60),sec=s%60;
+  return `${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`;
+}
+
+const SUBJ_META={
+  histoire:{icon:'🏛️',name:'Histoire',  tagClass:'gold',  chapClass:''},
+  geo:     {icon:'🌍',name:'Géographie',tagClass:'blue',  chapClass:''},
+  emc:     {icon:'⚖️',name:'EMC',       tagClass:'purple',chapClass:'emc-ch'},
+  francais:{icon:'📝',name:'Français',  tagClass:'pink',  chapClass:'francais-ch'},
+  maths:   {icon:'📐',name:'Maths',     tagClass:'teal',  chapClass:'maths-ch'},
+  sciences:{icon:'🔬',name:'Sciences',  tagClass:'orange',chapClass:'sciences-ch'}
+};
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function startSubject(subj){
+  state.subject=subj; state.chapters=[]; state.isBrevetBlanc=false;
+  renderChapters(subj); showScreen('screen-chapters');
+}
+
+function renderChapters(subj){
+  const m=SUBJ_META[subj];
+  document.getElementById('chapters-title').textContent=`${m.icon} Chapitres — ${m.name}`;
+  const list=document.getElementById('chapter-list');
+  list.innerHTML='';
+  Object.keys(DB[subj]).forEach((ch,i)=>{
+    const btn=document.createElement('button');
+    btn.className='chapter-btn'+(m.chapClass?' '+m.chapClass:'');
+    const qc=DB[subj][ch].length;
+    btn.innerHTML=`<div class="chapter-num">${i+1}</div><div class="chapter-info"><strong>${ch}</strong><span>${qc} question${qc>1?'s':''}</span></div>`;
+    btn.onclick=()=>toggleChapter(ch,btn);
+    list.appendChild(btn);
+  });
+}
+
+function toggleChapter(ch,btn){
+  if(state.chapters.includes(ch)){state.chapters=state.chapters.filter(c=>c!==ch);btn.classList.remove('selected');}
+  else{state.chapters.push(ch);btn.classList.add('selected');}
+}
+
+function selectAllChapters(){
+  state.chapters=Object.keys(DB[state.subject]);
+  document.querySelectorAll('.chapter-btn').forEach(b=>b.classList.add('selected'));
+  showToast('✓ Tout le programme sélectionné');
+}
+
+function goToDifficulty(){
+  if(!state.chapters.length){showToast('⚠️ Sélectionnez au moins un chapitre');return;}
+  showScreen('screen-difficulty');
+}
+
+function selectDiff(d,btn){
+  state.difficulty=d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function toggleOption(opt,btn){state.options[opt]=!state.options[opt];btn.classList.toggle('active');}
+
+/* ============================================================
+   MOTEUR QUIZ STANDARD
+   ============================================================ */
+function buildPool(){
+  const counts={facile:10,normal:15,difficile:20};
+  let pool=[];
+  state.chapters.forEach(ch=>pool.push(...(DB[state.subject][ch]||[])));
+  if(!state.options.mix){
+    const dm={facile:['facile'],normal:['facile','normal'],difficile:['facile','normal','difficile']};
+    pool=pool.filter(q=>dm[state.difficulty].includes(q.diff));
+  }
+  return shuffle(pool).slice(0,Math.min(counts[state.difficulty],pool.length));
+}
+
+function startQuiz(){
+  state.questions=buildPool();
+  if(!state.questions.length){showToast('⚠️ Aucune question disponible');return;}
+  state.currentIdx=0;state.score=0;state.errors=[];
+  state.startTime=Date.now();state.answered=false;state.isBrevetBlanc=false;
+
+  const m=SUBJ_META[state.subject];
+  const st=document.getElementById('q-subject-tag');
+  st.textContent=m.icon+' '+m.name; st.className='quiz-tag '+m.tagClass;
+  document.getElementById('q-chapter-tag').textContent=state.chapters.length===1?state.chapters[0]:state.chapters.length+' chapitres';
+  document.getElementById('q-diff-tag').textContent={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile'}[state.difficulty];
+  document.getElementById('q-total').textContent=state.questions.length;
+  document.getElementById('timer-display').style.display=state.options.timer?'flex':'none';
+
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q=state.questions[state.currentIdx];
+  state.answered=false;state.matchState={selected:null,pairs:{},done:0,total:0};
+  document.getElementById('progress-fill').style.width=((state.currentIdx/state.questions.length)*100)+'%';
+  document.getElementById('q-current').textContent=state.currentIdx+1;
+  document.getElementById('q-score-live').textContent='Score : '+state.score;
+  document.getElementById('feedback-container').innerHTML='';
+  document.getElementById('next-btn-wrap').style.display='none';
+  document.getElementById('question-card').innerHTML=renderQHTML(q);
+  if(state.options.timer) startTimer();
+}
+
+/* ============================================================
+   MOTEUR BREVET BLANC
+   ============================================================ */
+function startBrevetBlanc(){
+  // Build 30 questions from ALL subjects
+  let allQ=[];
+  Object.keys(DB).forEach(subj=>{
+    Object.keys(DB[subj]).forEach(ch=>{
+      DB[subj][ch].forEach(q=>allQ.push({...q,_subj:subj}));
+    });
+  });
+  allQ=shuffle(allQ);
+  // Try to balance: ~5 per subject
+  const bySubj={};Object.keys(DB).forEach(s=>bySubj[s]=[]);
+  allQ.forEach(q=>bySubj[q._subj].push(q));
+  let selected=[];
+  const perSubj=Math.floor(30/Object.keys(DB).length);
+  Object.keys(bySubj).forEach(s=>selected.push(...bySubj[s].slice(0,perSubj)));
+  // Fill remaining spots
+  const remaining=shuffle(allQ.filter(q=>!selected.includes(q)));
+  while(selected.length<30 && remaining.length) selected.push(remaining.pop());
+  selected=shuffle(selected).slice(0,30);
+
+  state.isBrevetBlanc=true;
+  state.questions=selected;
+  state.currentIdx=0;state.score=0;state.errors=[];
+  state.startTime=Date.now();state.answered=false;
+  state.bbBySubject={};Object.keys(DB).forEach(s=>state.bbBySubject[s]={correct:0,total:0});
+
+  // Global timer 15 min = 900s
+  state.bbTimeLeft=900;
+  startGlobalTimer();
+
+  showScreen('screen-bb-quiz');
+  renderBBQuestion();
+}
+
+function startGlobalTimer(){
+  clearInterval(state.bbGlobalTimerInterval);
+  updateGlobalTimerDisplay();
+  state.bbGlobalTimerInterval=setInterval(()=>{
+    state.bbTimeLeft--;
+    updateGlobalTimerDisplay();
+    if(state.bbTimeLeft<=0){
+      clearInterval(state.bbGlobalTimerInterval);
+      showToast('⏱️ Temps écoulé !');
+      showResults(true);
+    }
+  },1000);
+}
+
+function updateGlobalTimerDisplay(){
+  const v=document.getElementById('gtimer-val');
+  const f=document.getElementById('gtimer-fill');
+  const b=document.getElementById('global-timer-bar');
+  if(!v) return;
+  v.textContent=formatMMSS(state.bbTimeLeft);
+  const pct=(state.bbTimeLeft/900)*100;
+  if(f) f.style.width=pct+'%';
+  const isLow=state.bbTimeLeft<=120;
+  if(b) b.classList.toggle('warning',isLow);
+  if(f){f.classList.toggle('low',isLow);}
+}
+
+function renderBBQuestion(){
+  const q=state.questions[state.currentIdx];
+  state.answered=false;state.matchState={selected:null,pairs:{},done:0,total:0};
+  document.getElementById('bb-progress-fill').style.width=((state.currentIdx/30)*100)+'%';
+  document.getElementById('bb-current').textContent=state.currentIdx+1;
+  document.getElementById('bb-score-live').textContent='Score : '+state.score;
+  document.getElementById('bb-feedback-container').innerHTML='';
+  document.getElementById('bb-next-btn-wrap').style.display='none';
+  const m=SUBJ_META[q._subj||state.subject];
+  document.getElementById('bb-subject-tag').textContent=m.icon+' '+m.name;
+  document.getElementById('bb-subject-tag').className='quiz-tag '+m.tagClass;
+  document.getElementById('bb-question-card').innerHTML=renderQHTML(q,true);
+}
+
+function bbNextQuestion(){
+  state.currentIdx++;
+  if(state.currentIdx>=state.questions.length){showResults(true);return;}
+  renderBBQuestion();
+}
+
+/* ============================================================
+   RENDU QUESTIONS (partagé quiz + brevet blanc)
+   ============================================================ */
+function renderQHTML(q,isBB=false){
+  const prefix=isBB?'bb-':'';
+  const tl={mcq:'🔘 QCM',tf:'✅ Vrai ou Faux',open:'✏️ Question ouverte',date:'📅 Associer dates et événements'};
+  let html=`<div class="q-type-badge">${tl[q.type]||'Question'}</div><div class="question-text">${q.q||"Associez chaque date à l'événement correspondant :"}</div>`;
+  if(q.type==='mcq'){
+    const L=['A','B','C','D'];
+    html+='<div class="options-list">';
+    q.opts.forEach((opt,i)=>html+=`<button class="option-btn" onclick="${prefix}answerMCQ(${i})" id="${prefix}opt-${i}"><span class="option-letter">${L[i]}</span>${opt}</button>`);
+    html+='</div>';
+  }else if(q.type==='tf'){
+    html+=`<div class="tf-row"><button class="tf-btn" id="${prefix}tf-true" onclick="${prefix}answerTF(true)">✅ Vrai</button><button class="tf-btn" id="${prefix}tf-false" onclick="${prefix}answerTF(false)">❌ Faux</button></div>`;
+  }else if(q.type==='open'){
+    html+=`<div class="open-input-wrap"><textarea class="open-input" id="${prefix}open-ans" placeholder="Saisissez votre réponse..." rows="3"></textarea><button class="btn-primary" onclick="${prefix}answerOpen()" style="align-self:flex-start">Valider →</button></div>`;
+  }else if(q.type==='date'){
+    html+=renderDateMatch(q,isBB);
+  }
+  return html;
+}
+
+function renderDateMatch(q,isBB=false){
+  const prefix=isBB?'bb-':'';
+  const se=shuffle(q.events.map((e,i)=>({e,i})));
+  const sd=shuffle(q.dates.map((d,i)=>({d,i})));
+  state.matchState.total=q.dates.length;
+  let h='<div class="match-grid"><div class="match-col"><div class="match-col-title">📅 Dates</div>';
+  sd.forEach(({d,i})=>h+=`<div class="match-item" data-type="date" data-idx="${i}" data-bb="${isBB?1:0}" onclick="selectMatch(this)">${d}</div>`);
+  h+='</div><div class="match-col"><div class="match-col-title">📌 Événements</div>';
+  se.forEach(({e,i})=>h+=`<div class="match-item" data-type="event" data-idx="${i}" data-bb="${isBB?1:0}" onclick="selectMatch(this)">${e}</div>`);
+  h+='</div></div>';
+  return h;
+}
+
+function selectMatch(el){
+  if(el.classList.contains('matched'))return;
+  const ms=state.matchState,type=el.dataset.type,idx=parseInt(el.dataset.idx),isBB=el.dataset.bb==='1';
+  if(!ms.selected){if(type==='date'){ms.selected={el,idx};el.classList.add('selected-a');}return;}
+  if(ms.selected.el===el){el.classList.remove('selected-a');ms.selected=null;return;}
+  if(type==='date'){ms.selected.el.classList.remove('selected-a');ms.selected={el,idx};el.classList.add('selected-a');return;}
+  if(ms.selected.idx===idx){
+    ms.selected.el.classList.remove('selected-a');ms.selected.el.classList.add('matched');el.classList.add('matched');
+    ms.done++;ms.selected=null;
+    if(ms.done===ms.total) completeDateMatch(isBB);
+  }else{
+    const prev=ms.selected;
+    prev.el.classList.remove('selected-a');prev.el.classList.add('wrong-match');el.classList.add('wrong-match');
+    ms.selected=null;
+    setTimeout(()=>{prev.el.classList.remove('wrong-match');el.classList.remove('wrong-match');},600);
+  }
+}
+
+function completeDateMatch(isBB=false){
+  const q=state.questions[state.currentIdx];
+  state.score++;
+  if(isBB && q._subj) state.bbBySubject[q._subj].correct++;
+  if(isBB && q._subj) state.bbBySubject[q._subj].total++;
+  showFeedback(true,'✅ Parfait !',q.explain,isBB);
+  showNextButton(isBB);state.answered=true;
+}
+
+/* ── Standard quiz answer functions ── */
+function answerMCQ(i){if(state.answered)return;state.answered=true;stopTimer();const q=state.questions[state.currentIdx];const ok=i===q.ans;document.querySelectorAll('.option-btn').forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.classList.add('correct');else if(j===i&&!ok)b.classList.add('wrong');});if(ok)state.score++;else state.errors.push({q:q.q,yours:q.opts[i],correct:q.opts[q.ans],explain:q.explain});showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',q.explain);showNextButton();}
+function answerTF(ans){if(state.answered)return;state.answered=true;stopTimer();const q=state.questions[state.currentIdx];const ok=ans===q.ans;['tf-true','tf-false'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});(q.ans?document.getElementById('tf-true'):document.getElementById('tf-false'))?.classList.add('correct');if(!ok){(ans?document.getElementById('tf-true'):document.getElementById('tf-false'))?.classList.add('wrong');state.errors.push({q:q.q,yours:ans?'Vrai':'Faux',correct:q.ans?'Vrai':'Faux',explain:q.explain});}else state.score++;showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',q.explain);showNextButton();}
+function answerOpen(){if(state.answered)return;state.answered=true;stopTimer();const q=state.questions[state.currentIdx];const ua=(document.getElementById('open-ans')?.value||'').toLowerCase().trim();const hits=q.key.filter(k=>ua.includes(k.toLowerCase()));const ok=hits.length>=Math.min(2,q.key.length);const ta=document.getElementById('open-ans');if(ta)ta.disabled=true;if(ok)state.score++;else state.errors.push({q:q.q,yours:ua||'(vide)',correct:q.correctAnswer,explain:q.explain});showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',`Réponse attendue : ${q.correctAnswer}\n\n${q.explain}`);showNextButton();}
+
+/* ── Brevet Blanc answer functions ── */
+function bb_answerMCQ(i){if(state.answered)return;state.answered=true;const q=state.questions[state.currentIdx];const ok=i===q.ans;document.querySelectorAll('#bb-question-card .option-btn').forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.classList.add('correct');else if(j===i&&!ok)b.classList.add('wrong');});if(ok)state.score++;else state.errors.push({q:q.q,yours:q.opts[i],correct:q.opts[q.ans],explain:q.explain});const subj=q._subj||state.subject;if(!state.bbBySubject[subj])state.bbBySubject[subj]={correct:0,total:0};state.bbBySubject[subj].total++;if(ok)state.bbBySubject[subj].correct++;showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',q.explain,true);showNextButton(true);}
+function bb_answerTF(ans){if(state.answered)return;state.answered=true;const q=state.questions[state.currentIdx];const ok=ans===q.ans;['bb-tf-true','bb-tf-false'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});(q.ans?document.getElementById('bb-tf-true'):document.getElementById('bb-tf-false'))?.classList.add('correct');if(!ok){(ans?document.getElementById('bb-tf-true'):document.getElementById('bb-tf-false'))?.classList.add('wrong');state.errors.push({q:q.q,yours:ans?'Vrai':'Faux',correct:q.ans?'Vrai':'Faux',explain:q.explain});}else state.score++;const subj=q._subj||state.subject;if(!state.bbBySubject[subj])state.bbBySubject[subj]={correct:0,total:0};state.bbBySubject[subj].total++;if(ok)state.bbBySubject[subj].correct++;showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',q.explain,true);showNextButton(true);}
+function bb_answerOpen(){if(state.answered)return;state.answered=true;const q=state.questions[state.currentIdx];const ua=(document.getElementById('bb-open-ans')?.value||'').toLowerCase().trim();const hits=q.key.filter(k=>ua.includes(k.toLowerCase()));const ok=hits.length>=Math.min(2,q.key.length);const ta=document.getElementById('bb-open-ans');if(ta)ta.disabled=true;if(ok)state.score++;else state.errors.push({q:q.q,yours:ua||'(vide)',correct:q.correctAnswer,explain:q.explain});const subj=q._subj||state.subject;if(!state.bbBySubject[subj])state.bbBySubject[subj]={correct:0,total:0};state.bbBySubject[subj].total++;if(ok)state.bbBySubject[subj].correct++;showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',`Réponse attendue : ${q.correctAnswer}\n\n${q.explain}`,true);showNextButton(true);}
+
+function showFeedback(ok,title,text,isBB=false){
+  const container=document.getElementById((isBB?'bb-':'')+'feedback-container');
+  const box=document.createElement('div');
+  box.className='feedback-box '+(ok?'correct':'wrong');box.style.display='block';
+  box.innerHTML=`<div class="feedback-title">${title}</div><div class="feedback-text">${text}</div>`;
+  container.innerHTML='';container.appendChild(box);
+}
+
+function showNextButton(isBB=false){
+  const prefix=isBB?'bb-':'';
+  const wrap=document.getElementById(prefix+'next-btn-wrap');
+  wrap.style.display='flex';
+  const btn=wrap.querySelector('button');
+  const total=state.questions.length;
+  const isLast=state.currentIdx>=total-1;
+  if(isBB){btn.textContent=isLast?'📊 Voir les résultats':'Question suivante →';btn.onclick=isLast?()=>showResults(true):bbNextQuestion;}
+  else{btn.textContent=isLast?'📊 Voir les résultats':'Question suivante →';btn.onclick=isLast?()=>showResults(false):nextQuestion;}
+}
+
+function nextQuestion(){state.currentIdx++;if(state.currentIdx>=state.questions.length){showResults();return;}renderQuestion();}
+
+/* ============================================================
+   TIMER (quiz standard)
+   ============================================================ */
+function startTimer(){stopTimer();state.timerLeft=30;updateTimerDisplay();state.timerInterval=setInterval(()=>{state.timerLeft--;updateTimerDisplay();if(state.timerLeft<=0){stopTimer();if(!state.answered)timeUp();}},1000);}
+function stopTimer(){clearInterval(state.timerInterval);state.timerInterval=null;const d=document.getElementById('timer-display');if(d)d.classList.remove('warning');}
+function updateTimerDisplay(){const d=document.getElementById('timer-display'),v=document.getElementById('timer-val');if(!d||!v)return;v.textContent=state.timerLeft;d.classList.toggle('warning',state.timerLeft<=10);}
+function timeUp(){state.answered=true;const q=state.questions[state.currentIdx];state.errors.push({q:q.q,yours:'(temps écoulé)',correct:q.correctAnswer||q.opts?.[q.ans]||(q.ans?'Vrai':'Faux'),explain:q.explain});showFeedback(false,'⏱️ Temps écoulé !',q.explain);showNextButton();}
+
+/* ============================================================
+   RÉSULTATS
+   ============================================================ */
+function showResults(isBB=false){
+  stopTimer();clearInterval(state.bbGlobalTimerInterval);
+  const elapsed=Math.floor((Date.now()-state.startTime)/1000);
+  const total=state.questions.length;
+  const pct=Math.round((state.score/total)*100);
+
+  saveHistory({
+    subject: isBB?'brevet-blanc':state.subject,
+    chapters: isBB?['Brevet Blanc']:state.chapters,
+    diff: isBB?'Blanc':state.difficulty,
+    score:state.score,total,pct,elapsed,
+    date:new Date().toLocaleDateString('fr-FR')
+  });
+
+  const fill=document.getElementById('score-ring-fill');
+  const circumference=2*Math.PI*52;
+  fill.style.stroke=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  document.getElementById('result-percent').style.color=pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';
+  setTimeout(()=>{fill.style.strokeDashoffset=circumference-(pct/100)*circumference;},100);
+  document.getElementById('result-percent').textContent=pct+'%';
+
+  const [title,sub]=pct>=90?['🏆 Excellent !','Score parfait — prêt(e) pour le brevet !']:pct>=70?['👍 Très bien !','Bon travail ! Quelques points à revoir.']:pct>=50?['💪 Pas mal !','Continuez à réviser les parties manquées.']:['📚 À retravailler !','Consultez vos erreurs et recommencez.'];
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-subtitle').textContent=sub;
+  document.getElementById('stat-correct').textContent=state.score;
+  document.getElementById('stat-wrong').textContent=total-state.score;
+  document.getElementById('stat-time').textContent=formatTime(isBB?900-state.bbTimeLeft:elapsed);
+
+  // Brevet Blanc breakdown
+  const bbSection=document.getElementById('bb-breakdown-section');
+  const bbGrid=document.getElementById('bb-breakdown-grid');
+  if(isBB){
+    bbSection.style.display='block';
+    bbGrid.innerHTML='';
+    Object.entries(state.bbBySubject).forEach(([subj,data])=>{
+      if(!data.total)return;
+      const m=SUBJ_META[subj];
+      const sp=Math.round((data.correct/data.total)*100);
+      const sc=sp>=70?'var(--green)':sp>=40?'var(--gold)':'var(--red)';
+      const d=document.createElement('div');
+      d.className='bb-subj-stat';
+      d.innerHTML=`<div class="bss-name">${m.icon} ${m.name}</div><div class="bss-score" style="color:${sc}">${data.correct}/${data.total} (${sp}%)</div>`;
+      bbGrid.appendChild(d);
+    });
+    document.getElementById('btn-restart').textContent='🔄 Relancer un Brevet Blanc';
+    document.getElementById('btn-restart').onclick=startBrevetBlanc;
+  }else{
+    bbSection.style.display='none';
+    document.getElementById('btn-restart').textContent='🔄 Recommencer';
+    document.getElementById('btn-restart').onclick=restartQuiz;
+  }
+
+  showScreen('screen-results');
+}
+
+function showErrors(){
+  const list=document.getElementById('errors-list');list.innerHTML='';
+  document.getElementById('error-count-subtitle').textContent=state.errors.length===0?'Aucune erreur — parfait !':state.errors.length+' erreur(s) à retravailler';
+  state.errors.forEach(err=>{
+    const d=document.createElement('div');d.className='error-item';
+    d.innerHTML=`<div class="error-q">📌 ${err.q}</div><div class="error-your">❌ Votre réponse : ${err.yours}</div><div class="error-correct">✅ Réponse correcte : ${err.correct}</div><div class="error-explain">💡 ${err.explain}</div>`;
+    list.appendChild(d);
+  });
+  showScreen('screen-errors');
+}
+
+function restartQuiz(){showScreen('screen-difficulty');}
+
+function confirmQuit(isBB=false){
+  if(confirm('Quitter ? Votre progression sera perdue.')){
+    stopTimer();clearInterval(state.bbGlobalTimerInterval);
+    showScreen('screen-home');
+  }
+}
+
+/* ============================================================
+   HISTORIQUE
+   ============================================================ */
+function saveHistory(entry){
+  let h=JSON.parse(localStorage.getItem('brevet_history')||'[]');
+  h.unshift(entry);h=h.slice(0,20);
+  localStorage.setItem('brevet_history',JSON.stringify(h));
+}
+
+function renderHistory(){
+  const h=JSON.parse(localStorage.getItem('brevet_history')||'[]');
+  const list=document.getElementById('history-list');list.innerHTML='';
+  if(!h.length){list.innerHTML='<div class="history-empty">📚 Aucune session enregistrée.<br>Lancez votre premier quiz !</div>';return;}
+
+  // Stats
+  let gTotal=0,gCorrect=0;const bySubj={};
+  h.forEach(e=>{gTotal+=e.total;gCorrect+=e.score;
+    const s=e.subject;if(!bySubj[s])bySubj[s]={total:0,correct:0,count:0};
+    bySubj[s].total+=e.total;bySubj[s].correct+=e.score;bySubj[s].count++;
+  });
+  const gAvg=Math.round((gCorrect/gTotal)*100);
+
+  const allSubjMeta={...SUBJ_META,'brevet-blanc':{icon:'🎓',name:'Brevet Blanc',tagClass:'gold'}};
+
+  const banner=document.createElement('div');banner.className='history-avg-banner';
+  let subjHTML='';
+  Object.entries(bySubj).forEach(([s,d])=>{
+    const avg=Math.round((d.correct/d.total)*100);
+    const cls=avg>=70?'good':avg>=40?'mid':'bad';
+    const m=allSubjMeta[s]||{icon:'📚',name:s};
+    subjHTML+=`<div class="avg-subj-box"><div class="avg-pct ${cls}">${avg}%</div><div class="avg-name">${m.icon} ${m.name}</div><div class="avg-count">${d.count} partie${d.count>1?'s':''}</div></div>`;
+  });
+  banner.innerHTML=`<div class="avg-main">📊 Moyenne générale : <strong style="font-size:1.25rem">${gAvg}%</strong> &nbsp;— ${h.length} partie${h.length>1?'s':''}</div><div class="avg-grid">${subjHTML}</div>`;
+  list.appendChild(banner);
+
+  h.forEach(entry=>{
+    const cls=entry.pct>=70?'good':entry.pct>=40?'mid':'bad';
+    const m=allSubjMeta[entry.subject]||{icon:'📚',name:entry.subject};
+    const diffLabel={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile',Blanc:'🎓 Brevet Blanc'}[entry.diff]||entry.diff;
+    const chaps=entry.chapters?entry.chapters.join(', '):'—';
+    const d=document.createElement('div');d.className='history-item';
+    d.innerHTML=`<div class="history-score-badge ${cls}">${entry.pct}%</div><div class="history-info"><strong>${m.icon} ${m.name}</strong><div class="h-detail">${entry.score}/${entry.total} réponses · ${diffLabel} · ${formatTime(entry.elapsed)}</div><div class="h-chapters">📖 ${chaps}</div></div><div class="history-date">${entry.date}</div>`;
+    list.appendChild(d);
+  });
+}
+
+function clearHistory(){if(confirm("Effacer tout l'historique ?")){localStorage.removeItem('brevet_history');renderHistory();showToast('🗑️ Effacé');}}
+
+/* ============================================================
+   FLASHCARDS
+   ============================================================ */
+function updateFlashCounts(){
+  Object.keys(FLASHCARDS).forEach(s=>{
+    const el=document.getElementById('fc-count-'+s);
+    if(el)el.textContent=FLASHCARDS[s].length+' cartes';
+  });
+  const total=Object.values(FLASHCARDS).reduce((a,v)=>a+v.length,0);
+  const el=document.getElementById('fc-count-all');if(el)el.textContent=total+' cartes';
+}
+
+function startFlash(subj){
+  let cards=[];
+  if(subj==='all') cards=[...FLASHCARDS.histoire,...FLASHCARDS.geo,...FLASHCARDS.emc,...FLASHCARDS.francais,...FLASHCARDS.maths,...FLASHCARDS.sciences];
+  else cards=FLASHCARDS[subj]||[];
+  flashState.cards=shuffle(cards);flashState.idx=0;flashState.flipped=false;
+  renderFlashcard();showScreen('screen-flash');
+}
+
+function renderFlashcard(){
+  const c=flashState.cards[flashState.idx];
+  document.getElementById('fc-question').textContent=c.q;
+  document.getElementById('fc-answer').textContent=c.a;
+  document.getElementById('fc-explain').textContent=c.explain||'';
+  document.getElementById('fc-current').textContent=flashState.idx+1;
+  document.getElementById('fc-total').textContent=flashState.cards.length;
+  document.getElementById('flashcard').classList.remove('flipped');
+  flashState.flipped=false;
+}
+
+function flipCard(){flashState.flipped=!flashState.flipped;document.getElementById('flashcard').classList.toggle('flipped',flashState.flipped);}
+function nextCard(){flashState.idx=(flashState.idx+1)%flashState.cards.length;renderFlashcard();}
+function prevCard(){flashState.idx=(flashState.idx-1+flashState.cards.length)%flashState.cards.length;renderFlashcard();}
+function shuffleCards(){flashState.cards=shuffle(flashState.cards);flashState.idx=0;renderFlashcard();showToast('🔀 Cartes mélangées !');}
+
+/* ============================================================
+   THÈME
+   ============================================================ */
+function toggleTheme(){const cur=document.body.getAttribute('data-theme')||'dark';const t=cur==='light'?'dark':'light';document.body.setAttribute('data-theme',t);localStorage.setItem('brevet-theme',t);}
+
+/* ============================================================
+   RACCOURCIS CLAVIER
+   ============================================================ */
+document.addEventListener('keydown',e=>{
+  const screen=document.querySelector('.screen.active');if(!screen)return;
+  if(screen.id==='screen-flash'){if(e.key==='ArrowRight')nextCard();if(e.key==='ArrowLeft')prevCard();if(e.key===' '){e.preventDefault();flipCard();}}
+  const isBB=screen.id==='screen-bb-quiz';
+  if((screen.id==='screen-quiz'||isBB)&&!state.answered){
+    const q=state.questions[state.currentIdx];
+    if(q?.type==='mcq'){const m={'1':0,'2':1,'3':2,'4':3};if(m[e.key]!==undefined){isBB?bb_answerMCQ(m[e.key]):answerMCQ(m[e.key]);}}
+    if(q?.type==='tf'){if(e.key==='v'||e.key==='V'){isBB?bb_answerTF(true):answerTF(true);}if(e.key==='f'||e.key==='F'){isBB?bb_answerTF(false):answerTF(false);}}
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener('load',()=>{
+  const t=localStorage.getItem('brevet-theme');
+  if(t)document.body.setAttribute('data-theme',t);
+  updateFlashCounts();
+});
+</script>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker enregistré !'))
+        .catch(err => console.log('Erreur SW:', err));
+    });
+  }
+</script>
+</body>
+</html>
