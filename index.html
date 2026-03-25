@@ -79,7 +79,15 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 /* ========== BREVET BLANC CTA ========== */
 .brevet-blanc-cta{width:100%;max-width:1000px;margin:0 0 28px}
-.brevet-blanc-btn{width:100%;background:linear-gradient(135deg,#1a2254,#243070);border:2px solid rgba(232,184,75,.5);border-radius:var(--radius);padding:22px 32px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:var(--transition);position:relative;overflow:hidden}
+/* Cherche ce bloc et modifie juste la ligne background */
+.brevet-blanc-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--navy2), var(--navy3)); /* <--- MODIFIE CETTE LIGNE */
+  border: 2px solid rgba(232,184,75,0.5);
+  border-radius: var(--radius); /* Cette ligne évite qu'il devienne carré */
+  padding: 22px 32px;
+  /* ... ne touche pas au reste ... */
+}
 .brevet-blanc-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,184,75,.06),transparent);pointer-events:none}
 .brevet-blanc-btn:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 12px 40px rgba(232,184,75,.25)}
 .bb-left{display:flex;align-items:center;gap:16px}
