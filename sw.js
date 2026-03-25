@@ -1,4 +1,4 @@
-const CACHE_NAME = 'brevetpro-v2';
+const CACHE_NAME = 'brevetpro-v3';
 const ASSETS = [
   './',
   './index.html',
