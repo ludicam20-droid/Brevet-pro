@@ -297,7 +297,12 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .flash-subj-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:18px 16px;cursor:pointer;text-align:center;transition:var(--transition);font-family:'DM Sans',sans-serif;color:var(--white)}
 .flash-subj-btn .fsb-icon{font-size:1.8rem;margin-bottom:8px;display:block}
 .flash-subj-btn .fsb-name{font-weight:600;font-size:.9rem}
-.flash-subj-btn .fsb-count{font-size:.72rem;color:var(--gray);margin-top:3px}
+.flash-subj-btn ..fsb-count {
+  font-size: .72rem;
+  color: var(--gray);
+  margin-top: 10px; /* Augmente cette valeur selon tes préférences */
+  display: block;   /* Sécurité pour s'assurer que l'espace s'applique bien */
+}
 .flash-subj-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .flash-subj-btn.f-histoire{border-top:3px solid var(--gold)}
 .flash-subj-btn.f-geo{border-top:3px solid var(--blue-light)}
@@ -538,13 +543,13 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
   <div class="section-title">⚡ Mode Flashcards</div>
   <div class="section-subtitle">Choisissez une matière ou mélangez tout</div>
   <div class="flash-select-grid">
-    <button class="flash-subj-btn f-histoire"  onclick="startFlash('histoire')"><span class="fsb-icon">🏛️</span><span class="fsb-name">Histoire</span><span class="fsb-count" id="fc-count-histoire">— cartes</span></button>
-    <button class="flash-subj-btn f-geo"       onclick="startFlash('geo')">      <span class="fsb-icon">🌍</span><span class="fsb-name">Géographie</span><span class="fsb-count" id="fc-count-geo">— cartes</span></button>
-    <button class="flash-subj-btn f-emc"       onclick="startFlash('emc')">      <span class="fsb-icon">⚖️</span><span class="fsb-name">EMC</span><span class="fsb-count" id="fc-count-emc">— cartes</span></button>
-    <button class="flash-subj-btn f-francais"  onclick="startFlash('francais')"> <span class="fsb-icon">📝</span><span class="fsb-name">Français</span><span class="fsb-count" id="fc-count-francais">— cartes</span></button>
-    <button class="flash-subj-btn f-maths"     onclick="startFlash('maths')">    <span class="fsb-icon">📐</span><span class="fsb-name">Mathématiques</span><span class="fsb-count" id="fc-count-maths">— cartes</span></button>
-    <button class="flash-subj-btn f-sciences"  onclick="startFlash('sciences')"> <span class="fsb-icon">🔬</span><span class="fsb-name">Sciences</span><span class="fsb-count" id="fc-count-sciences">— cartes</span></button>
-    <button class="flash-subj-btn f-all"       onclick="startFlash('all')">      <span class="fsb-icon">🌟</span><span class="fsb-name">Tout mélanger</span><span class="fsb-count" id="fc-count-all">— cartes</span></button>
+    <button class="flash-subj-btn f-histoire"  onclick="startFlash('histoire')"><span class="fsb-icon">🏛️</span><span class="fsb-name">Histoire </span><span class="fsb-count" id="fc-count-histoire">— cartes</span></button>
+    <button class="flash-subj-btn f-geo"       onclick="startFlash('geo')">      <span class="fsb-icon">🌍</span><span class="fsb-name">Géographie </span><span class="fsb-count" id="fc-count-geo">— cartes</span></button>
+    <button class="flash-subj-btn f-emc"       onclick="startFlash('emc')">      <span class="fsb-icon">⚖️</span><span class="fsb-name">EMC </span><span class="fsb-count" id="fc-count-emc">— cartes</span></button>
+    <button class="flash-subj-btn f-francais"  onclick="startFlash('francais')"> <span class="fsb-icon">📝</span><span class="fsb-name">Français </span><span class="fsb-count" id="fc-count-francais">— cartes</span></button>
+    <button class="flash-subj-btn f-maths"     onclick="startFlash('maths')">    <span class="fsb-icon">📐</span><span class="fsb-name">Mathématiques </span><span class="fsb-count" id="fc-count-maths">— cartes</span></button>
+    <button class="flash-subj-btn f-sciences"  onclick="startFlash('sciences')"> <span class="fsb-icon">🔬</span><span class="fsb-name">Sciences </span><span class="fsb-count" id="fc-count-sciences">— cartes</span></button>
+    <button class="flash-subj-btn f-all"       onclick="startFlash('all')">      <span class="fsb-icon">🌟</span><span class="fsb-name">Tout mélangé </span><span class="fsb-count" id="fc-count-all">— cartes</span></button>
   </div>
 </div>
 
