@@ -1,8 +1,8 @@
 {
   "name": "BrevetPro",
   "short_name": "BrevetPro",
+  "id": "/Brevet-pro/",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
   "background_color": "#0f1535",
   "theme_color": "#0f1535",
