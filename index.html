@@ -348,6 +348,12 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
   .history-date{display:none}
   .bb-badge{display:none}
 }
+  /* Ce code s'active uniquement en mode clair */
+[data-theme="light"] .brevet-blanc-btn {
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-color: var(--gold);
+}
 </style>
 </head>
 <body>
