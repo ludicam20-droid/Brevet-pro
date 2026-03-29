@@ -1918,6 +1918,19 @@ body[data-theme="light"] .player-topbar{
   border:1px solid var(--card-border);
   border-radius:20px;
   padding:14px 16px;
+  position:relative;
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease;
+}
+.xp-track-wrap.clickable{cursor:pointer}
+.xp-track-wrap.clickable:hover{
+  transform:translateY(-2px);
+  border-color:rgba(232,184,75,.26);
+  box-shadow:0 18px 34px rgba(0,0,0,.16);
+}
+.xp-track-wrap.clickable:focus-visible{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 2px rgba(232,184,75,.18),0 18px 34px rgba(0,0,0,.16);
 }
 .xp-track-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--gray);margin-bottom:8px}
 .xp-track{height:12px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;position:relative}
@@ -1928,6 +1941,12 @@ body[data-theme="light"] .player-topbar{
   border-radius:100px;
   transition:width .45s ease;
   box-shadow:0 0 24px rgba(232,184,75,.35);
+}
+.xp-track-hint{
+  margin-top:9px;
+  font-size:.72rem;
+  color:var(--gray);
+  text-align:right;
 }
 .theme-panel{
   width:100%;
@@ -2026,6 +2045,154 @@ body[data-theme="light"] .modal-card,
 body[data-theme="paper"] .modal-card{
   background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(245,248,252,.97));
 }
+.xp-focus-overlay{z-index:95}
+.xp-modal-card{width:min(760px,100%)}
+.xp-modal-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:16px;
+  align-items:start;
+  margin-bottom:18px;
+}
+.xp-modal-level-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:92px;
+  padding:12px 18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--navy);
+  font-weight:800;
+  font-size:1.05rem;
+  box-shadow:0 16px 30px rgba(232,184,75,.22);
+}
+.xp-modal-track-shell{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--card-border);
+  border-radius:24px;
+  padding:18px;
+  margin-bottom:18px;
+}
+.xp-modal-track-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  color:var(--gray);
+  font-size:.84rem;
+  margin-bottom:12px;
+}
+.xp-modal-track{
+  height:24px;
+  background:rgba(255,255,255,.08);
+  border-radius:999px;
+  overflow:hidden;
+  position:relative;
+}
+.xp-modal-track::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  pointer-events:none;
+}
+.xp-modal-track-fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  border-radius:999px;
+  transition:width .45s ease;
+  box-shadow:0 0 28px rgba(232,184,75,.34);
+}
+.xp-modal-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.xp-modal-stat{
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--card-border);
+}
+.xp-modal-stat-label{
+  display:block;
+  font-size:.74rem;
+  color:var(--gray);
+  margin-bottom:6px;
+}
+.xp-modal-stat-value{
+  display:block;
+  font-size:1rem;
+  color:var(--white);
+  font-weight:700;
+}
+.xp-modal-section{
+  padding:18px;
+  border-radius:24px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--card-border);
+}
+.xp-modal-section-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.18rem;
+  color:var(--white);
+  margin-bottom:12px;
+}
+.xp-reward-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+}
+.xp-reward-card{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--card-border);
+}
+.xp-reward-icon{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(232,184,75,.12);
+  border:1px solid rgba(232,184,75,.18);
+  font-size:1.15rem;
+}
+.xp-reward-copy strong{
+  display:block;
+  color:var(--white);
+  font-size:.92rem;
+  margin-bottom:4px;
+}
+.xp-reward-copy span{
+  display:block;
+  color:var(--gray);
+  font-size:.78rem;
+  line-height:1.45;
+}
+.xp-modal-empty{
+  color:var(--gray);
+  font-size:.86rem;
+}
+.xp-modal-upcoming{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(232,184,75,.08);
+  border:1px solid rgba(232,184,75,.18);
+  color:#f2dfbf;
+  font-size:.82rem;
+}
+.xp-modal-upcoming strong{color:var(--gold)}
 .modal-badge{
   display:inline-flex;
   align-items:center;
@@ -2938,14 +3105,24 @@ body[data-theme="paper"] .modal-card{
   .diff-btn{min-width:100%}
   .history-date{display:none}
   .bb-badge{display:none}
-  .player-topbar{grid-template-columns:1fr;padding:14px}
-  .player-identity{align-items:flex-start;flex-wrap:wrap}
-  .player-avatar-frame{width:62px;height:62px;border-radius:50%}
+  .player-topbar{grid-template-columns:1fr;gap:10px;padding:10px 10px 8px}
+  .player-identity{align-items:center;flex-wrap:nowrap;gap:10px}
+  .player-avatar-btn{gap:0}
+  .player-avatar-frame{width:50px;height:50px;border-radius:50%}
   .player-avatar-frame img{border-radius:50%}
-  .player-level-badge{width:60px;height:60px;min-width:60px;font-size:1rem;border-radius:16px}
-  .player-name{font-size:1.12rem}
-  .player-specialty{width:100%;justify-content:center}
-  .xp-track-wrap{padding:12px 14px}
+  .avatar-edit-chip{display:none}
+  .player-level-badge{width:50px;height:50px;min-width:50px;font-size:.88rem;border-radius:14px}
+  .player-texts{gap:4px;flex:1}
+  .player-name{font-size:1rem;line-height:1.05}
+  .player-title-line{gap:6px}
+  .player-global-title{font-size:.96rem}
+  .player-specialty{padding:4px 8px;font-size:.66rem;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .player-meta-line{gap:6px 8px;font-size:.67rem;line-height:1.25}
+  .meta-pill{padding:4px 8px;font-size:.67rem}
+  #player-total-xp,#player-sound-pack,#player-next-theme,#player-xp-hint{display:none}
+  .xp-track-wrap{padding:10px 12px;border-radius:16px}
+  .xp-track-head{margin-bottom:6px;font-size:.68rem}
+  .xp-track{height:10px}
   .theme-grid,.avatar-grid{grid-template-columns:1fr 1fr}
   .brevet-blanc-btn{padding:20px 18px;align-items:flex-start}
   .ranked-cta-btn{padding:20px 18px;align-items:flex-start;flex-direction:column}
@@ -2955,6 +3132,21 @@ body[data-theme="paper"] .modal-card{
   .modal-card{padding:22px 16px}
   .sound-pack-select{max-width:none}
   .atelier-preview-ring{width:136px;height:136px}
+}
+@media(max-width:420px){
+  .player-topbar{gap:8px;padding:8px 8px 6px}
+  .player-identity{gap:8px}
+  .player-avatar-frame{width:44px;height:44px}
+  .player-level-badge{width:44px;height:44px;min-width:44px;font-size:.78rem;border-radius:12px}
+  .player-name{font-size:.92rem}
+  .player-global-title{font-size:.84rem}
+  .player-specialty{display:none}
+  .player-meta-line{gap:4px 6px;font-size:.62rem}
+  .meta-pill{padding:3px 7px;font-size:.62rem}
+  .xp-track-wrap{padding:8px 10px;border-radius:14px}
+  .xp-track-head{gap:6px;font-size:.62rem}
+  #player-multiplier{display:none}
+  .xp-track{height:8px}
 }
 /* Ce code s'active uniquement en mode clair */
 [data-theme="light"] .brevet-blanc-btn {
@@ -3008,12 +3200,13 @@ body[data-theme="paper"] .modal-card{
       </div>
     </div>
   </div>
-  <div class="xp-track-wrap">
+  <div class="xp-track-wrap clickable" id="xp-track-wrap" role="button" tabindex="0" aria-label="Afficher le détail de progression XP" onclick="openXpModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openXpModal();}">
     <div class="xp-track-head">
       <span id="player-xp-range">0 / 100 XP vers le niveau 2</span>
       <span id="player-multiplier">Bonus série x1.0</span>
     </div>
     <div class="xp-track"><div class="xp-track-fill" id="xp-track-fill"></div></div>
+    <div class="xp-track-hint" id="player-xp-hint">Clique sur la barre pour voir le prochain déblocage</div>
   </div>
 </div>
 
@@ -3447,6 +3640,49 @@ body[data-theme="paper"] .modal-card{
       <button class="btn-secondary" onclick="randomizeAvatarDraft('atelier')">Aléatoire</button>
       <button class="btn-primary" onclick="saveAvatarWorkshop()">Enregistrer l'avatar</button>
       <button class="btn-secondary" onclick="closeAvatarModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay xp-focus-overlay" id="xp-modal" onclick="if(event.target===this)closeXpModal()">
+  <div class="modal-card xp-modal-card">
+    <div class="modal-badge">✨ Progression XP</div>
+    <div class="xp-modal-hero">
+      <div>
+        <div class="modal-title" id="xp-modal-title">Niveau 1 → 2</div>
+        <div class="modal-subtitle" id="xp-modal-subtitle">Encore 100 XP pour atteindre le prochain niveau.</div>
+      </div>
+      <div class="xp-modal-level-pill" id="xp-modal-next-level-pill">Lvl 2</div>
+    </div>
+    <div class="xp-modal-track-shell">
+      <div class="xp-modal-track-head">
+        <span id="xp-modal-range">0 / 100 XP vers le niveau 2</span>
+        <span id="xp-modal-percent">0%</span>
+      </div>
+      <div class="xp-modal-track"><div class="xp-modal-track-fill" id="xp-modal-track-fill"></div></div>
+    </div>
+    <div class="xp-modal-stats">
+      <div class="xp-modal-stat">
+        <span class="xp-modal-stat-label">XP totale</span>
+        <span class="xp-modal-stat-value" id="xp-modal-total-xp">0 XP</span>
+      </div>
+      <div class="xp-modal-stat">
+        <span class="xp-modal-stat-label">XP restante</span>
+        <span class="xp-modal-stat-value" id="xp-modal-remaining-xp">0 XP</span>
+      </div>
+      <div class="xp-modal-stat">
+        <span class="xp-modal-stat-label">Bonus actif</span>
+        <span class="xp-modal-stat-value" id="xp-modal-bonus">x1.0</span>
+      </div>
+    </div>
+    <div class="xp-modal-section">
+      <div class="xp-modal-section-title" id="xp-modal-reward-heading">Récompenses du niveau 2</div>
+      <div class="xp-reward-list" id="xp-modal-rewards"></div>
+      <div class="xp-modal-empty" id="xp-modal-empty" hidden>Aucun déblocage spécial sur ce niveau.</div>
+      <div class="xp-modal-upcoming" id="xp-modal-upcoming" hidden></div>
+    </div>
+    <div class="atelier-actions">
+      <button class="btn-secondary" onclick="closeXpModal()">Fermer</button>
     </div>
   </div>
 </div>
@@ -5126,6 +5362,89 @@ function getThemeUnlockText(theme){
   return `Niveau ${theme.unlockLevel||1}`;
 }
 
+function escapeHtml(value){
+  return String(value??'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function getLevelRewardItems(level){
+  if(level<1 || level>XP_RULES.maxLevel) return [];
+  const rewards=[];
+  const globalTitle=GLOBAL_TITLES.find(item=>item.level===level);
+  if(globalTitle){
+    rewards.push({
+      icon:'🏅',
+      label:`Titre global : ${globalTitle.title}`,
+      desc:'Nouveau titre à équiper dans le sélecteur de titres.'
+    });
+  }
+  Object.entries(THEMES)
+    .filter(([,theme])=>theme.unlockLevel===level)
+    .forEach(([,theme])=>{
+      rewards.push({
+        icon:'🎨',
+        label:`Thème : ${theme.label}`,
+        desc:'Ajouté automatiquement au sélecteur de thèmes.'
+      });
+    });
+  Object.entries(SOUND_PACKS)
+    .filter(([,pack])=>pack.unlockLevel===level)
+    .forEach(([,pack])=>{
+      rewards.push({
+        icon:'🔊',
+        label:`Pack sonore : ${pack.label}`,
+        desc:pack.desc
+      });
+    });
+  if(level===MIN_RANKED_LEVEL){
+    rewards.push({
+      icon:'🏆',
+      label:'Mode classé',
+      desc:'Débloque les parties classées et la montée en RP.'
+    });
+  }
+  if(level>0 && level%10===0){
+    rewards.push({
+      icon:'🛡️',
+      label:'Bouclier de série',
+      desc:'+1 bouclier pour protéger automatiquement ta flamme.'
+    });
+  }
+  if(level===XP_RULES.maxLevel){
+    rewards.push({
+      icon:'👑',
+      label:'Niveau maximum',
+      desc:'Tu atteins le niveau maximum de BrevetPro.'
+    });
+  }
+  return rewards;
+}
+
+function getNextRewardMilestone(fromLevel){
+  for(let level=Math.max(1,fromLevel); level<=XP_RULES.maxLevel; level++){
+    const rewards=getLevelRewardItems(level);
+    if(rewards.length) return {level,rewards};
+  }
+  return null;
+}
+
+function renderXpRewardCards(rewards=[]){
+  if(!rewards.length) return '';
+  return rewards.map(reward=>`
+    <div class="xp-reward-card">
+      <div class="xp-reward-icon">${escapeHtml(reward.icon)}</div>
+      <div class="xp-reward-copy">
+        <strong>${escapeHtml(reward.label)}</strong>
+        <span>${escapeHtml(reward.desc)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 function isThemeUnlocked(themeKey,level=playerProfile?.levelInfo?.level||1,peakRp=rankedProfile?.peakRp||rankedProfile?.rp||0){
   const theme=THEMES[themeKey];
   if(!theme) return false;
@@ -5569,6 +5888,78 @@ function openVipScreen(){
   showScreen('screen-vip');
 }
 
+function renderXpModal(){
+  if(!playerProfile) return;
+  syncProfileComputedData();
+  const info=playerProfile.levelInfo;
+  const currentLevel=info.level;
+  const nextLevel=Math.min(currentLevel+1,XP_RULES.maxLevel);
+  const remainingXp=currentLevel>=XP_RULES.maxLevel ? 0 : Math.max(0,info.nextLevelXp-info.currentLevelXp);
+  const currentRewards=currentLevel>=XP_RULES.maxLevel ? getLevelRewardItems(currentLevel) : getLevelRewardItems(nextLevel);
+  const fallbackMilestone=currentLevel>=XP_RULES.maxLevel ? null : (!currentRewards.length ? getNextRewardMilestone(nextLevel+1) : null);
+  const setText=(id,value)=>{
+    const node=document.getElementById(id);
+    if(node) node.textContent=value;
+  };
+  setText('xp-modal-title',currentLevel>=XP_RULES.maxLevel?`Niveau ${currentLevel} atteint`:`Niveau ${currentLevel} → ${nextLevel}`);
+  setText(
+    'xp-modal-subtitle',
+    currentLevel>=XP_RULES.maxLevel
+      ? 'Tu as atteint le niveau maximum. Toutes les récompenses de niveau sont maintenant débloquées.'
+      : `Encore ${remainingXp} XP pour atteindre le niveau ${nextLevel}.`
+  );
+  setText('xp-modal-next-level-pill',currentLevel>=XP_RULES.maxLevel?`Lvl ${currentLevel}`:`Lvl ${nextLevel}`);
+  setText(
+    'xp-modal-range',
+    currentLevel>=XP_RULES.maxLevel
+      ? 'Niveau maximum atteint'
+      : `${info.currentLevelXp} / ${info.nextLevelXp} XP vers le niveau ${nextLevel}`
+  );
+  setText('xp-modal-percent',`${info.progressPct}%`);
+  setText('xp-modal-total-xp',`${playerProfile.totalXp} XP`);
+  setText('xp-modal-remaining-xp',currentLevel>=XP_RULES.maxLevel?'0 XP':`${remainingXp} XP`);
+  setText('xp-modal-bonus',`x${getStreakMultiplier().toFixed(1)}`);
+  setText(
+    'xp-modal-reward-heading',
+    currentLevel>=XP_RULES.maxLevel
+      ? 'Récompenses déjà obtenues au niveau maximum'
+      : `Récompenses du niveau ${nextLevel}`
+  );
+  const fill=document.getElementById('xp-modal-track-fill');
+  if(fill) fill.style.width=info.progressPct+'%';
+  const rewardsNode=document.getElementById('xp-modal-rewards');
+  if(rewardsNode) rewardsNode.innerHTML=renderXpRewardCards(currentRewards);
+  const emptyNode=document.getElementById('xp-modal-empty');
+  if(emptyNode){
+    const shouldShowEmpty=!currentRewards.length;
+    emptyNode.hidden=!shouldShowEmpty;
+    if(shouldShowEmpty){
+      emptyNode.textContent=currentLevel>=XP_RULES.maxLevel
+        ? 'Toutes les récompenses de niveau sont déjà récupérées.'
+        : `Le niveau ${nextLevel} n’ajoute pas de déblocage majeur.`;
+    }
+  }
+  const upcomingNode=document.getElementById('xp-modal-upcoming');
+  if(upcomingNode){
+    if(fallbackMilestone){
+      upcomingNode.hidden=false;
+      upcomingNode.innerHTML=`<strong>Palier marquant suivant : niveau ${fallbackMilestone.level}</strong><br>${renderXpRewardCards(fallbackMilestone.rewards)}`;
+    }else{
+      upcomingNode.hidden=true;
+      upcomingNode.innerHTML='';
+    }
+  }
+}
+
+function openXpModal(){
+  renderXpModal();
+  document.getElementById('xp-modal')?.classList.add('open');
+}
+
+function closeXpModal(){
+  document.getElementById('xp-modal')?.classList.remove('open');
+}
+
 function updateRankedUI(){
   if(!rankedProfile || !playerProfile) return;
   const rankInfo=getRankInfo(rankedProfile.rp);
@@ -5622,6 +6013,12 @@ function refreshPlayerUI(){
     : `${info.currentLevelXp} / ${info.nextLevelXp} XP vers le niveau ${info.level+1}`;
   document.getElementById('player-multiplier').textContent=`Bonus série x${getStreakMultiplier().toFixed(1)}`;
   document.getElementById('xp-track-fill').style.width=info.progressPct+'%';
+  const xpHint=document.getElementById('player-xp-hint');
+  if(xpHint){
+    xpHint.textContent=info.level>=XP_RULES.maxLevel
+      ? 'Clique sur la barre pour revoir tes récompenses de niveau'
+      : `Clique sur la barre pour voir ce que tu débloques au niveau ${Math.min(info.level+1,XP_RULES.maxLevel)}`;
+  }
   const nameNode=document.getElementById('player-name');
   if(nameNode){
     const fx=getPlayerNameFxClass(info.level);
@@ -5649,6 +6046,7 @@ function refreshPlayerUI(){
   renderSettingsPanel();
   updateRankedUI();
   updateVipUI();
+  renderXpModal();
 }
 
 const ADMIN_SECRET_CODE='admin123';
@@ -6724,6 +7122,9 @@ function toggleTheme(){
    RACCOURCIS CLAVIER
    ============================================================ */
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeXpModal();
+  }
   const screen=document.querySelector('.screen.active');if(!screen)return;
   if(screen.id==='screen-flash'){if(e.key==='ArrowRight')nextCard();if(e.key==='ArrowLeft')prevCard();if(e.key===' '){e.preventDefault();flipCard();}}
   const isBB=screen.id==='screen-bb-quiz';
