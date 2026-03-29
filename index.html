@@ -7161,16 +7161,29 @@ window.addEventListener('load',()=>{
         .then(reg => console.log('Service Worker enregistré !'))
         .catch(err => console.log('Erreur SW:', err));
     });
-  }
-</script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Application prête pour le mode hors-ligne !'))
-        .catch(err => console.error('Erreur de chargement de l\'app', err));
+<script>
+/* ── DÉTECTION DE MISE À JOUR AUTOMATIQUE ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('Service Worker actif');
+
+      // On surveille si un nouveau fichier sw.js est détecté
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // ALERTE : Une nouvelle version a été téléchargée !
+            if(confirm("Une nouvelle mise à jour de BrevetPro est prête ! Voulez-vous l'installer maintenant ?")) {
+              window.location.reload();
+            }
+          }
+        };
+      };
     });
-  }
+  });
+}
+</script>
 </script>
 </body>
 </html>
