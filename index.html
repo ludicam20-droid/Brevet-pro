@@ -34,6 +34,7 @@
       </div>
       <div class="player-meta-line">
         <span id="player-total-xp">0 XP cumulés</span>
+        <span class="meta-pill coin-pill" id="player-coins"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></span>
         <span id="player-streak"><span class="streak-flame idle">🔥</span> Série : 0 jour</span>
         <span class="meta-pill" id="player-shields">🛡 0 bouclier</span>
         <span class="meta-pill" id="player-sound-pack">🔊 Son : Classique</span>
@@ -59,6 +60,7 @@
       <button class="nav-btn" onclick="toggleThemePanel()">🎨 Thèmes</button>
       <button class="nav-btn" onclick="toggleTitlePanel()">🏅 Titres</button>
       <button class="nav-btn" onclick="showScreen('screen-daily-challenges')">🗓️ Défis</button>
+      <button class="nav-btn" onclick="showScreen('screen-shop')">🛍️ Boutique</button>
       <button class="nav-btn" onclick="toggleSettingsPanel()">⚙️ Paramètres</button>
       <button class="nav-btn" onclick="openVipScreen()">📊 Statistiques</button>
       <button class="nav-btn" onclick="showScreen('screen-flash-select')">⚡ Flashcards</button>
@@ -123,6 +125,18 @@
         </div>
         <div class="locked-note" id="vip-settings-note">Tableau de bord détaillé accessible à tout moment.</div>
       </div>
+      <div class="settings-card">
+        <div class="settings-card-title">Sauvegarde & Accessibilité</div>
+        <div class="settings-help">Exportez votre progression en JSON, restaurez-la sur un autre appareil et activez l'auto-évaluation pour les réponses ouvertes.</div>
+        <div class="sound-row">
+          <button class="btn-secondary" onclick="exportProgress()">Sauvegarder ma progression</button>
+          <button class="btn-secondary" onclick="triggerImportProgress()">Restaurer</button>
+        </div>
+        <div class="sound-row">
+          <button class="btn-secondary" id="open-self-eval-btn" onclick="toggleOpenSelfEvalMode()">Auto-évaluation : OFF</button>
+        </div>
+        <div class="locked-note" id="backup-settings-note">Un fichier JSON est téléchargé localement. Aucun compte n'est nécessaire.</div>
+      </div>
     </div>
   </div>
 
@@ -165,10 +179,12 @@
     <div class="card svt"        onclick="startSubject('svt')">      <span class="card-icon">🌿</span><h3>SVT</h3><p>Vivant, génétique, corps humain, biodiversité et planète…</p><span class="card-arrow">→</span></div>
     <div class="card physique"   onclick="startSubject('physique')"> <span class="card-icon">⚗️</span><h3>Physique-Chimie</h3><p>Vitesse, énergie, matière, ions, réactions chimiques…</p><span class="card-arrow">→</span></div>
     <div class="card technologie" onclick="startSubject('technologie')"><span class="card-icon">💻</span><h3>Technologie</h3><p>Algorithmique, programmation, matériaux, objets techniques et réseaux…</p><span class="card-arrow">→</span></div>
-    <div class="card titles"     onclick="toggleTitlePanel()"><span class="card-icon">🏅</span><h3>Mes Titres</h3><p>Choisissez le titre à afficher parmi ceux déjà débloqués.</p><span class="card-arrow">→</span></div>
     <div class="card vip"        onclick="openVipScreen()"><span class="card-icon">📊</span><h3>Statistiques</h3><p id="vip-card-subtitle">Regroupez ici progression, historique récent, temps de révision et performance globale.</p><span class="card-arrow">→</span></div>
     <div class="card flash"      onclick="showScreen('screen-flash-select')"><span class="card-icon">⚡</span><h3>Flashcards</h3><p>Révision rapide par cartes : dates, définitions, formules…</p><span class="card-arrow">→</span></div>
     <div class="card weak"       onclick="startWeakReview()"><span class="card-icon">🎯</span><h3>Réviser mes points faibles</h3><p id="weak-card-copy">Aucune question ratée enregistrée pour le moment.</p><span class="card-arrow">→</span></div>
+    <div class="card duel"       onclick="startDuelChallenge()"><span class="card-icon">🤖</span><h3>Duel contre l'IA</h3><p>Affronte BrevetAI sur une série mixte et gagne +100 XP si tu le bats.</p><span class="card-arrow">→</span></div>
+    <div class="card survival"   onclick="startSurvivalMode({label:'Mix total'})"><span class="card-icon">🔥</span><h3>Lancer le Mode Survie</h3><p>30 secondes, chrono géant, combo et pression continue jusqu'au Game Over.</p><span class="card-arrow">→</span></div>
+    <div class="card shop"       onclick="showScreen('screen-shop')"><span class="card-icon">🛍️</span><h3>Boutique</h3><p>Dépense tes BrevetCoins pour des objets, boosts XP et thèmes premium.</p><span class="card-arrow">→</span></div>
   </div>
 </div>
 
@@ -206,12 +222,15 @@
     <button class="toggle-btn active" id="btn-correction" onclick="toggleOption('correction',this)">✅ Correction immédiate</button>
     <button class="toggle-btn" id="btn-mix" onclick="toggleOption('mix',this)">🔀 Types mixtes</button>
     <button class="toggle-btn" id="btn-survival" onclick="toggleOption('survival',this)">🔥 Mode Survie XP</button>
+    <button class="toggle-btn" id="btn-duel" onclick="toggleOption('duel',this)">🤖 Duel contre l'IA</button>
   </div>
   <button class="btn-primary" onclick="startQuiz()">🚀 Lancer le quiz</button>
 </div>
 
 <!-- ======== QUIZ ======== -->
 <div id="screen-quiz" class="screen">
+  <div class="coin-burst-layer" id="coin-burst-layer"></div>
+  <div class="combo-fx-layer" id="combo-fx-layer"></div>
   <div class="quiz-header">
     <div class="quiz-meta">
       <span class="quiz-tag" id="q-subject-tag">Matière</span>
@@ -221,10 +240,44 @@
     <div class="timer-display" id="timer-display" style="display:none">⏱️ <span id="timer-val">30</span>s</div>
     <button class="btn-secondary" onclick="confirmQuit()" style="padding:7px 12px;font-size:.78rem">✕ Quitter</button>
   </div>
+  <div class="duel-hud" id="duel-hud" hidden>
+    <div class="duel-hud-head">
+      <div class="duel-bot-card">
+        <div class="duel-bot-avatar" id="duel-bot-avatar">🤖</div>
+        <div>
+          <div class="duel-bot-name" id="duel-bot-name">BrevetAI</div>
+          <div class="duel-bot-meta" id="duel-bot-meta">Niv. 1 · Mode découverte · Lent</div>
+        </div>
+      </div>
+      <div class="duel-leader tie" id="duel-leader">Duel serré</div>
+    </div>
+    <div class="duel-track-list">
+      <div class="duel-track-row">
+        <span class="duel-track-label player">Joueur</span>
+        <div class="duel-track player"><div class="duel-track-fill player" id="duel-player-fill" style="width:0%"></div></div>
+        <span class="duel-track-value" id="duel-player-value">0%</span>
+      </div>
+      <div class="duel-track-row">
+        <span class="duel-track-label bot">BrevetAI</span>
+        <div class="duel-track bot"><div class="duel-track-fill bot" id="duel-bot-fill" style="width:0%"></div></div>
+        <span class="duel-track-value" id="duel-bot-value">0%</span>
+      </div>
+    </div>
+    <div class="duel-alert" id="duel-alert">BrevetAI se prépare...</div>
+  </div>
+  <div class="survival-hud" id="survival-hud" hidden>
+    <div class="survival-timer-val" id="survival-timer-val">30.0s</div>
+    <div class="survival-meta">
+      <span id="survival-record">Record : 0s</span>
+      <span id="survival-hint">+5 s par bonne réponse · -8 s par erreur</span>
+    </div>
+  </div>
   <div class="progress-wrap">
     <div class="progress-info"><span>Question <strong id="q-current">1</strong> / <strong id="q-total">15</strong></span><span id="q-score-live">Score : 0</span></div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   </div>
+  <div class="combo-hud" id="combo-hud" hidden></div>
+  <div class="quiz-utility-bar" id="quiz-utility-bar"></div>
   <div class="question-card" id="question-card"></div>
   <div id="feedback-container"></div>
   <div class="next-btn-wrap" id="next-btn-wrap" style="display:none"><button class="btn-primary" id="next-btn" onclick="nextQuestion()">Question suivante →</button></div>
@@ -412,6 +465,17 @@
   </div>
 </div>
 
+<div id="screen-shop" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">🛍️ Boutique BrevetPro</div>
+  <div class="section-subtitle">Achète des objets utiles avec tes BrevetCoins et débloque des thèmes premium. Le thème Antique se débloque automatiquement avec une série de 7 jours.</div>
+  <div class="shop-balance" id="shop-balance"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
+  <div class="shop-grid" id="shop-grid"></div>
+</div>
+
 <div id="screen-vip" class="screen">
   <header class="site-header">
     <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
@@ -443,6 +507,8 @@
         <div class="vip-line"><span>Rang classé</span><strong id="vip-ranked-name">Bronze I</strong></div>
         <div class="vip-line"><span>Parties terminées</span><strong id="vip-completed-runs">0</strong></div>
         <div class="vip-line"><span>Thème actif</span><strong id="vip-theme-name">Classique</strong></div>
+        <div class="vip-line"><span>Victoires contre l'IA</span><strong id="vip-duel-wins">0</strong></div>
+        <div class="vip-line"><span>Badge robot</span><strong id="vip-robot-badge">Verrouillé</strong></div>
       </div>
     </div>
     <div class="stats-history-wrap">
@@ -564,6 +630,10 @@
         <input class="admin-input" id="admin-shields-input" type="number" min="0">
       </label>
       <label>
+        <span class="field-label">BrevetCoins</span>
+        <input class="admin-input" id="admin-coins-input" type="number" min="0">
+      </label>
+      <label>
         <span class="field-label">Série</span>
         <input class="admin-input" id="admin-streak-input" type="number" min="0">
       </label>
@@ -583,6 +653,7 @@
   </div>
 </div>
 
+<input type="file" id="progress-import-input" accept="application/json,.json" hidden>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="app.js" defer></script>

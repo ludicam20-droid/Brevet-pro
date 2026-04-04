@@ -274,12 +274,20 @@ const STORAGE_KEYS={
   weakQuestions:'brevet_weak_questions_v1',
   dailyChallenges:'brevet_daily_challenges_v1'
 };
+const BADGES={
+  'robot-slayer':{label:'Tueur de Robots',icon:'🤖'},
+  'night-owl':{label:'Oiseau de nuit',icon:'🦉'},
+  'sniper':{label:'Sniper',icon:'🎯'},
+  'invincible':{label:'Invincible',icon:'🛡️'}
+};
+const DUEL_BOT_NAME='BrevetAI';
 const XP_RULES={
   baseLevelXp:260,
   growth:1.10,
   maxLevel:50,
   question:{mcq:6,tf:6,open:10,date:10},
   quizBonus:24,
+  duelVictoryBonus:100,
   brevetBlancBonus:120
 };
 const DIFFICULTY_TARGETS={facile:8,normal:12,difficile:16};
@@ -368,7 +376,26 @@ const THEMES={
   'ranked-silver':{label:'Argent',unlockRp:320,preview:'linear-gradient(135deg,#223041,#536980,#a4b6c9)'},
   'ranked-gold':{label:'Or',unlockRp:560,preview:'linear-gradient(135deg,#322108,#8f6216,#d1a22f)'},
   'ranked-diamond':{label:'Diamant',unlockRp:1080,preview:'linear-gradient(135deg,#c8f1ff,#eefaff,#9fe1ff)'},
-  'elite-cosmos':{label:'Élite',unlockRp:1400,preview:'linear-gradient(135deg,#130824,#261045,#43186c)'}
+  'elite-cosmos':{label:'Élite',unlockRp:1400,preview:'linear-gradient(135deg,#130824,#261045,#43186c)'},
+  neon:{label:'Néon',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#061625,#00e7ff,#39ff88)'},
+  'alerte-rouge':{label:'Alerte Rouge',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#22070a,#ff4040,#ffb347)'},
+  'nature-vivante':{label:'Nature vivante',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#204a2d,#7bb15e,#d8cfad)'},
+  glace:{label:'Glace',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#dff5ff,#9fdcff,#ffffff)'},
+  electricite:{label:'Électricité',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#0b1a54,#ffd84f,#5ee6ff)'},
+  'ciel-nuages':{label:'Ciel / Nuages',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#8ad0ff,#eef9ff,#ffffff)'},
+  antique:{label:'Antique',unlockStreak:7,preview:'linear-gradient(135deg,#e8dfcf,#b79b71,#f1d37f)'}
+};
+const SHOP_ITEMS={
+  shield:{icon:'🛡️',label:'Le Bouclier',price:200,desc:'Protège la série si tu rates un jour.',action:'shield'},
+  hourglass:{icon:'⏳',label:'Le Sablier',price:150,desc:'Ajoute +15 s en mode Survie.',action:'hourglass'},
+  eraser:{icon:'🌓',label:'Bonus 50/50',price:100,desc:'Retire 2 mauvaises réponses sur un QCM.',action:'eraser'},
+  xpboost:{icon:'⚡',label:'Boost XP x2',price:300,desc:'Double l XP sur les 3 prochains quiz.',action:'xpboost'},
+  themeNeon:{icon:'💡',label:'Thème Néon',price:260,desc:'Lueur néon vivante et contours lumineux sur toute l interface.',action:'theme',themeKey:'neon'},
+  themeAlert:{icon:'🚨',label:'Thème Alerte Rouge',price:260,desc:'Ambiance alarme rouge avec pulsation sombre et bords d urgence.',action:'theme',themeKey:'alerte-rouge'},
+  themeNature:{icon:'🍃',label:'Thème Nature vivante',price:280,desc:'Forêt zen en vert et beige avec feuilles qui tombent.',action:'theme',themeKey:'nature-vivante'},
+  themeGlace:{icon:'❄️',label:'Thème Glace',price:280,desc:'Univers froid et propre avec givre et neige légère.',action:'theme',themeKey:'glace'},
+  themeElectric:{icon:'⚡',label:'Thème Électricité',price:320,desc:'Énergie brute, éclairs aléatoires et arcs électriques sur les boutons.',action:'theme',themeKey:'electricite'},
+  themeSky:{icon:'☁️',label:'Thème Ciel / Nuages',price:280,desc:'Ambiance légère avec nuages qui défilent et éléments flottants.',action:'theme',themeKey:'ciel-nuages'}
 };
 const MINIAVS_WORKSHOP={
   backgrounds:[
@@ -986,7 +1013,7 @@ function getCorrectAnswerText(q){
   if(q.type==='mcq') return q.opts?.[q.ans]||'';
   if(q.type==='tf') return q.ans?'Vrai':'Faux';
   if(q.type==='date') return (q.dates||[]).map((date,idx)=>`${date} → ${q.events?.[idx]||''}`).join(' · ');
-  return q.correctAnswer||'';
+  return q.correctAnswer||q.answer||getOpenAnswerKeywords(q).slice(0,3).join(', ');
 }
 
 function buildPedagogicalReminder(subject,chapter,q){
@@ -1025,6 +1052,10 @@ function normalizeQuestionBank(){
   Object.entries(DB).forEach(([subject,chapters])=>{
     Object.entries(chapters).forEach(([chapter,questions])=>{
       questions.forEach(q=>{
+        if(!q.q && q.question) q.q=q.question;
+        if(q.type==='input') q.type='open';
+        if(!q.correctAnswer && q.answer) q.correctAnswer=q.answer;
+        if(!Array.isArray(q.key) && Array.isArray(q.keywords)) q.key=[...q.keywords];
         if(!q.correctAnswer) q.correctAnswer=getCorrectAnswerText(q);
         const baseExplanation=q.explain||q.explanation||`Cette notion appartient au chapitre ${chapter}.`;
         const reminder=buildPedagogicalReminder(subject,chapter,q);
@@ -1142,10 +1173,76 @@ function normalizeAnswerText(text=''){
     .trim();
 }
 
+function getLevenshteinDistance(s1='',s2=''){
+  const a=String(s1||'');
+  const b=String(s2||'');
+  if(a===b) return 0;
+  if(!a.length) return b.length;
+  if(!b.length) return a.length;
+  const rows=Array.from({length:b.length+1},(_,index)=>index);
+  for(let i=1;i<=a.length;i++){
+    let previous=i-1;
+    rows[0]=i;
+    for(let j=1;j<=b.length;j++){
+      const current=rows[j];
+      const cost=a[i-1]===b[j-1]?0:1;
+      rows[j]=Math.min(
+        rows[j]+1,
+        rows[j-1]+1,
+        previous+cost
+      );
+      previous=current;
+    }
+  }
+  return rows[b.length];
+}
+
+function getCloseEnoughThreshold(str=''){
+  const compact=normalizeAnswerText(str).replace(/\s+/g,'');
+  const len=compact.length;
+  if(len<=2) return 0;
+  if(len<=6) return 1;
+  return 2;
+}
+
+function isCloseEnough(str1='',str2=''){
+  const normalized1=normalizeAnswerText(str1);
+  const normalized2=normalizeAnswerText(str2);
+  if(!normalized1 || !normalized2) return false;
+  const threshold=Math.min(getCloseEnoughThreshold(normalized1),getCloseEnoughThreshold(normalized2));
+  return getLevenshteinDistance(normalized1,normalized2)<=threshold;
+}
+
+function tokenizeNormalizedAnswer(text=''){
+  return normalizeAnswerText(text)
+    .split(' ')
+    .map(part=>part.trim())
+    .filter(part=>part.length>=2);
+}
+
+function matchKeywordAgainstAnswer(keyword,userAnswer){
+  const keywordParts=tokenizeNormalizedAnswer(keyword);
+  const answerTokens=tokenizeNormalizedAnswer(userAnswer);
+  if(!keywordParts.length || !answerTokens.length){
+    return {ok:false,usedTolerance:false};
+  }
+  let usedTolerance=false;
+  const ok=keywordParts.every(part=>{
+    if(answerTokens.includes(part)) return true;
+    const fuzzyMatch=answerTokens.some(token=>isCloseEnough(token,part));
+    if(fuzzyMatch) usedTolerance=true;
+    return fuzzyMatch;
+  });
+  return {ok,usedTolerance};
+}
+
 function getOpenAnswerKeywords(q){
-  const source=(Array.isArray(q?.key) && q.key.length)
-    ? q.key
-    : extractKeywords(`${q?.correctAnswer||''} ${q?.explain||q?.explanation||''}`);
+  const explicit=[
+    ...(Array.isArray(q?.key)?q.key:[]),
+    ...(Array.isArray(q?.keywords)?q.keywords:[])
+  ];
+  const derived=extractKeywords(`${q?.correctAnswer||q?.answer||''} ${q?.explain||q?.explanation||''}`);
+  const source=explicit.length?explicit.concat(derived):derived;
   return Array.from(new Set(
     source
       .map(keyword=>normalizeAnswerText(keyword))
@@ -1162,11 +1259,29 @@ function getOpenAnswerRequirement(keywords){
 function isOpenAnswerValid(q,userAnswer){
   const normalizedAnswer=normalizeAnswerText(userAnswer);
   const keywords=getOpenAnswerKeywords(q);
-  const hits=keywords.filter(keyword=>keyword.split(' ').every(part=>normalizedAnswer.includes(part)));
+  if(!normalizedAnswer){
+    return {ok:false,hits:[],keywords,usedTolerance:false,viaKeywords:keywords.length>0};
+  }
+  const hits=keywords
+    .map(keyword=>({keyword,...matchKeywordAgainstAnswer(keyword,normalizedAnswer)}))
+    .filter(match=>match.ok);
+  if(keywords.length){
+    return {
+      ok:hits.length>=getOpenAnswerRequirement(keywords),
+      hits:hits.map(match=>match.keyword),
+      keywords,
+      usedTolerance:hits.some(match=>match.usedTolerance),
+      viaKeywords:true
+    };
+  }
+  const expected=normalizeAnswerText(q?.correctAnswer||q?.answer||'');
+  const closeEnough=expected?isCloseEnough(normalizedAnswer,expected):false;
   return {
-    ok:hits.length>=getOpenAnswerRequirement(keywords),
-    hits,
-    keywords
+    ok:closeEnough,
+    hits:[],
+    keywords,
+    usedTolerance:closeEnough && normalizedAnswer!==expected,
+    viaKeywords:false
   };
 }
 
@@ -1495,12 +1610,66 @@ REVISION_SHEETS=Object.fromEntries(
   ])
 );
 
+function createDefaultDuelState(){
+  return {
+    active:false,
+    result:null,
+    pendingResult:false,
+    finalizeTimer:null,
+    animationFrame:null,
+    botName:DUEL_BOT_NAME,
+    botAvatar:'🤖',
+    botDifficultyLabel:'Mode découverte',
+    botPaceLabel:'Lent',
+    botAnswers:0,
+    botScore:0,
+    botQuestionStart:0,
+    botQuestionDelayMs:0,
+    botWillAnswerCorrect:true,
+    botFinishedAt:0,
+    playerFinishedAt:0,
+    playerProgress:0,
+    botProgress:0,
+    lastBeepAt:0,
+    statusText:`${DUEL_BOT_NAME} se prépare...`,
+    lead:'tie'
+  };
+}
+
+function createDefaultComboState(){
+  return {
+    streak:0,
+    multiplier:1
+  };
+}
+
+function createDefaultSurvivalState(){
+  return {
+    active:false,
+    timerFrame:null,
+    timeLeft:30,
+    lastTick:0,
+    questionsAnswered:0,
+    bestSessionTime:0,
+    gameOver:false,
+    gameOverReason:'',
+    selectedPoolLabel:'Mix total'
+  };
+}
+
+function createDefaultQuestionAidState(){
+  return {
+    gommeUsed:false,
+    hiddenWrongOptions:[]
+  };
+}
+
 /* ============================================================
    ÉTAT
    ============================================================ */
 let state = {
   subject:'histoire', chapters:[], difficulty:'normal',
-  options:{timer:false,correction:true,mix:false,survival:false},
+  options:{timer:false,correction:true,mix:false,survival:false,duel:false},
   questions:[], currentIdx:0, score:0, errors:[],
   startTime:null, timerInterval:null, timerLeft:30, answered:false,
   matchState:{selected:null,pairs:{},done:0,total:0},
@@ -1510,7 +1679,13 @@ let state = {
   unlockedThemesThisRun:[],
   mode:'standard',
   rankedTier:null,
-  rankedRpDelta:0
+  rankedRpDelta:0,
+  duel:createDefaultDuelState(),
+  combo:createDefaultComboState(),
+  survival:createDefaultSurvivalState(),
+  questionAid:createDefaultQuestionAidState(),
+  pendingSelfEval:null,
+  runXpBoostActive:false
 };
 let flashState={cards:[],idx:0,flipped:false};
 let playerProfile=null;
@@ -1520,6 +1695,7 @@ let weakQuestionIds=[];
 let dailyChallengeState=null;
 let dailyChallengeRewardLock=false;
 let currentSheetSubject='histoire';
+let speechState={active:false,isBB:false,text:''};
 
 /* ============================================================
    UTILITAIRES
@@ -1531,14 +1707,17 @@ function showScreen(id){
     openVipScreen();
     return;
   }
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  stopSpeech();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','enter'));
   const screen=document.getElementById(id);
   if(!screen) return;
   screen.classList.add('active');
+  requestAnimationFrame(()=>screen.classList.add('enter'));
   window.scrollTo(0,0);
   if(id==='screen-flash-select') updateFlashCounts();
   if(id==='screen-ranked-hub') updateRankedUI();
   if(id==='screen-daily-challenges') renderDailyChallenges();
+  if(id==='screen-shop') renderShop();
   if(id==='screen-vip'){
     updateVipUI();
     renderHistory('stats-history-list');
@@ -1560,7 +1739,8 @@ const TOAST_TYPES={
   locked:{icon:'🔒',label:'Verrouillé'},
   delete:{icon:'🗑️',label:'Action'},
   shuffle:{icon:'🔀',label:'Flashcards'},
-  streak:{icon:'🔥',label:'Série'}
+  streak:{icon:'🔥',label:'Série'},
+  badge:{icon:'🏅',label:'Badge'}
 };
 
 const toastState={
@@ -1620,6 +1800,876 @@ function formatMMSS(s){
   return `${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`;
 }
 
+function formatTenths(seconds=0){
+  const safe=Math.max(0,seconds||0);
+  return safe>=10 ? `${safe.toFixed(0)}s` : `${safe.toFixed(1)}s`;
+}
+
+function normalizeInventory(raw={}){
+  return {
+    shield:Math.max(0,Math.floor(raw.shield||0)),
+    hourglass:Math.max(0,Math.floor(raw.hourglass||0)),
+    eraser:Math.max(0,Math.floor(raw.eraser||0)),
+    xpBoostRuns:Math.max(0,Math.floor(raw.xpBoostRuns||0))
+  };
+}
+
+function isSurvivalRun(){
+  return state.mode==='survival';
+}
+
+function getComboMultiplierForStreak(streak=0){
+  if(streak>=10) return 5;
+  if(streak>=6) return 3;
+  if(streak>=3) return 2;
+  return 1;
+}
+
+function isDuelRun(){
+  return state.mode==='duel';
+}
+
+function getDuelBotProfile(level=1){
+  const duelLevel=Math.max(1,Math.min(15,Math.floor(level||1)));
+  const profiles=[
+    {max:2,avatar:'🤖',difficulty:'Mode découverte',pace:'Lent'},
+    {max:5,avatar:'🦾',difficulty:'Mode révision',pace:'Cadencé'},
+    {max:8,avatar:'⚙️',difficulty:'Mode sérieux',pace:'Rapide'},
+    {max:11,avatar:'🚀',difficulty:'Mode turbo',pace:'Très rapide'},
+    {max:14,avatar:'🔥',difficulty:'Mode agressif',pace:'Éclair'},
+    {max:15,avatar:'👾',difficulty:'Mode ultime',pace:'Extrême'}
+  ];
+  const profile=profiles.find(entry=>duelLevel<=entry.max)||profiles[profiles.length-1];
+  return {...profile,duelLevel};
+}
+
+function getDuelBotQuestionDelayMs(level=1){
+  const duelLevel=Math.max(1,Math.min(15,Math.floor(level||1)));
+  const ratio=(duelLevel-1)/14;
+  const baseDelay=7200-(ratio*5200);
+  const jitter=1100-(ratio*450);
+  return Math.max(1200,Math.round(baseDelay+(((Math.random()*2)-1)*jitter)));
+}
+
+function clearDuelTimers(){
+  if(state.duel.animationFrame){
+    cancelAnimationFrame(state.duel.animationFrame);
+    state.duel.animationFrame=null;
+  }
+  if(state.duel.finalizeTimer){
+    clearTimeout(state.duel.finalizeTimer);
+    state.duel.finalizeTimer=null;
+  }
+}
+
+function setDuelHudVisible(visible){
+  const hud=document.getElementById('duel-hud');
+  if(!hud) return;
+  hud.hidden=!visible;
+  hud.classList.toggle('active',visible);
+}
+
+function resetDuelState(){
+  clearDuelTimers();
+  state.duel=createDefaultDuelState();
+  setDuelHudVisible(false);
+}
+
+function pauseDuelEngine(){
+  clearDuelTimers();
+  state.duel.active=false;
+}
+
+function getPlayerDuelProgress(){
+  const total=state.questions.length||1;
+  return Math.min(1,(state.currentIdx+(state.answered?1:0))/total);
+}
+
+function getCurrentBotFraction(now=performance.now()){
+  if(!state.duel.active || state.duel.botFinishedAt || !state.duel.botQuestionDelayMs) return 0;
+  return Math.min(1,Math.max(0,(now-state.duel.botQuestionStart)/state.duel.botQuestionDelayMs));
+}
+
+function getRobotBadgeLabel(){
+  return playerProfile?.badges?.includes('robot-slayer')
+    ? `${BADGES['robot-slayer'].icon} ${BADGES['robot-slayer'].label}`
+    : 'Verrouillé';
+}
+
+function unlockBadge(key){
+  if(!playerProfile || !BADGES[key]) return false;
+  const owned=new Set(playerProfile.badges||[]);
+  if(owned.has(key)) return false;
+  playerProfile.badges=[...(playerProfile.badges||[]),key];
+  showToast(`Badge débloqué : ${BADGES[key].label}`,'badge');
+  savePlayerProfile();
+  return true;
+}
+
+function renderCoinAmount(amount,label='BrevetCoins'){
+  const suffix=label?` ${label}`:'';
+  return `<span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> ${amount}${suffix}</span>`;
+}
+
+function spawnCoinBurst(amount=0){
+  const layer=document.getElementById('coin-burst-layer');
+  if(!layer || amount<=0) return;
+  const count=Math.min(8,Math.max(3,Math.round(amount/20)));
+  for(let index=0; index<count; index++){
+    const coin=document.createElement('span');
+    coin.className='coin-burst';
+    coin.innerHTML='<img src="brevetcoin.png" alt="BrevetCoin">';
+    coin.style.left=`${46+((Math.random()*18)-9)}%`;
+    coin.style.setProperty('--coin-x',`${(Math.random()*140)-70}px`);
+    coin.style.setProperty('--coin-y',`${-60-(Math.random()*90)}px`);
+    coin.style.animationDelay=`${index*0.03}s`;
+    layer.appendChild(coin);
+    setTimeout(()=>coin.remove(),1200);
+  }
+}
+
+function awardCoins(amount,reason='',silent=false){
+  if(!playerProfile || !amount) return 0;
+  const actual=Math.max(0,Math.floor(amount));
+  if(!actual) return 0;
+  playerProfile.coins=Math.max(0,(playerProfile.coins||0)+actual);
+  playerProfile.stats.coinsEarned=(playerProfile.stats.coinsEarned||0)+actual;
+  savePlayerProfile();
+  refreshPlayerUI();
+  spawnCoinBurst(actual);
+  if(!silent){
+    showToast(`+${actual} BrevetCoins${reason?` · ${reason}`:''}`,'success');
+  }
+  return actual;
+}
+
+function spendCoins(amount){
+  if(!playerProfile) return false;
+  const cost=Math.max(0,Math.floor(amount||0));
+  if((playerProfile.coins||0)<cost){
+    showToast('Fonds insuffisants','warning');
+    return false;
+  }
+  playerProfile.coins=Math.max(0,(playerProfile.coins||0)-cost);
+  savePlayerProfile();
+  refreshPlayerUI();
+  return true;
+}
+
+function updateDuelHud(now=performance.now()){
+  const hud=document.getElementById('duel-hud');
+  if(!hud) return;
+  const total=state.questions.length||1;
+  const playerProgress=getPlayerDuelProgress();
+  const botProgress=Math.min(1,(state.duel.botAnswers+getCurrentBotFraction(now))/total);
+  state.duel.playerProgress=playerProgress;
+  state.duel.botProgress=botProgress;
+
+  const playerFill=document.getElementById('duel-player-fill');
+  const botFill=document.getElementById('duel-bot-fill');
+  const playerValue=document.getElementById('duel-player-value');
+  const botValue=document.getElementById('duel-bot-value');
+  const botAvatar=document.getElementById('duel-bot-avatar');
+  const botName=document.getElementById('duel-bot-name');
+  const botMeta=document.getElementById('duel-bot-meta');
+  const leader=document.getElementById('duel-leader');
+  const alert=document.getElementById('duel-alert');
+
+  if(playerFill) playerFill.style.width=`${Math.round(playerProgress*100)}%`;
+  if(botFill) botFill.style.width=`${Math.round(botProgress*100)}%`;
+  if(playerValue) playerValue.textContent=`${Math.round(playerProgress*100)}%`;
+  if(botValue) botValue.textContent=`${Math.round(botProgress*100)}%`;
+  if(botAvatar) botAvatar.textContent=state.duel.botAvatar;
+  if(botName) botName.textContent=state.duel.botName;
+  if(botMeta) botMeta.textContent=`Niv. ${getDuelBotProfile(playerProfile?.levelInfo?.level||1).duelLevel} · ${state.duel.botDifficultyLabel} · ${state.duel.botPaceLabel}`;
+
+  let lead='tie';
+  let leaderText='Duel serré';
+  if(state.duel.playerFinishedAt && !state.duel.botFinishedAt){
+    lead='player';
+    leaderText='Tu as terminé en premier';
+  }else if(state.duel.botFinishedAt && !state.duel.playerFinishedAt){
+    lead='bot';
+    leaderText=`${DUEL_BOT_NAME} a terminé`;
+  }else if(playerProgress>botProgress+0.025){
+    lead='player';
+    leaderText='Tu es en tête';
+  }else if(botProgress>playerProgress+0.025){
+    lead='bot';
+    leaderText=`${DUEL_BOT_NAME} mène`;
+  }
+  state.duel.lead=lead;
+  if(leader){
+    leader.textContent=leaderText;
+    leader.className=`duel-leader ${lead}`;
+  }
+
+  let alertText=state.duel.statusText||`${DUEL_BOT_NAME} se prépare...`;
+  if(state.duel.botFinishedAt){
+    alertText=`${DUEL_BOT_NAME} a bouclé sa série.`;
+  }else if(!state.duel.botWillAnswerCorrect){
+    alertText=`${DUEL_BOT_NAME} hésite... profite de sa faute possible.`;
+  }else if(lead==='bot' && botProgress>=0.75){
+    alertText='Alerte : le bot met la pression.';
+  }else if(lead==='player'){
+    alertText='Garde ce rythme pour rester devant.';
+  }
+  if(alert) alert.textContent=alertText;
+}
+
+function playDuelWarningBeep(remainingRatio=0.2){
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+  const pack=getSoundPack(playerProfile?.soundPack);
+  const now=ctx.currentTime;
+  const base=remainingRatio<0.1?1380:remainingRatio<0.18?1240:1100;
+  const volume=Math.max(0.015,(pack.volume||0.05)*0.32);
+  playTone(ctx,now,base,0.045,'square',volume);
+  playTone(ctx,now+0.085,base*1.08,0.045,'square',volume);
+}
+
+function maybePlayDuelWarning(now=performance.now()){
+  if(!isDuelRun() || !state.duel.active || state.duel.playerFinishedAt) return;
+  const remainingRatio=1-state.duel.botProgress;
+  const botAhead=state.duel.botProgress>state.duel.playerProgress+0.05;
+  if(!botAhead || remainingRatio>0.35) return;
+  const cooldown=remainingRatio<0.08?220:remainingRatio<0.15?360:remainingRatio<0.24?520:760;
+  if(now-state.duel.lastBeepAt<cooldown) return;
+  playDuelWarningBeep(remainingRatio);
+  state.duel.lastBeepAt=now;
+}
+
+function scheduleNextBotQuestion(now=performance.now()){
+  if(!isDuelRun()) return;
+  if(state.duel.botAnswers>=state.questions.length){
+    state.duel.botFinishedAt=state.duel.botFinishedAt||Date.now();
+    return;
+  }
+  state.duel.botQuestionStart=now;
+  state.duel.botWillAnswerCorrect=Math.random()>=0.10;
+  state.duel.botQuestionDelayMs=getDuelBotQuestionDelayMs(playerProfile?.levelInfo?.level||1)+(state.duel.botWillAnswerCorrect?0:2000);
+  state.duel.statusText=state.duel.botWillAnswerCorrect
+    ? `${DUEL_BOT_NAME} répond...`
+    : `${DUEL_BOT_NAME} risque une erreur et ralentit.`;
+}
+
+function syncDuelBotProgress(now=performance.now()){
+  if(!isDuelRun() || state.duel.botFinishedAt || !state.questions.length) return;
+  while(!state.duel.botFinishedAt && state.duel.botQuestionDelayMs && now-state.duel.botQuestionStart>=state.duel.botQuestionDelayMs){
+    state.duel.botAnswers=Math.min(state.questions.length,state.duel.botAnswers+1);
+    if(state.duel.botWillAnswerCorrect) state.duel.botScore++;
+    if(state.duel.botAnswers>=state.questions.length){
+      state.duel.botFinishedAt=Date.now();
+      state.duel.statusText=`${DUEL_BOT_NAME} a terminé sa série.`;
+    }else{
+      scheduleNextBotQuestion(now);
+    }
+  }
+}
+
+function disableCurrentQuestionInputs(){
+  document.querySelectorAll('#question-card button, #question-card textarea').forEach(node=>{
+    node.disabled=true;
+  });
+}
+
+function getLockedDuelOutcome(){
+  if(!isDuelRun()) return null;
+  const total=state.questions.length||1;
+  const remainingForBot=Math.max(0,total-state.duel.botAnswers);
+  if(state.duel.botFinishedAt && !state.duel.playerFinishedAt) return 'bot';
+  if(state.duel.playerFinishedAt && !state.duel.botFinishedAt){
+    if(state.score<=state.duel.botScore) return 'bot';
+    if(state.score>state.duel.botScore+remainingForBot) return 'player';
+    return null;
+  }
+  if(state.duel.playerFinishedAt && state.duel.botFinishedAt){
+    return state.duel.playerFinishedAt<state.duel.botFinishedAt && state.score>state.duel.botScore ? 'player' : 'bot';
+  }
+  return null;
+}
+
+function finalizeDuelOutcome(result){
+  if(!isDuelRun() || state.duel.pendingResult) return true;
+  state.duel.pendingResult=true;
+  state.duel.result=result;
+  pauseDuelEngine();
+  updateDuelHud(performance.now());
+  setDuelHudVisible(false);
+  if(result==='bot'){
+    state.duel.statusText='Le Bot a été plus rapide... Entraîne-toi encore !';
+    stopTimer();
+    state.answered=true;
+    disableCurrentQuestionInputs();
+    showFeedback(false,`🤖 ${DUEL_BOT_NAME} a pris l’avantage !`,{
+      expected:'',
+      explanation:`${DUEL_BOT_NAME} a été plus rapide... Entraîne-toi encore !`
+    },false);
+  }
+  state.duel.finalizeTimer=setTimeout(()=>showResults(false),result==='bot'?900:450);
+  return true;
+}
+
+function handlePlayerAnswerForDuel(ok){
+  if(!isDuelRun() || !state.duel.active || state.duel.pendingResult) return false;
+  if(!ok){
+    const immediateAdvance=Math.min(1500,Math.max(700,state.duel.botQuestionDelayMs*0.24));
+    state.duel.botQuestionStart-=immediateAdvance;
+    state.duel.statusText=`Mauvaise réponse : ${DUEL_BOT_NAME} gagne du terrain.`;
+  }else{
+    state.duel.statusText='Bonne réponse : tu tiens la cadence.';
+  }
+  const now=performance.now();
+  syncDuelBotProgress(now);
+  updateDuelHud(now);
+  const isLastQuestion=state.currentIdx>=state.questions.length-1;
+  if(isLastQuestion){
+    state.duel.playerFinishedAt=Date.now();
+    state.duel.statusText='Tu as terminé. Verdict du duel en cours...';
+    updateDuelHud(now);
+    const lockedOutcome=getLockedDuelOutcome();
+    if(lockedOutcome) return finalizeDuelOutcome(lockedOutcome);
+    const wrap=document.getElementById('next-btn-wrap');
+    const btn=document.getElementById('next-btn');
+    if(wrap) wrap.style.display='flex';
+    if(btn){
+      btn.textContent=`🤖 ${DUEL_BOT_NAME} termine...`;
+      btn.disabled=true;
+    }
+    return true;
+  }
+  const lockedOutcome=getLockedDuelOutcome();
+  if(lockedOutcome) return finalizeDuelOutcome(lockedOutcome);
+  return false;
+}
+
+function tickDuelBot(now=performance.now()){
+  if(!isDuelRun() || !state.duel.active){
+    state.duel.animationFrame=null;
+    return;
+  }
+  syncDuelBotProgress(now);
+  updateDuelHud(now);
+  maybePlayDuelWarning(now);
+  const lockedOutcome=getLockedDuelOutcome();
+  if(lockedOutcome){
+    finalizeDuelOutcome(lockedOutcome);
+    return;
+  }
+  state.duel.animationFrame=requestAnimationFrame(tickDuelBot);
+}
+
+function startDuelMode(){
+  if(!isDuelRun()) return;
+  clearDuelTimers();
+  state.duel=createDefaultDuelState();
+  const botProfile=getDuelBotProfile(playerProfile?.levelInfo?.level||1);
+  state.duel.active=true;
+  state.duel.botAvatar=botProfile.avatar;
+  state.duel.botDifficultyLabel=botProfile.difficulty;
+  state.duel.botPaceLabel=botProfile.pace;
+  setDuelHudVisible(true);
+  scheduleNextBotQuestion(performance.now());
+  updateDuelHud(performance.now());
+  state.duel.animationFrame=requestAnimationFrame(tickDuelBot);
+}
+
+function registerDuelOutcome(){
+  if(!playerProfile || !isDuelRun()) return;
+  const stats=playerProfile.stats;
+  if(state.duel.result==='player'){
+    stats.duelWins=(stats.duelWins||0)+1;
+    stats.duelWinStreak=(stats.duelWinStreak||0)+1;
+    stats.bestDuelWinStreak=Math.max(stats.bestDuelWinStreak||0,stats.duelWinStreak||0);
+    if((stats.duelWinStreak||0)>=3) unlockBadge('robot-slayer');
+  }else{
+    stats.duelLosses=(stats.duelLosses||0)+1;
+    stats.duelWinStreak=0;
+  }
+}
+
+function buildMixedQuestionPool(count=12,diffs=['facile','normal','difficile']){
+  const pool=[];
+  SUBJECT_KEYS.forEach(subject=>{
+    Object.keys(DB[subject]||{}).forEach(chapter=>{
+      pool.push(...(DB[subject][chapter]||[])
+        .filter(q=>diffs.includes(q.diff))
+        .map(q=>({...q,_subj:q._subj||subject,_chapter:q._chapter||chapter})));
+    });
+  });
+  return shuffle(pool).slice(0,Math.min(count,pool.length));
+}
+
+function recordAnsweredQuestion(q,isBB=false){
+  if(!q) return;
+  if(!state.runSubjectCounts) state.runSubjectCounts={};
+  const subjectKey=isBB
+    ? (q._subj||state.subject)
+    : ((state.mode==='ranked' || state.mode==='duel' || state.mode==='survival') ? (q._subj||state.subject) : state.subject);
+  state.runSubjectCounts[subjectKey]=(state.runSubjectCounts[subjectKey]||0)+1;
+}
+
+function startDuelChallenge(){
+  resetDuelState();
+  clearSurvivalTimer();
+  stopTimer();
+  state.options.duel=true;
+  state.options.survival=false;
+  const selected=buildMixedQuestionPool(Math.max(10,DIFFICULTY_TARGETS.normal),['facile','normal','difficile']);
+  if(!selected.length){
+    showToast('Aucune question disponible pour le duel.','warning');
+    return;
+  }
+  state.subject=selected[0]?._subj||'histoire';
+  state.chapters=['Duel IA'];
+  state.questions=selected;
+  state.currentIdx=0;
+  state.score=0;
+  state.errors=[];
+  state.startTime=Date.now();
+  state.answered=false;
+  state.isBrevetBlanc=false;
+  state.mode='duel';
+  state.rankedTier=null;
+  state.rankedRpDelta=0;
+  state.runRewarded=false;
+  state.sessionEarnedXp=0;
+  state.correctAnswersInRun=0;
+  state.unlockedThemesThisRun=[];
+  resetRunHelpers();
+  document.getElementById('q-subject-tag').textContent='🤖 Duel IA';
+  document.getElementById('q-subject-tag').className='quiz-tag gold';
+  document.getElementById('q-chapter-tag').textContent='Mix toutes matières';
+  document.getElementById('q-diff-tag').textContent=DUEL_BOT_NAME;
+  document.getElementById('q-total').textContent=selected.length;
+  document.getElementById('timer-display').style.display='none';
+  showScreen('screen-quiz');
+  startDuelMode();
+  renderQuestion();
+}
+
+function getShopOwnedLabel(itemKey){
+  if(!playerProfile) return '';
+  const item=SHOP_ITEMS[itemKey];
+  if(item?.action==='theme' && item.themeKey){
+    return playerProfile.unlockedThemes.includes(item.themeKey)
+      ? 'Thème déjà débloqué'
+      : `Déblocage immédiat : ${THEMES[item.themeKey]?.label||'Thème'}`;
+  }
+  switch(itemKey){
+    case 'shield': return `${playerProfile.streakShields||0} bouclier${(playerProfile.streakShields||0)>1?'s':''} en réserve`;
+    case 'hourglass': return `${playerProfile.inventory.hourglass||0} sablier${(playerProfile.inventory.hourglass||0)>1?'s':''} disponible${(playerProfile.inventory.hourglass||0)>1?'s':''}`;
+    case 'eraser': return `${playerProfile.inventory.eraser||0} bonus 50/50 disponible${(playerProfile.inventory.eraser||0)>1?'s':''}`;
+    case 'xpboost': return `${playerProfile.inventory.xpBoostRuns||0} quiz boosté${(playerProfile.inventory.xpBoostRuns||0)>1?'s':''} restant${(playerProfile.inventory.xpBoostRuns||0)>1?'s':''}`;
+    default:return '';
+  }
+}
+
+function renderShop(){
+  if(!playerProfile) return;
+  const balance=document.getElementById('shop-balance');
+  const grid=document.getElementById('shop-grid');
+  if(balance) balance.innerHTML=renderCoinAmount(playerProfile.coins||0);
+  if(!grid) return;
+  const entries=Object.entries(SHOP_ITEMS);
+  const utilityCards=entries.filter(([,item])=>item.action!=='theme').map(([itemKey,item])=>{
+    return `
+      <div class="shop-card">
+        <div class="shop-card-head">
+          <div class="shop-icon">${item.icon}</div>
+          <div class="shop-price">${renderCoinAmount(item.price,'')}</div>
+        </div>
+        <div class="shop-title">${item.label}</div>
+        <div class="shop-desc">${item.desc}</div>
+        <div class="shop-owned">${getShopOwnedLabel(itemKey)}</div>
+        <button class="btn-primary" onclick="buyShopItem('${itemKey}')">
+          Acheter
+        </button>
+      </div>
+    `;
+  }).join('');
+  const themeCards=entries.filter(([,item])=>item.action==='theme').map(([itemKey,item])=>{
+    const unlocked=!!item.themeKey && playerProfile.unlockedThemes.includes(item.themeKey);
+    return `
+      <div class="shop-card theme-offer ${unlocked?'owned':''}">
+        <div class="shop-card-head">
+          <div class="shop-icon">${item.icon}</div>
+          <div class="shop-price">${renderCoinAmount(item.price,'')}</div>
+        </div>
+        <div class="shop-title">${item.label}</div>
+        <div class="shop-desc">${item.desc}</div>
+        <div class="shop-owned">${getShopOwnedLabel(itemKey)}</div>
+        <button class="${unlocked?'btn-secondary':'btn-primary'}" ${unlocked?'disabled':''} onclick="${unlocked?'void(0)':`buyShopItem('${itemKey}')`}">
+          ${unlocked?'Déjà débloqué':'Acheter ce thème'}
+        </button>
+      </div>
+    `;
+  }).join('');
+  grid.innerHTML=`
+    <div class="shop-section">
+      <div class="shop-section-title">Objets & Boosts</div>
+      <div class="shop-section-grid">${utilityCards}</div>
+    </div>
+    <div class="shop-section">
+      <div class="shop-section-title">Thèmes Premium</div>
+      <div class="shop-section-copy">Chaque thème s’achète séparément et reste disponible ensuite dans le sélecteur de thèmes.</div>
+      <div class="shop-section-grid">${themeCards}</div>
+    </div>
+  `;
+}
+
+function buyShopItem(itemKey){
+  if(!playerProfile) return;
+  const item=SHOP_ITEMS[itemKey];
+  if(!item) return;
+  if(item.action==='theme' && item.themeKey && playerProfile.unlockedThemes.includes(item.themeKey)){
+    showToast('Thème déjà possédé.','info');
+    return;
+  }
+  if(!spendCoins(item.price)) return;
+  switch(item.action){
+    case 'shield':
+      playerProfile.streakShields=(playerProfile.streakShields||0)+1;
+      playerProfile.inventory.shield=(playerProfile.inventory.shield||0)+1;
+      break;
+    case 'hourglass':
+      playerProfile.inventory.hourglass=(playerProfile.inventory.hourglass||0)+1;
+      break;
+    case 'eraser':
+      playerProfile.inventory.eraser=(playerProfile.inventory.eraser||0)+1;
+      break;
+    case 'xpboost':
+      playerProfile.inventory.xpBoostRuns=(playerProfile.inventory.xpBoostRuns||0)+3;
+      break;
+    case 'theme':
+      if(item.themeKey && !playerProfile.unlockedThemes.includes(item.themeKey)){
+        playerProfile.unlockedThemes.push(item.themeKey);
+      }
+      break;
+  }
+  syncProfileComputedData();
+  savePlayerProfile();
+  refreshPlayerUI();
+  renderShop();
+  renderThemeSelector();
+  showToast(`${item.label} acheté !`,'success');
+}
+
+function resetRunHelpers(){
+  state.combo=createDefaultComboState();
+  state.questionAid=createDefaultQuestionAidState();
+  state.pendingSelfEval=null;
+  state.runSubjectCounts={};
+  state.runXpBoostActive=(playerProfile?.inventory?.xpBoostRuns||0)>0;
+  stopSpeech();
+  updateComboHud();
+  renderQuizUtilityBar();
+}
+
+function getQuestionXpBase(q,isBB=false){
+  return XP_RULES.question[q.type]||10;
+}
+
+function getActiveQuestionXpMultiplier(){
+  return (state.combo?.multiplier||1)*(state.runXpBoostActive?2:1);
+}
+
+function updateComboHud(){
+  const hud=document.getElementById('combo-hud');
+  if(!hud) return;
+  const active=(state.combo?.multiplier||1)>1;
+  hud.hidden=!active;
+  hud.textContent=active?`Combo x${state.combo.multiplier}`:'';
+}
+
+function spawnComboText(text,type='combo'){
+  const layer=document.getElementById('combo-fx-layer');
+  if(!layer || !text) return;
+  const node=document.createElement('div');
+  node.className=`combo-fx ${type}`;
+  node.textContent=text;
+  layer.appendChild(node);
+  setTimeout(()=>node.remove(),1200);
+}
+
+function triggerScreenShake(){
+  const target=document.getElementById('screen-quiz');
+  if(!target) return;
+  target.classList.remove('screen-shake');
+  void target.offsetWidth;
+  target.classList.add('screen-shake');
+  setTimeout(()=>target.classList.remove('screen-shake'),480);
+}
+
+function advanceCombo(){
+  state.combo.streak+=1;
+  const previousMultiplier=state.combo.multiplier||1;
+  const nextMultiplier=getComboMultiplierForStreak(state.combo.streak);
+  state.combo.multiplier=nextMultiplier;
+  updateComboHud();
+  if(nextMultiplier>previousMultiplier){
+    triggerVibration('success');
+    spawnComboText(`COMBO X${nextMultiplier} !`);
+  }
+}
+
+function breakCombo(){
+  if((state.combo?.multiplier||1)>1){
+    spawnComboText('COMBO BRISÉ','break');
+  }
+  state.combo=createDefaultComboState();
+  updateComboHud();
+  triggerScreenShake();
+}
+
+function getQuestionSpeechText(q){
+  if(!q) return '';
+  let text=q.q||'';
+  if(q.type==='mcq' && Array.isArray(q.opts)){
+    text+=`. Choix proposés : ${q.opts.join(', ')}.`;
+  }else if(q.type==='tf'){
+    text+='. Réponds par vrai ou faux.';
+  }
+  return text;
+}
+
+function stopSpeech(){
+  if(typeof window==='undefined' || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  speechState={active:false,isBB:false,text:''};
+  renderQuizUtilityBar();
+}
+
+function toggleQuestionSpeech(isBB=false){
+  const q=state.questions[state.currentIdx];
+  const text=getQuestionSpeechText(q);
+  if(typeof window==='undefined' || !window.speechSynthesis || !text){
+    showToast('Lecture vocale indisponible sur cet appareil.','warning');
+    return;
+  }
+  if(speechState.active){
+    stopSpeech();
+    return;
+  }
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang='fr-FR';
+  utterance.rate=0.96;
+  utterance.onend=()=>{speechState={active:false,isBB:false,text:''};renderQuizUtilityBar();};
+  utterance.onerror=()=>{speechState={active:false,isBB:false,text:''};renderQuizUtilityBar();};
+  speechState={active:true,isBB,text};
+  renderQuizUtilityBar();
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function canUseHourglass(){
+  return isSurvivalRun() && (playerProfile?.inventory?.hourglass||0)>0 && !state.survival.gameOver;
+}
+
+function canUseEraser(){
+  const q=state.questions[state.currentIdx];
+  return !state.answered && q?.type==='mcq' && !state.questionAid.gommeUsed && (playerProfile?.inventory?.eraser||0)>0;
+}
+
+function renderQuizUtilityBar(){
+  const bar=document.getElementById('quiz-utility-bar');
+  if(!bar) return;
+  const speechLabel=speechState.active?'⏹ Stop voix':'🔊 Lire la question';
+  const eraserCount=playerProfile?.inventory?.eraser||0;
+  const hourglassCount=playerProfile?.inventory?.hourglass||0;
+  bar.innerHTML=`
+    <button class="question-tool-btn" onclick="toggleQuestionSpeech(false)">${speechLabel}</button>
+    <button class="question-tool-btn ${canUseEraser()?'':'disabled'}" ${canUseEraser()?'':'disabled'} onclick="useEraser()">🌓 50/50 (${eraserCount})</button>
+    <button class="question-tool-btn ${canUseHourglass()?'':'disabled'}" ${canUseHourglass()?'':'disabled'} onclick="useHourglass()">⏳ Sablier (${hourglassCount})</button>
+    <div class="question-tool-badge ${state.runXpBoostActive?'active':''}">⚡ Boost XP ${state.runXpBoostActive?'x2 actif':'x1'}</div>
+  `;
+}
+
+function useHourglass(){
+  if(!canUseHourglass()){
+    showToast('Aucun sablier disponible.','warning');
+    return;
+  }
+  playerProfile.inventory.hourglass=Math.max(0,(playerProfile.inventory.hourglass||0)-1);
+  adjustSurvivalTime(15,'Sablier utilisé');
+  savePlayerProfile();
+  refreshPlayerUI();
+  renderQuizUtilityBar();
+  showToast('Sablier utilisé : +15 s','success');
+}
+
+function useEraser(){
+  if(!canUseEraser()){
+    showToast('Le bonus 50/50 est indisponible sur cette question.','warning');
+    return;
+  }
+  const q=state.questions[state.currentIdx];
+  const wrongIndexes=(q.opts||[]).map((_,index)=>index).filter(index=>index!==q.ans);
+  const removed=shuffle(wrongIndexes).slice(0,Math.min(2,wrongIndexes.length));
+  removed.forEach(index=>{
+    const node=document.getElementById(`opt-${index}`);
+    if(node){
+      node.disabled=true;
+      node.classList.add('erased');
+    }
+  });
+  state.questionAid.gommeUsed=true;
+  state.questionAid.hiddenWrongOptions=removed;
+  playerProfile.inventory.eraser=Math.max(0,(playerProfile.inventory.eraser||0)-1);
+  savePlayerProfile();
+  refreshPlayerUI();
+  renderQuizUtilityBar();
+  showToast('50/50 utilisé : 2 réponses retirées','success');
+}
+
+function buildSurvivalPool(subject=null,chapters=[]){
+  if(subject && chapters.length){
+    const pool=[];
+    chapters.forEach(chapter=>{
+      pool.push(...(DB[subject]?.[chapter]||[]).map(q=>({...q,_subj:q._subj||subject,_chapter:q._chapter||chapter})));
+    });
+    return shuffle(pool);
+  }
+  const pool=[];
+  SUBJECT_KEYS.forEach(subjectKey=>{
+    Object.keys(DB[subjectKey]||{}).forEach(chapter=>{
+      pool.push(...(DB[subjectKey][chapter]||[]).map(q=>({...q,_subj:q._subj||subjectKey,_chapter:q._chapter||chapter})));
+    });
+  });
+  return shuffle(pool);
+}
+
+function clearSurvivalTimer(){
+  if(state.survival.timerFrame){
+    cancelAnimationFrame(state.survival.timerFrame);
+    state.survival.timerFrame=null;
+  }
+}
+
+function setSurvivalHudVisible(visible){
+  const hud=document.getElementById('survival-hud');
+  if(!hud) return;
+  hud.hidden=!visible;
+}
+
+function updateSurvivalHud(){
+  const hud=document.getElementById('survival-hud');
+  const timerNode=document.getElementById('survival-timer-val');
+  const recordNode=document.getElementById('survival-record');
+  const hintNode=document.getElementById('survival-hint');
+  if(!hud || !timerNode) return;
+  const warning=state.survival.timeLeft<10;
+  timerNode.textContent=formatTenths(state.survival.timeLeft);
+  hud.classList.toggle('warning',warning);
+  hud.classList.toggle('critical',warning);
+  if(recordNode){
+    recordNode.textContent=`Record : ${formatTime(Math.round(playerProfile?.stats?.bestSurvivalTime||0))}`;
+  }
+  if(hintNode){
+    hintNode.textContent=state.survival.gameOver
+      ? 'Game Over'
+      : `+5 s par bonne réponse · -8 s par erreur`;
+  }
+}
+
+function adjustSurvivalTime(delta,label=''){
+  if(!isSurvivalRun()) return;
+  state.survival.timeLeft=Math.max(0,state.survival.timeLeft+delta);
+  updateSurvivalHud();
+  if(label){
+    spawnComboText(`${delta>0?'+':''}${delta}s`,delta>0?'time-plus':'break');
+  }
+}
+
+function handleSurvivalGameOver(reason='time'){
+  if(!isSurvivalRun() || state.survival.gameOver) return true;
+  state.survival.gameOver=true;
+  state.survival.gameOverReason=reason;
+  clearSurvivalTimer();
+  stopSpeech();
+  setSurvivalHudVisible(true);
+  updateSurvivalHud();
+  showFeedback(false,'💀 Game Over',{
+    expected:'',
+    explanation:`Score final : ${state.score} · Temps survécu : ${formatTime(Math.round((Date.now()-state.startTime)/1000))}`
+  },false);
+  setTimeout(()=>showResults(false),550);
+  return true;
+}
+
+function tickSurvivalMode(timestamp){
+  if(!isSurvivalRun() || state.survival.gameOver){
+    state.survival.timerFrame=null;
+    return;
+  }
+  if(!state.survival.lastTick) state.survival.lastTick=timestamp;
+  const delta=(timestamp-state.survival.lastTick)/1000;
+  state.survival.lastTick=timestamp;
+  state.survival.timeLeft=Math.max(0,state.survival.timeLeft-delta);
+  updateSurvivalHud();
+  if(state.survival.timeLeft<=0){
+    handleSurvivalGameOver('time');
+    return;
+  }
+  state.survival.timerFrame=requestAnimationFrame(tickSurvivalMode);
+}
+
+function handleAnswerForSurvival(ok){
+  if(!isSurvivalRun()) return false;
+  state.survival.questionsAnswered+=1;
+  adjustSurvivalTime(ok?5:-8,ok?'Temps gagné':'Temps perdu');
+  if(state.survival.timeLeft<=0){
+    handleSurvivalGameOver('time');
+    return true;
+  }
+  return false;
+}
+
+function startSurvivalMode(config={}){
+  resetDuelState();
+  clearSurvivalTimer();
+  stopTimer();
+  state.options.duel=false;
+  state.options.survival=true;
+  state.mode='survival';
+  state.survival=createDefaultSurvivalState();
+  state.survival.active=true;
+  state.survival.selectedPoolLabel=config.label||'Mix total';
+  const pool=config.pool?.length?config.pool:buildSurvivalPool(config.subject||null,config.chapters||[]);
+  if(!pool.length){
+    showToast('Aucune question disponible pour le mode Survie.','warning');
+    return;
+  }
+  state.subject=config.subject||'histoire';
+  state.chapters=config.chapters?.length?[...config.chapters]:['Mode Survie'];
+  state.questions=pool;
+  state.currentIdx=0;
+  state.score=0;
+  state.errors=[];
+  state.startTime=Date.now();
+  state.answered=false;
+  state.isBrevetBlanc=false;
+  state.rankedTier=null;
+  state.rankedRpDelta=0;
+  state.runRewarded=false;
+  state.sessionEarnedXp=0;
+  state.correctAnswersInRun=0;
+  state.unlockedThemesThisRun=[];
+  resetRunHelpers();
+  document.getElementById('q-subject-tag').textContent='🔥 Mode Survie';
+  document.getElementById('q-subject-tag').className='quiz-tag gold';
+  document.getElementById('q-chapter-tag').textContent=state.survival.selectedPoolLabel;
+  document.getElementById('q-diff-tag').textContent='⏳ Survie';
+  document.getElementById('q-total').textContent='∞';
+  document.getElementById('timer-display').style.display='none';
+  showScreen('screen-quiz');
+  setSurvivalHudVisible(true);
+  updateSurvivalHud();
+  renderQuestion();
+  state.survival.lastTick=0;
+  state.survival.timerFrame=requestAnimationFrame(tickSurvivalMode);
+}
+
 const SUBJ_META={
   histoire:{icon:'🏛️',name:'Histoire',  tagClass:'gold',  chapClass:''},
   geo:     {icon:'🌍',name:'Géographie',tagClass:'blue',  chapClass:''},
@@ -1642,6 +2692,8 @@ function loadPlayerProfile(){
     pseudo:String(raw.pseudo||'').trim(),
     avatarConfigured:!!raw.userAvatarConfig,
     totalXp:Math.max(0,Math.floor(raw.totalXp||0)),
+    coins:Math.max(0,Math.floor(raw.coins||0)),
+    openSelfEvalMode:!!raw.openSelfEvalMode,
     xpBySubject:{...getDefaultXpBySubject(),...(raw.xpBySubject||{})},
     unlockedThemes:Array.isArray(raw.unlockedThemes)?raw.unlockedThemes.map(normalizeThemeKey):['dark','light'],
     currentTheme:migratedTheme,
@@ -1650,11 +2702,22 @@ function loadPlayerProfile(){
     soundPack:raw.soundPack||'classic',
     streakShields:Math.max(0,Math.floor(raw.streakShields||0)),
     shieldMilestone:Math.max(0,Math.floor(raw.shieldMilestone||0)),
+    badges:Array.isArray(raw.badges)?raw.badges.filter(Boolean):[],
+    inventory:normalizeInventory(raw.inventory||{}),
+    level:Math.max(1,Math.floor(raw.level||1)),
     stats:{
       questionsAnswered:Math.max(0,Math.floor(statsRaw.questionsAnswered||0)),
       revisionSeconds:Math.max(0,Math.floor(statsRaw.revisionSeconds||0)),
       completedRuns:Math.max(0,Math.floor(statsRaw.completedRuns||0)),
-      answersBySubject:{...getDefaultAnswerStats(),...(statsRaw.answersBySubject||{})}
+      answersBySubject:{...getDefaultAnswerStats(),...(statsRaw.answersBySubject||{})},
+      duelWins:Math.max(0,Math.floor(statsRaw.duelWins||0)),
+      duelLosses:Math.max(0,Math.floor(statsRaw.duelLosses||0)),
+      duelWinStreak:Math.max(0,Math.floor(statsRaw.duelWinStreak||0)),
+      bestDuelWinStreak:Math.max(0,Math.floor(statsRaw.bestDuelWinStreak||0)),
+      bestSurvivalTime:Math.max(0,Number(statsRaw.bestSurvivalTime||0)),
+      bestSurvivalScore:Math.max(0,Math.floor(statsRaw.bestSurvivalScore||0)),
+      coinsEarned:Math.max(0,Math.floor(statsRaw.coinsEarned||0)),
+      xp:Math.max(0,Math.floor(statsRaw.xp||raw.totalXp||0))
     }
   };
   profile.unlockedThemes=Array.from(new Set(['dark','light',...profile.unlockedThemes]));
@@ -1667,6 +2730,8 @@ function savePlayerProfile(){
   localStorage.setItem(STORAGE_KEYS.profile,JSON.stringify({
     pseudo:playerProfile.pseudo,
     totalXp:playerProfile.totalXp,
+    coins:playerProfile.coins,
+    openSelfEvalMode:playerProfile.openSelfEvalMode,
     xpBySubject:playerProfile.xpBySubject,
     unlockedThemes:playerProfile.unlockedThemes,
     currentTheme:playerProfile.currentTheme,
@@ -1675,6 +2740,9 @@ function savePlayerProfile(){
     soundPack:playerProfile.soundPack,
     streakShields:playerProfile.streakShields,
     shieldMilestone:playerProfile.shieldMilestone,
+    inventory:playerProfile.inventory,
+    level:playerProfile.level,
+    badges:playerProfile.badges,
     stats:playerProfile.stats
   }));
   localStorage.setItem(STORAGE_KEYS.theme,playerProfile.currentTheme);
@@ -1907,6 +2975,7 @@ function syncDailyChallenges(){
       dailyChallengeRewardLock=true;
       addXP(quest.rewardXp,null);
       dailyChallengeRewardLock=false;
+      awardCoins(30,'Défi complété',true);
     }
   });
   if(changed) saveDailyChallenges();
@@ -1940,6 +3009,12 @@ function registerDailyRunCompletion(mode='standard'){
 
 function getThemeUnlockText(theme){
   if(!theme) return '';
+  if(theme.shopOnly){
+    return 'Boutique';
+  }
+  if(theme.unlockStreak){
+    return `Série de ${theme.unlockStreak} jours`;
+  }
   if(theme.unlockRp){
     return `Mode classé : ${getRankInfo(theme.unlockRp).name}`;
   }
@@ -2029,18 +3104,23 @@ function renderXpRewardCards(rewards=[]){
   `).join('');
 }
 
-function isThemeUnlocked(themeKey,level=playerProfile?.levelInfo?.level||1,peakRp=rankedProfile?.peakRp||rankedProfile?.rp||0){
+function isThemeUnlocked(themeKey,level=playerProfile?.levelInfo?.level||1,peakRp=rankedProfile?.peakRp||rankedProfile?.rp||0,streakCount=getStreakStatus().displayCount){
   const theme=THEMES[themeKey];
   if(!theme) return false;
+  if(theme.shopOnly) return !!playerProfile?.unlockedThemes?.includes(themeKey);
   const levelOk=theme.unlockLevel ? level>=theme.unlockLevel : true;
   const rankOk=theme.unlockRp ? peakRp>=theme.unlockRp : true;
-  return levelOk && rankOk;
+  const streakOk=theme.unlockStreak ? streakCount>=theme.unlockStreak : true;
+  return levelOk && rankOk && streakOk;
 }
 
 function syncProfileComputedData(){
   if(!playerProfile) return;
+  playerProfile.inventory=normalizeInventory(playerProfile.inventory||{});
   const levelInfo=getLevelInfo(playerProfile.totalXp);
+  const streakCount=getStreakStatus().displayCount;
   playerProfile.levelInfo=levelInfo;
+  playerProfile.level=levelInfo.level;
   if(!playerProfile.pseudo) playerProfile.pseudo='';
   playerProfile.globalTitle=pickTitle(GLOBAL_TITLES,levelInfo.level);
   while((playerProfile.shieldMilestone||0)+10<=levelInfo.level){
@@ -2048,7 +3128,7 @@ function syncProfileComputedData(){
     playerProfile.streakShields=(playerProfile.streakShields||0)+1;
   }
   const unlocked=Object.entries(THEMES)
-    .filter(([themeKey])=>isThemeUnlocked(themeKey,levelInfo.level,rankedProfile?.peakRp||rankedProfile?.rp||0))
+    .filter(([themeKey])=>isThemeUnlocked(themeKey,levelInfo.level,rankedProfile?.peakRp||rankedProfile?.rp||0,streakCount))
     .map(([themeKey])=>themeKey);
   playerProfile.unlockedThemes=Array.from(new Set(['dark','light',...playerProfile.unlockedThemes,...unlocked]));
   playerProfile.userAvatarConfig=normalizeUserAvatarConfig(
@@ -2090,6 +3170,8 @@ function syncProfileComputedData(){
   }
   playerProfile.displayedTitle=playerProfile.ownedTitles.find(title=>title.key===playerProfile.selectedTitle)?.text||playerProfile.globalTitle;
   playerProfile.favoriteSubject=getFavoriteSubject(playerProfile.stats.answersBySubject,playerProfile.xpBySubject);
+  playerProfile.inventory.shield=Math.max(playerProfile.inventory.shield||0,playerProfile.streakShields||0);
+  playerProfile.stats.xp=playerProfile.totalXp;
 }
 
 function getNextThemeGoal(level){
@@ -2401,6 +3483,8 @@ function renderSettingsPanel(){
   const desc=document.getElementById('sound-pack-desc');
   const status=document.getElementById('settings-panel-status');
   const vipNote=document.getElementById('vip-settings-note');
+  const selfEvalBtn=document.getElementById('open-self-eval-btn');
+  const backupNote=document.getElementById('backup-settings-note');
   if(select){
     select.innerHTML=Object.entries(SOUND_PACKS).map(([key,pack])=>{
       const unlocked=playerProfile.unlockedSoundPacks.includes(key);
@@ -2416,6 +3500,14 @@ function renderSettingsPanel(){
   }
   if(vipNote){
     vipNote.textContent='Tableau de bord complet : progression, historique et classé accessibles à tout moment.';
+  }
+  if(selfEvalBtn){
+    selfEvalBtn.textContent=`Auto-évaluation : ${playerProfile.openSelfEvalMode?'ON':'OFF'}`;
+  }
+  if(backupNote){
+    backupNote.textContent=playerProfile.openSelfEvalMode
+      ? 'Mode auto-évaluation actif : les questions ouvertes peuvent être validées manuellement.'
+      : 'Mode auto-évaluation inactif : la correction des réponses ouvertes reste automatique.';
   }
 }
 
@@ -2444,6 +3536,104 @@ function previewSoundPack(){
   setTimeout(()=>playSound('error'),180);
 }
 
+function toggleOpenSelfEvalMode(){
+  if(!playerProfile) return;
+  playerProfile.openSelfEvalMode=!playerProfile.openSelfEvalMode;
+  savePlayerProfile();
+  renderSettingsPanel();
+  showToast(
+    playerProfile.openSelfEvalMode
+      ? 'Auto-évaluation activée pour les réponses ouvertes.'
+      : 'Auto-évaluation désactivée.',
+    'info'
+  );
+}
+
+function exportProgress(){
+  const payload={
+    version:1,
+    exportedAt:new Date().toISOString(),
+    storage:{
+      [STORAGE_KEYS.profile]:localStorage.getItem(STORAGE_KEYS.profile),
+      [STORAGE_KEYS.streak]:localStorage.getItem(STORAGE_KEYS.streak),
+      [STORAGE_KEYS.theme]:localStorage.getItem(STORAGE_KEYS.theme),
+      [STORAGE_KEYS.ranked]:localStorage.getItem(STORAGE_KEYS.ranked),
+      [STORAGE_KEYS.weakQuestions]:localStorage.getItem(STORAGE_KEYS.weakQuestions),
+      [STORAGE_KEYS.dailyChallenges]:localStorage.getItem(STORAGE_KEYS.dailyChallenges),
+      brevet_history:localStorage.getItem('brevet_history')
+    }
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=`brevetpro-save-${getLocalDateKey()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),500);
+  showToast('Sauvegarde exportée en JSON.','success');
+}
+
+function triggerImportProgress(){
+  document.getElementById('progress-import-input')?.click();
+}
+
+function handleImportProgress(event){
+  const file=event?.target?.files?.[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(String(reader.result||'{}'));
+      const storage=parsed.storage||parsed;
+      const knownKeys=[
+        STORAGE_KEYS.profile,
+        STORAGE_KEYS.streak,
+        STORAGE_KEYS.theme,
+        STORAGE_KEYS.ranked,
+        STORAGE_KEYS.weakQuestions,
+        STORAGE_KEYS.dailyChallenges,
+        'brevet_history'
+      ];
+      let restored=0;
+      knownKeys.forEach(key=>{
+        if(typeof storage[key]==='string'){
+          localStorage.setItem(key,storage[key]);
+          restored++;
+        }
+      });
+      if(!restored) throw new Error('empty-import');
+      playerProfile=loadPlayerProfile();
+      syncProfileComputedData();
+      streakState=loadStreakState();
+      rankedProfile=loadRankedProfile();
+      weakQuestionIds=loadWeakQuestions().filter(id=>QUESTION_LOOKUP[id]);
+      dailyChallengeState=loadDailyChallenges();
+      ensureDailyChallenges();
+      savePlayerProfile();
+      saveWeakQuestions();
+      saveDailyChallenges();
+      document.body.setAttribute('data-theme',playerProfile.currentTheme||'dark');
+      refreshPlayerUI();
+      renderSettingsPanel();
+      renderThemeSelector();
+      renderTitleSelector();
+      renderWeakReviewCard();
+      renderDailyChallenges();
+      renderHistory('stats-history-list');
+      renderShop();
+      updateRankedUI();
+      showToast('Progression restaurée avec succès.','success');
+    }catch(error){
+      showToast('Fichier de sauvegarde invalide.','error');
+    }finally{
+      event.target.value='';
+    }
+  };
+  reader.readAsText(file,'utf-8');
+}
+
 function updateVipUI(){
   if(!playerProfile || !rankedProfile) return;
   const streakStatus=getStreakStatus();
@@ -2465,6 +3655,8 @@ function updateVipUI(){
   setText('vip-ranked-name',getRankInfo(rankedProfile.rp).name);
   setText('vip-completed-runs',String(playerProfile.stats.completedRuns||0));
   setText('vip-theme-name',THEMES[playerProfile.currentTheme]?.label||'Classique');
+  setText('vip-duel-wins',String(playerProfile.stats.duelWins||0));
+  setText('vip-robot-badge',getRobotBadgeLabel());
 }
 
 function openVipScreen(){
@@ -2585,6 +3777,10 @@ function refreshPlayerUI(){
   document.getElementById('player-level-badge').textContent=`Lvl ${info.level}`;
   document.getElementById('player-global-title').textContent=playerProfile.displayedTitle;
   document.getElementById('player-total-xp').textContent=`${playerProfile.totalXp} XP cumulés`;
+  const coinNode=document.getElementById('player-coins');
+  if(coinNode){
+    coinNode.innerHTML=renderCoinAmount(playerProfile.coins||0);
+  }
   const streakNode=document.getElementById('player-streak');
   if(streakNode){
     streakNode.innerHTML=`<span class="streak-flame ${streakStatus.isToday?'ready':'idle'}">🔥</span>Série : ${streakStatus.displayCount} jour${streakStatus.displayCount>1?'s':''}`;
@@ -2630,6 +3826,7 @@ function refreshPlayerUI(){
   renderSettingsPanel();
   renderWeakReviewCard();
   renderDailyChallenges();
+  renderShop();
   updateRankedUI();
   updateVipUI();
   renderXpModal();
@@ -2656,20 +3853,22 @@ function populateAdminPanel(){
   const lvlInput=document.getElementById('admin-level-input');
   const xpInput=document.getElementById('admin-xp-input');
   const shieldInput=document.getElementById('admin-shields-input');
+  const coinsInput=document.getElementById('admin-coins-input');
   const streakInput=document.getElementById('admin-streak-input');
   const rankInput=document.getElementById('admin-rank-input');
   const note=document.getElementById('admin-note');
   if(lvlInput) lvlInput.value=String(info.level);
   if(xpInput) xpInput.value=String(info.currentLevelXp);
   if(shieldInput) shieldInput.value=String(playerProfile.streakShields||0);
+  if(coinsInput) coinsInput.value=String(playerProfile.coins||0);
   if(streakInput) streakInput.value=String(streakStatus.displayCount);
   if(rankInput){
     rankInput.innerHTML=RANK_TIERS.map(tier=>`<option value="${tier.rp}" ${getRankInfo(rankedProfile?.rp||0).name===tier.name?'selected':''}>${tier.name}</option>`).join('');
   }
   if(note){
     note.textContent=info.level>=XP_RULES.maxLevel
-      ? 'Niveau maximum atteint. L’XP saisie sera ignorée tant que le niveau reste au maximum.'
-      : `Palier suivant : ${info.nextLevelXp} XP pour le niveau ${info.level+1}.`;
+      ? 'Niveau maximum atteint. L’XP saisie sera ignorée tant que le niveau reste au maximum. Les BrevetCoins peuvent être modifiés librement.'
+      : `Palier suivant : ${info.nextLevelXp} XP pour le niveau ${info.level+1}. Les BrevetCoins peuvent être ajustés ici aussi.`;
   }
 }
 
@@ -2708,12 +3907,14 @@ function applyAdminChanges(){
   const lvlValue=Number(document.getElementById('admin-level-input')?.value||1);
   const xpValue=Number(document.getElementById('admin-xp-input')?.value||0);
   const shieldsValue=Number(document.getElementById('admin-shields-input')?.value||0);
+  const coinsValue=Number(document.getElementById('admin-coins-input')?.value||0);
   const streakValue=Number(document.getElementById('admin-streak-input')?.value||0);
   const rankRpValue=Number(document.getElementById('admin-rank-input')?.value||0);
   const safeLevel=Math.max(1,Math.min(XP_RULES.maxLevel,Math.floor(lvlValue||1)));
   const safeCurrentXp=Math.max(0,Math.floor(xpValue||0));
   playerProfile.totalXp=getTotalXpFromLevelProgress(safeLevel,safeCurrentXp);
   playerProfile.streakShields=Math.max(0,Math.floor(shieldsValue||0));
+  playerProfile.coins=Math.max(0,Math.floor(coinsValue||0));
   playerProfile.shieldMilestone=Math.floor(safeLevel/10)*10;
   if(!streakState) streakState={count:0,lastQuizDate:null};
   streakState.count=Math.max(0,Math.floor(streakValue||0));
@@ -2735,6 +3936,7 @@ function resetAdminProfile(){
   playerProfile.pseudo='';
   playerProfile.avatarConfigured=false;
   playerProfile.totalXp=0;
+  playerProfile.coins=0;
   playerProfile.xpBySubject=getDefaultXpBySubject();
   playerProfile.unlockedThemes=['dark','light'];
   playerProfile.currentTheme='dark';
@@ -2743,11 +3945,23 @@ function resetAdminProfile(){
   playerProfile.soundPack='classic';
   playerProfile.streakShields=0;
   playerProfile.shieldMilestone=0;
+  playerProfile.badges=[];
+  playerProfile.inventory=normalizeInventory({});
+  playerProfile.openSelfEvalMode=false;
+  playerProfile.level=1;
   playerProfile.stats={
     questionsAnswered:0,
     revisionSeconds:0,
     completedRuns:0,
-    answersBySubject:getDefaultAnswerStats()
+    answersBySubject:getDefaultAnswerStats(),
+    duelWins:0,
+    duelLosses:0,
+    duelWinStreak:0,
+    bestDuelWinStreak:0,
+    bestSurvivalTime:0,
+    bestSurvivalScore:0,
+    coinsEarned:0,
+    xp:0
   };
   streakState={count:0,lastQuizDate:null};
   rankedProfile={rp:0,peakRp:0};
@@ -2765,6 +3979,7 @@ function updateStreak(){
   if(!streakState || !playerProfile) return false;
   const status=getStreakStatus();
   const previousDisplay=status.displayCount;
+  const previousThemes=new Set(playerProfile.unlockedThemes||[]);
   let toastMessage='';
 
   if(status.isToday) return false;
@@ -2782,6 +3997,9 @@ function updateStreak(){
   }
 
   streakState.lastQuizDate=getLocalDateKey();
+  playerProfile.inventory=normalizeInventory(playerProfile.inventory||{});
+  playerProfile.inventory.shield=Math.max(0,playerProfile.streakShields||0);
+  syncProfileComputedData();
   saveStreakState();
   savePlayerProfile();
   refreshPlayerUI();
@@ -2789,6 +4007,12 @@ function updateStreak(){
   if(!toastMessage && streakState.count>=2 && streakState.count>previousDisplay){
     toastMessage=`Série de ${streakState.count} jours ! Tu es en feu ! 🔥`;
   }
+  const newThemes=playerProfile.unlockedThemes.filter(themeKey=>!previousThemes.has(themeKey));
+  if(newThemes.length){
+    state.unlockedThemesThisRun.push(...newThemes.filter(themeKey=>!state.unlockedThemesThisRun.includes(themeKey)));
+    showToast(`Thème débloqué : ${THEMES[newThemes[0]].label}`,'theme');
+  }
+  awardCoins(Math.max(10,streakState.count*10),'Série du jour',true);
   if(toastMessage) showToast(toastMessage,'streak');
   return true;
 }
@@ -2797,11 +4021,11 @@ function updateStreakAfterCompletedQuiz(){
   updateStreak();
 }
 
-function addXP(amount,subject=state.subject){
+function addXP(amount,subject=state.subject,applyMultiplier=true){
   if(!playerProfile || !amount) return 0;
   syncProfileComputedData();
   const multiplier=getStreakMultiplier();
-  const actual=Math.round(amount*multiplier);
+  const actual=applyMultiplier?Math.round(amount*multiplier):Math.max(0,Math.round(amount));
   const previousLevel=playerProfile.levelInfo?.level||1;
   const previousThemes=new Set(playerProfile.unlockedThemes||[]);
   const previousPacks=new Set(playerProfile.unlockedSoundPacks||[]);
@@ -2836,8 +4060,10 @@ function addXP(amount,subject=state.subject){
     showToast(`+${shieldGain} bouclier${shieldGain>1?'s':''} de série`,'shield');
   }
   if(playerProfile.levelInfo.level>previousLevel){
+    const levelGain=playerProfile.levelInfo.level-previousLevel;
     playEffect('level');
     triggerVibration('level');
+    awardCoins(levelGain*100,'Passage de niveau',true);
     showToast(`Niveau ${playerProfile.levelInfo.level} atteint !`,'level');
   }
   savePlayerProfile();
@@ -2852,33 +4078,36 @@ function awardXp(baseAmount,subject){
 }
 
 function getQuestionXpValue(q,isBB=false){
-  if(state.options.survival && !isBB){
-    const tier=Math.floor(Math.max(0,state.correctAnswersInRun-1)/5);
-    return 5*Math.pow(2,tier);
-  }
-  return XP_RULES.question[q.type]||10;
+  return getQuestionXpBase(q,isBB);
 }
 
 function markCorrectAnswer(q,isBB=false){
+  recordAnsweredQuestion(q,isBB);
   state.score++;
   state.correctAnswersInRun++;
+  advanceCombo();
   playEffect('success');
   triggerVibration('success');
   registerDailyAnswer(true);
   clearWeakQuestion(q);
-  const subjectKey=isBB?(q._subj||state.subject):(state.mode==='ranked'?(q._subj||state.subject):state.subject);
+  const subjectKey=isBB
+    ? (q._subj||state.subject)
+    : ((state.mode==='ranked' || state.mode==='duel' || state.mode==='survival') ? (q._subj||state.subject) : state.subject);
   if(isBB){
     if(!state.bbBySubject[subjectKey]) state.bbBySubject[subjectKey]={correct:0,total:0};
     state.bbBySubject[subjectKey].total++;
     state.bbBySubject[subjectKey].correct++;
   }
-  awardXp(getQuestionXpValue(q,isBB),subjectKey);
+  const questionXp=Math.max(1,Math.round(getQuestionXpValue(q,isBB)*getActiveQuestionXpMultiplier()));
+  addXP(questionXp,subjectKey);
 }
 
 function markWrongAnswer(q,isBB=false){
+  recordAnsweredQuestion(q,isBB);
   playEffect('error');
   triggerVibration('error');
   state.correctAnswersInRun=0;
+  breakCombo();
   registerDailyAnswer(false);
   rememberWeakQuestion(q);
   if(isBB){
@@ -2896,10 +4125,12 @@ function updateScoreDisplays(){
   if(bbScore) bbScore.textContent=scoreText;
 }
 
-function buildFeedbackPayload(q,showExpected=false){
+function buildFeedbackPayload(q,showExpected=false,extra={}){
   return {
     expected:showExpected?getCorrectAnswerText(q):'',
-    explanation:getExplanation(q)
+    explanation:getExplanation(q),
+    note:'',
+    ...extra
   };
 }
 
@@ -2908,10 +4139,9 @@ function registerRunStats(total,elapsed){
   playerProfile.stats.questionsAnswered+=Math.max(0,total||0);
   playerProfile.stats.revisionSeconds+=Math.max(0,elapsed||0);
   playerProfile.stats.completedRuns+=1;
-  state.questions.forEach(q=>{
-    const subjectKey=q._subj||state.subject;
+  Object.entries(state.runSubjectCounts||{}).forEach(([subjectKey,count])=>{
     if(playerProfile.stats.answersBySubject[subjectKey]!==undefined){
-      playerProfile.stats.answersBySubject[subjectKey]+=1;
+      playerProfile.stats.answersBySubject[subjectKey]+=count;
     }
   });
 }
@@ -3042,6 +4272,8 @@ function setSheetSubject(subject){
    NAVIGATION
    ============================================================ */
 function startSubject(subj){
+  resetDuelState();
+  clearSurvivalTimer();
   state.subject=subj; state.chapters=[]; state.isBrevetBlanc=false; state.mode='standard';
   renderChapters(subj); showScreen('screen-chapters');
 }
@@ -3090,7 +4322,20 @@ function selectDiff(d,btn){
   btn.classList.add('selected');
 }
 
-function toggleOption(opt,btn){state.options[opt]=!state.options[opt];btn.classList.toggle('active');}
+function toggleOption(opt,btn){
+  state.options[opt]=!state.options[opt];
+  btn.classList.toggle('active');
+  if(opt==='duel' && state.options.duel){
+    state.options.survival=false;
+    document.getElementById('btn-survival')?.classList.remove('active');
+  }
+  if(opt==='survival' && state.options.survival){
+    state.options.duel=false;
+    document.getElementById('btn-duel')?.classList.remove('active');
+    state.options.timer=false;
+    document.getElementById('btn-timer')?.classList.remove('active');
+  }
+}
 
 function getQuestionsForDifficulty(subject,chapters,difficulty){
   const pool=[];
@@ -3151,6 +4396,8 @@ function startWeakReview(){
     showToast('Aucune question ratée enregistrée pour le moment.','info');
     return;
   }
+  resetDuelState();
+  clearSurvivalTimer();
   state.mode='weak';
   state.subject=selected[0]?._subj||'histoire';
   state.chapters=['Points faibles'];
@@ -3158,6 +4405,7 @@ function startWeakReview(){
   state.currentIdx=0;state.score=0;state.errors=[];
   state.startTime=Date.now();state.answered=false;state.isBrevetBlanc=false;state.rankedTier=null;state.rankedRpDelta=0;
   state.runRewarded=false;state.sessionEarnedXp=0;state.correctAnswersInRun=0;state.unlockedThemesThisRun=[];
+  resetRunHelpers();
   const first=selected[0];
   const meta=SUBJ_META[first?._subj]||SUBJ_META.histoire;
   const st=document.getElementById('q-subject-tag');
@@ -3172,21 +4420,36 @@ function startWeakReview(){
 }
 
 function startQuiz(){
+  if(state.options.survival && !state.options.duel){
+    startSurvivalMode({
+      subject:state.subject,
+      chapters:[...state.chapters],
+      label:state.chapters.length===1?`${SUBJ_META[state.subject].icon} ${state.chapters[0]}`:`${SUBJ_META[state.subject].icon} Survie personnalisée`
+    });
+    return;
+  }
+  resetDuelState();
+  clearSurvivalTimer();
   state.questions=buildPool();
   if(!state.questions.length){showToast('Aucune question disponible.','warning');return;}
   state.currentIdx=0;state.score=0;state.errors=[];
-  state.startTime=Date.now();state.answered=false;state.isBrevetBlanc=false;state.mode='standard';state.rankedTier=null;state.rankedRpDelta=0;
+  state.startTime=Date.now();state.answered=false;state.isBrevetBlanc=false;state.mode=state.options.duel?'duel':'standard';state.rankedTier=null;state.rankedRpDelta=0;
   state.runRewarded=false;state.sessionEarnedXp=0;state.correctAnswersInRun=0;state.unlockedThemesThisRun=[];
+  resetRunHelpers();
 
   const m=SUBJ_META[state.subject];
+  const diffLabel={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile'}[state.difficulty];
   const st=document.getElementById('q-subject-tag');
   st.textContent=m.icon+' '+m.name; st.className='quiz-tag '+m.tagClass;
   document.getElementById('q-chapter-tag').textContent=state.chapters.length===1?state.chapters[0]:state.chapters.length+' chapitres';
-  document.getElementById('q-diff-tag').textContent={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile'}[state.difficulty];
+  document.getElementById('q-diff-tag').textContent=state.mode==='duel'
+    ? `🤖 Duel · ${diffLabel}`
+    : diffLabel;
   document.getElementById('q-total').textContent=state.questions.length;
   document.getElementById('timer-display').style.display=state.options.timer?'flex':'none';
 
   showScreen('screen-quiz');
+  if(state.mode==='duel') startDuelMode();
   renderQuestion();
 }
 
@@ -3208,6 +4471,8 @@ function buildRankedPool(rankInfo){
 }
 
 function startRankedQuiz(){
+  resetDuelState();
+  clearSurvivalTimer();
   if(playerProfile.levelInfo.level<MIN_RANKED_LEVEL){
     showToast(`Le mode classé se débloque au niveau ${MIN_RANKED_LEVEL}.`,'locked');
     return;
@@ -3222,6 +4487,7 @@ function startRankedQuiz(){
   state.currentIdx=0;state.score=0;state.errors=[];
   state.startTime=Date.now();state.answered=false;state.isBrevetBlanc=false;
   state.runRewarded=false;state.sessionEarnedXp=0;state.correctAnswersInRun=0;state.unlockedThemesThisRun=[];
+  resetRunHelpers();
 
   const st=document.getElementById('q-subject-tag');
   st.textContent=`🏆 ${rankInfo.name}`;
@@ -3237,9 +4503,15 @@ function startRankedQuiz(){
 
 function renderQuestion(){
   const q=state.questions[state.currentIdx];
+  stopSpeech();
+  state.pendingSelfEval=null;
   state.answered=false;state.matchState={selected:null,pairs:{},done:0,total:0};
-  document.getElementById('progress-fill').style.width=((state.currentIdx/state.questions.length)*100)+'%';
-  document.getElementById('q-current').textContent=state.currentIdx+1;
+  state.questionAid=createDefaultQuestionAidState();
+  const progressBase=isSurvivalRun()
+    ? ((state.survival.questionsAnswered%10)/10)*100
+    : ((state.currentIdx/state.questions.length)*100);
+  document.getElementById('progress-fill').style.width=progressBase+'%';
+  document.getElementById('q-current').textContent=isSurvivalRun()?state.survival.questionsAnswered+1:state.currentIdx+1;
   document.getElementById('q-score-live').textContent='Score : '+state.score;
   document.getElementById('feedback-container').innerHTML='';
   document.getElementById('next-btn-wrap').style.display='none';
@@ -3261,6 +4533,16 @@ function renderQuestion(){
     }[q.diff]||'Révision ciblée';
   }
   document.getElementById('question-card').innerHTML=renderQHTML(q);
+  setSurvivalHudVisible(isSurvivalRun());
+  if(isSurvivalRun()) updateSurvivalHud();
+  updateComboHud();
+  renderQuizUtilityBar();
+  if(isDuelRun()){
+    setDuelHudVisible(true);
+    updateDuelHud(performance.now());
+  }else{
+    setDuelHudVisible(false);
+  }
   if(state.options.timer) startTimer();
 }
 
@@ -3268,6 +4550,8 @@ function renderQuestion(){
    MOTEUR BREVET BLANC
    ============================================================ */
 function startBrevetBlanc(){
+  resetDuelState();
+  clearSurvivalTimer();
   // Build 30 questions from ALL subjects
   let allQ=[];
   SUBJECT_KEYS.forEach(subj=>{
@@ -3293,6 +4577,7 @@ function startBrevetBlanc(){
   state.startTime=Date.now();state.answered=false;
   state.runRewarded=false;state.sessionEarnedXp=0;state.correctAnswersInRun=0;state.unlockedThemesThisRun=[];
   state.bbBySubject={};SUBJECT_KEYS.forEach(s=>state.bbBySubject[s]={correct:0,total:0});
+  resetRunHelpers();
 
   // Global timer 15 min = 900s
   state.bbTimeLeft=900;
@@ -3331,6 +4616,7 @@ function updateGlobalTimerDisplay(){
 
 function renderBBQuestion(){
   const q=state.questions[state.currentIdx];
+  stopSpeech();
   state.answered=false;state.matchState={selected:null,pairs:{},done:0,total:0};
   document.getElementById('bb-progress-fill').style.width=((state.currentIdx/30)*100)+'%';
   document.getElementById('bb-current').textContent=state.currentIdx+1;
@@ -3355,7 +4641,7 @@ function bbNextQuestion(){
 function renderQHTML(q,isBB=false){
   const prefix=isBB?'bb-':'';
   const handlerPrefix=isBB?'bb_':'';
-  const tl={mcq:'🔘 QCM',tf:'✅ Vrai ou Faux',open:'✏️ Question ouverte',date:'📅 Associer dates et événements'};
+  const tl={mcq:'🔘 QCM',tf:'✅ Vrai ou Faux',open:'✏️ Question ouverte',input:'✏️ Question ouverte',date:'📅 Associer dates et événements'};
   let html=`<div class="q-type-badge">${tl[q.type]||'Question'}</div><div class="question-text">${q.q||"Associez chaque date à l'événement correspondant :"}</div>`;
   if(q.type==='mcq'){
     const L=['A','B','C','D'];
@@ -3364,7 +4650,7 @@ function renderQHTML(q,isBB=false){
     html+='</div>';
   }else if(q.type==='tf'){
     html+=`<div class="tf-row"><button class="tf-btn" id="${prefix}tf-true" onclick="${handlerPrefix}answerTF(true)">✅ Vrai</button><button class="tf-btn" id="${prefix}tf-false" onclick="${handlerPrefix}answerTF(false)">❌ Faux</button></div>`;
-  }else if(q.type==='open'){
+  }else if(q.type==='open' || q.type==='input'){
     html+=`<div class="open-input-wrap"><textarea class="open-input" id="${prefix}open-ans" placeholder="Saisissez votre réponse..." rows="3"></textarea><button class="btn-primary" onclick="${handlerPrefix}answerOpen()" style="align-self:flex-start">Valider →</button></div>`;
   }else if(q.type==='date'){
     html+=renderDateMatch(q,isBB);
@@ -3409,6 +4695,8 @@ function completeDateMatch(isBB=false){
   markCorrectAnswer(q,isBB);
   updateScoreDisplays();
   showFeedback(true,'✅ Parfait !',buildFeedbackPayload(q),isBB);
+  if(!isBB && handleAnswerForSurvival(true)) return;
+  if(!isBB && handlePlayerAnswerForDuel(true)) return;
   showNextButton(isBB);state.answered=true;
 }
 
@@ -3425,6 +4713,8 @@ function answerMCQ(i){
   }
   updateScoreDisplays();
   showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',buildFeedbackPayload(q,!ok),false);
+  if(handleAnswerForSurvival(ok)) return;
+  if(handlePlayerAnswerForDuel(ok)) return;
   showNextButton();
 }
 function answerTF(ans){
@@ -3443,6 +4733,8 @@ function answerTF(ans){
   }
   updateScoreDisplays();
   showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Mauvaise réponse',buildFeedbackPayload(q,!ok),false);
+  if(handleAnswerForSurvival(ok)) return;
+  if(handlePlayerAnswerForDuel(ok)) return;
   showNextButton();
 }
 function answerOpen(){
@@ -3454,6 +4746,20 @@ function answerOpen(){
   const ok=validation.ok;
   const ta=document.getElementById('open-ans');
   if(ta)ta.disabled=true;
+  if(!ok && playerProfile?.openSelfEvalMode){
+    state.pendingSelfEval={q,ua};
+    showFeedback(false,'🤔 Auto-évaluation',{
+      expected:getCorrectAnswerText(q),
+      explanation:'Compare ta réponse avec la correction puis choisis ton niveau de validation.',
+      note:'Mode auto-évaluation actif pour les réponses ouvertes.',
+      actions:`
+        <button class="feedback-action" onclick="resolveOpenSelfEval('yes')">Oui</button>
+        <button class="feedback-action" onclick="resolveOpenSelfEval('partial')">Partiellement</button>
+        <button class="feedback-action" onclick="resolveOpenSelfEval('no')">Non</button>
+      `
+    },false);
+    return;
+  }
   if(ok){
     markCorrectAnswer(q,false);
   }else{
@@ -3461,7 +4767,48 @@ function answerOpen(){
     state.errors.push({q:q.q,yours:ua||'(vide)',correct:getCorrectAnswerText(q),explanation:getExplanation(q)});
   }
   updateScoreDisplays();
-  showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',buildFeedbackPayload(q,!ok),false);
+  showFeedback(
+    ok,
+    ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',
+    buildFeedbackPayload(q,!ok,{
+      note:ok && validation.usedTolerance ? 'Réponse acceptée malgré une petite faute !' : ''
+    }),
+    false
+  );
+  if(handleAnswerForSurvival(ok)) return;
+  if(handlePlayerAnswerForDuel(ok)) return;
+  showNextButton();
+}
+
+function resolveOpenSelfEval(result){
+  const pending=state.pendingSelfEval;
+  if(!pending) return;
+  state.pendingSelfEval=null;
+  const {q,ua}=pending;
+  const accepted=result==='yes' || result==='partial';
+  if(accepted){
+    markCorrectAnswer(q,false);
+    updateScoreDisplays();
+    showFeedback(
+      true,
+      result==='yes'?'✅ Réponse validée':'🟡 Réponse partiellement validée',
+      {
+        expected:getCorrectAnswerText(q),
+        explanation:result==='yes'
+          ? 'Validation manuelle confirmée. La compréhension est acceptée.'
+          : 'Validation partielle acceptée. Continue à préciser ta formulation pour viser une réponse parfaite.',
+        note:'Réponse évaluée manuellement.'
+      },
+      false
+    );
+  }else{
+    markWrongAnswer(q,false);
+    state.errors.push({q:q.q,yours:ua||'(vide)',correct:getCorrectAnswerText(q),explanation:getExplanation(q)});
+    updateScoreDisplays();
+    showFeedback(false,'❌ Réponse à retravailler',buildFeedbackPayload(q,true),false);
+  }
+  if(handleAnswerForSurvival(accepted)) return;
+  if(handlePlayerAnswerForDuel(accepted)) return;
   showNextButton();
 }
 
@@ -3514,7 +4861,14 @@ function bb_answerOpen(){
     state.errors.push({q:q.q,yours:ua||'(vide)',correct:getCorrectAnswerText(q),explanation:getExplanation(q)});
   }
   updateScoreDisplays();
-  showFeedback(ok,ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',buildFeedbackPayload(q,!ok),true);
+  showFeedback(
+    ok,
+    ok?'✅ Bonne réponse !':'❌ Réponse insuffisante',
+    buildFeedbackPayload(q,!ok,{
+      note:ok && validation.usedTolerance ? 'Réponse acceptée malgré une petite faute !' : ''
+    }),
+    true
+  );
   showNextButton(true);
 }
 
@@ -3522,9 +4876,11 @@ function showFeedback(ok,title,payload,isBB=false){
   const container=document.getElementById((isBB?'bb-':'')+'feedback-container');
   const box=document.createElement('div');
   box.className='feedback-box '+(ok?'correct':'wrong');box.style.display='block';
+  const noteBlock=payload.note?`<div class="feedback-note">${escapeHTML(payload.note)}</div>`:'';
   const expectedBlock=payload.expected?`<div class="feedback-answer"><strong>Réponse attendue :</strong> ${escapeHTML(payload.expected)}</div>`:'';
   const explanationBlock=payload.explanation?`<div class="feedback-explanation"><div class="feedback-label">Rappel</div><div class="feedback-text">${nl2br(payload.explanation)}</div></div>`:'';
-  box.innerHTML=`<div class="feedback-title">${title}</div>${expectedBlock}${explanationBlock}`;
+  const actionsBlock=payload.actions?`<div class="feedback-actions">${payload.actions}</div>`:'';
+  box.innerHTML=`<div class="feedback-title">${title}</div>${noteBlock}${expectedBlock}${explanationBlock}${actionsBlock}`;
   container.innerHTML='';container.appendChild(box);
 }
 
@@ -3539,7 +4895,18 @@ function showNextButton(isBB=false){
   else{btn.textContent=isLast?'📊 Voir les résultats':'Question suivante →';btn.onclick=isLast?()=>showResults(false):nextQuestion;}
 }
 
-function nextQuestion(){state.currentIdx++;if(state.currentIdx>=state.questions.length){showResults();return;}renderQuestion();}
+function nextQuestion(){
+  stopSpeech();
+  if(isSurvivalRun()){
+    state.currentIdx=(state.currentIdx+1)%state.questions.length;
+    if(state.currentIdx===0) state.questions=shuffle(state.questions);
+    renderQuestion();
+    return;
+  }
+  state.currentIdx++;
+  if(state.currentIdx>=state.questions.length){showResults();return;}
+  renderQuestion();
+}
 
 /* ============================================================
    TIMER (quiz standard)
@@ -3550,14 +4917,35 @@ function updateTimerDisplay(){const d=document.getElementById('timer-display'),v
 function timeUp(){
   state.answered=true;
   const q=state.questions[state.currentIdx];
+  recordAnsweredQuestion(q,false);
   playEffect('error');
   triggerVibration('error');
   state.correctAnswersInRun=0;
+  breakCombo();
   registerDailyAnswer(false);
   rememberWeakQuestion(q);
   state.errors.push({q:q.q,yours:'(temps écoulé)',correct:getCorrectAnswerText(q),explanation:getExplanation(q)});
   showFeedback(false,'⏱️ Temps écoulé !',buildFeedbackPayload(q,true));
+  if(handlePlayerAnswerForDuel(false)) return;
   showNextButton();
+}
+
+function finalizeRunMilestones(total,elapsed,isBB=false){
+  if(!playerProfile) return;
+  if(!isSurvivalRun() && !isBB && total>=10 && state.score===total){
+    awardCoins(50,'Quiz parfait',true);
+  }
+  if(state.runXpBoostActive && (playerProfile.inventory.xpBoostRuns||0)>0){
+    playerProfile.inventory.xpBoostRuns=Math.max(0,(playerProfile.inventory.xpBoostRuns||0)-1);
+  }
+  if(isSurvivalRun()){
+    playerProfile.stats.bestSurvivalTime=Math.max(playerProfile.stats.bestSurvivalTime||0,elapsed);
+    playerProfile.stats.bestSurvivalScore=Math.max(playerProfile.stats.bestSurvivalScore||0,state.score||0);
+  }
+  const hour=new Date().getHours();
+  if(hour>=22) unlockBadge('night-owl');
+  if(state.score>=10 && elapsed<=120) unlockBadge('sniper');
+  if(isBB && state.score===total) unlockBadge('invincible');
 }
 
 /* ============================================================
@@ -3565,9 +4953,16 @@ function timeUp(){
    ============================================================ */
 function showResults(isBB=false){
   stopTimer();clearInterval(state.bbGlobalTimerInterval);
+  pauseDuelEngine();
+  setDuelHudVisible(false);
+  clearSurvivalTimer();
+  setSurvivalHudVisible(false);
   const elapsed=Math.floor((Date.now()-state.startTime)/1000);
-  const total=state.questions.length||1;
+  const total=isSurvivalRun()
+    ? Math.max(1,state.survival.questionsAnswered||0)
+    : (state.questions.length||1);
   const pct=Math.round((state.score/total)*100);
+  const runBonusMultiplier=state.runXpBoostActive?2:1;
 
   if(!state.runRewarded){
     updateStreakAfterCompletedQuiz();
@@ -3581,30 +4976,59 @@ function showResults(isBB=false){
       saveRankedProfile();
       updateRankedUI();
       const rankedSubjects=Array.from(new Set(state.questions.map(q=>q._subj).filter(Boolean)));
-      const share=rankedSubjects.length?Math.floor(36/rankedSubjects.length):36;
-      let remainder=rankedSubjects.length?36-(share*rankedSubjects.length):0;
+      const rankedBonus=36*runBonusMultiplier;
+      const share=rankedSubjects.length?Math.floor(rankedBonus/rankedSubjects.length):rankedBonus;
+      let remainder=rankedSubjects.length?rankedBonus-(share*rankedSubjects.length):0;
       (rankedSubjects.length?rankedSubjects:[state.subject]).forEach(subjectKey=>awardXp(share+(remainder-->0?1:0),subjectKey));
     }else if(state.mode==='weak'){
       const subjects=Array.from(new Set(state.questions.map(q=>q._subj).filter(Boolean)));
-      const share=subjects.length?Math.floor(XP_RULES.quizBonus/subjects.length):XP_RULES.quizBonus;
-      let remainder=subjects.length?XP_RULES.quizBonus-(share*subjects.length):0;
+      const weakBonus=XP_RULES.quizBonus*runBonusMultiplier;
+      const share=subjects.length?Math.floor(weakBonus/subjects.length):weakBonus;
+      let remainder=subjects.length?weakBonus-(share*subjects.length):0;
       (subjects.length?subjects:[state.subject]).forEach(subjectKey=>awardXp(share+(remainder-->0?1:0),subjectKey));
     }else if(isBB){
       const subjects=SUBJECT_KEYS.filter(subjectKey=>state.bbBySubject[subjectKey]?.total);
-      const share=subjects.length?Math.floor(XP_RULES.brevetBlancBonus/subjects.length):0;
-      let remainder=subjects.length?XP_RULES.brevetBlancBonus-(share*subjects.length):0;
+      const bbBonus=XP_RULES.brevetBlancBonus*runBonusMultiplier;
+      const share=subjects.length?Math.floor(bbBonus/subjects.length):0;
+      let remainder=subjects.length?bbBonus-(share*subjects.length):0;
       subjects.forEach(subjectKey=>awardXp(share+(remainder-->0?1:0),subjectKey));
+    }else if(state.mode==='survival'){
+      // Le mode Survie rémunère déjà chaque bonne réponse via l'XP des questions.
     }else{
-      awardXp(XP_RULES.quizBonus,state.subject);
+      awardXp(XP_RULES.quizBonus*runBonusMultiplier,state.subject);
+      if(state.mode==='duel'){
+        registerDuelOutcome();
+        if(state.duel.result==='player'){
+          addXP(XP_RULES.duelVictoryBonus,state.subject,false);
+          showToast('IA vaincue ! +100 XP','success');
+        }else{
+          showToast('Le Bot a été plus rapide... Entraîne-toi encore !','warning');
+        }
+      }
     }
+    finalizeRunMilestones(total,elapsed,isBB);
     saveHistory({
-      subject:state.mode==='ranked'?'classe':(state.mode==='weak'?'points-faibles':(isBB?'brevet-blanc':state.subject)),
+      subject:state.mode==='ranked'
+        ? 'classe'
+        : (state.mode==='weak'
+          ? 'points-faibles'
+          : (state.mode==='survival'
+            ? 'survival'
+            : (isBB?'brevet-blanc':state.subject))),
       chapters:state.mode==='ranked'
         ? [`Rang ${state.rankedTier?.name||getRankInfo(rankedProfile.rp).name}`]
         : (state.mode==='weak'
           ? ['Révision ciblée']
-          : (isBB?['Brevet Blanc']:state.chapters)),
-      diff:state.mode==='ranked'?'Classé':(state.mode==='weak'?'Points faibles':(isBB?'Blanc':state.difficulty)),
+          : (state.mode==='survival'
+            ? [state.survival.selectedPoolLabel||'Mode Survie']
+            : (isBB?['Brevet Blanc']:state.chapters))),
+      diff:state.mode==='ranked'
+        ? 'Classé'
+        : (state.mode==='weak'
+          ? 'Points faibles'
+          : (state.mode==='survival'
+            ? 'Survie'
+            : (isBB?'Blanc':(state.mode==='duel'?'Duel':state.difficulty)))),
       score:state.score,total,pct,elapsed,
       rpDelta:state.mode==='ranked'?state.rankedRpDelta:0,
       xpEarned:state.sessionEarnedXp,
@@ -3621,7 +5045,21 @@ function showResults(isBB=false){
   setTimeout(()=>{fill.style.strokeDashoffset=circumference-(pct/100)*circumference;},100);
   document.getElementById('result-percent').textContent=pct+'%';
 
-  const [title,sub]=pct>=90?['🏆 Excellent !','Score parfait — prêt(e) pour le brevet !']:pct>=70?['👍 Très bien !','Bon travail ! Quelques points à revoir.']:pct>=50?['💪 Pas mal !','Continuez à réviser les parties manquées.']:['📚 À retravailler !','Consultez vos erreurs et recommencez.'];
+  let [title,sub]=pct>=90?['🏆 Excellent !','Score parfait — prêt(e) pour le brevet !']:pct>=70?['👍 Très bien !','Bon travail ! Quelques points à revoir.']:pct>=50?['💪 Pas mal !','Continuez à réviser les parties manquées.']:['📚 À retravailler !','Consultez vos erreurs et recommencez.'];
+  if(state.mode==='duel'){
+    if(state.duel.result==='player'){
+      title='🤖 IA vaincue !';
+      sub=`${DUEL_BOT_NAME} s’incline. Bonus duel accordé : +100 XP.`;
+    }else{
+      title='🤖 Duel perdu';
+      sub='Le Bot a été plus rapide... Entraîne-toi encore !';
+    }
+  }else if(state.mode==='survival'){
+    const bestTime=playerProfile?.stats?.bestSurvivalTime||elapsed;
+    const bestScore=playerProfile?.stats?.bestSurvivalScore||state.score;
+    title='💀 Game Over';
+    sub=`Score final : ${state.score}/${total} · Record temps : ${formatTime(Math.round(bestTime))} · Record score : ${bestScore}`;
+  }
   document.getElementById('result-title').textContent=title;
   document.getElementById('result-subtitle').textContent=state.mode==='ranked'
     ? `${sub} ${state.rankedRpDelta>=0?'+':''}${state.rankedRpDelta} RP sur cette partie classée.`
@@ -3653,10 +5091,24 @@ function showResults(isBB=false){
     bbSection.style.display='none';
     document.getElementById('btn-restart').textContent=state.mode==='ranked'
       ? '🏆 Rejouer en classé'
-      : (state.mode==='weak' ? '🎯 Refaire mes points faibles' : '🔄 Recommencer');
+      : (state.mode==='weak'
+        ? '🎯 Refaire mes points faibles'
+        : (state.mode==='duel'
+          ? '🤖 Refaire un duel'
+          : (state.mode==='survival' ? '🔥 Relancer la survie' : '🔄 Recommencer')));
     document.getElementById('btn-restart').onclick=state.mode==='ranked'
       ? startRankedQuiz
-      : (state.mode==='weak' ? startWeakReview : restartQuiz);
+      : (state.mode==='weak'
+        ? startWeakReview
+        : (state.mode==='duel'
+          ? startDuelChallenge
+          : (state.mode==='survival'
+            ? ()=>startSurvivalMode({
+                subject:state.chapters.includes('Mode Survie')?null:state.subject,
+                chapters:state.chapters.includes('Mode Survie')?[]:[...state.chapters],
+                label:state.survival.selectedPoolLabel||'Mix total'
+              })
+            : restartQuiz)));
   }
 
   showScreen('screen-results');
@@ -3673,11 +5125,17 @@ function showErrors(){
   showScreen('screen-errors');
 }
 
-function restartQuiz(){showScreen('screen-difficulty');}
+function restartQuiz(){
+  resetDuelState();
+  clearSurvivalTimer();
+  showScreen('screen-difficulty');
+}
 
 function confirmQuit(isBB=false){
   if(confirm('Quitter ? Votre progression sera perdue.')){
     stopTimer();clearInterval(state.bbGlobalTimerInterval);
+    resetDuelState();
+    clearSurvivalTimer();
     showScreen('screen-home');
   }
 }
@@ -3708,6 +5166,7 @@ function renderHistory(targetId='history-list'){
 
   const allSubjMeta={...SUBJ_META,'brevet-blanc':{icon:'🎓',name:'Brevet Blanc',tagClass:'gold'},'classe':{icon:'🏆',name:'Mode Classé',tagClass:'gold'}};
   allSubjMeta['points-faibles']={icon:'🎯',name:'Points faibles',tagClass:'gold'};
+  allSubjMeta['survival']={icon:'🔥',name:'Mode Survie',tagClass:'gold'};
 
   const banner=document.createElement('div');banner.className='history-avg-banner';
   let subjHTML='';
@@ -3723,7 +5182,7 @@ function renderHistory(targetId='history-list'){
   h.forEach(entry=>{
     const cls=entry.pct>=70?'good':entry.pct>=40?'mid':'bad';
     const m=allSubjMeta[entry.subject]||{icon:'📚',name:entry.subject};
-    const diffLabel={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile',Blanc:'🎓 Brevet Blanc','Classé':'🏆 Classé','Points faibles':'🎯 Points faibles'}[entry.diff]||entry.diff;
+    const diffLabel={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile',Blanc:'🎓 Brevet Blanc','Classé':'🏆 Classé','Points faibles':'🎯 Points faibles',Duel:'🤖 Duel IA',Survie:'🔥 Survie'}[entry.diff]||entry.diff;
     const chaps=entry.chapters?entry.chapters.join(', '):'—';
     const xpLabel=entry.xpEarned?` · +${entry.xpEarned} XP`:'';
     const rpLabel=entry.rpDelta?` · ${entry.rpDelta>=0?'+':''}${entry.rpDelta} RP`:'';
@@ -3823,8 +5282,12 @@ window.addEventListener('load',()=>{
   refreshPlayerUI();
   updateFlashCounts();
   renderSettingsPanel();
+  renderThemeSelector();
+  renderTitleSelector();
+  renderShop();
   renderWeakReviewCard();
   renderDailyChallenges();
+  document.getElementById('progress-import-input')?.addEventListener('change',handleImportProgress);
   bindAdminLogoAccess();
   maybeOpenOnboarding();
 });
