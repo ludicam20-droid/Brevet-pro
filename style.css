@@ -687,31 +687,33 @@ select:disabled{
 }
 
 body[data-theme="neon"]{
-  --navy:#031018;
-  --navy2:#071a24;
-  --navy3:#0b3145;
-  --gold:#00e7ff;
-  --gold2:#8effdf;
-  --white:#ecfffe;
-  --gray:#8ebfca;
-  --card-bg:rgba(5,24,34,.84);
-  --card-border:rgba(0,231,255,.18);
-  --cta-gradient:linear-gradient(135deg,#041521,#09344a,#08c7d9);
-  --select-surface:linear-gradient(180deg,rgba(6,28,40,.96),rgba(4,18,28,.94));
-  --select-border:rgba(0,231,255,.22);
+  --navy:#040612;
+  --navy2:#0b1028;
+  --navy3:#1c1446;
+  --gold:#00efff;
+  --gold2:#ff9cff;
+  --white:#f8f2ff;
+  --gray:#b7b0d8;
+  --card-bg:rgba(10,13,36,.86);
+  --card-border:rgba(0,239,255,.2);
+  --cta-gradient:linear-gradient(135deg,#070a18,#15204f,#ff5dff);
+  --select-surface:linear-gradient(180deg,rgba(12,15,40,.97),rgba(7,9,24,.95));
+  --select-border:rgba(255,110,255,.24);
 }
 body[data-theme="neon"]::before{
   background:
-    radial-gradient(circle at 18% 18%,rgba(0,231,255,.24) 0%,transparent 28%),
-    radial-gradient(circle at 78% 70%,rgba(57,255,136,.18) 0%,transparent 24%),
-    linear-gradient(130deg,rgba(0,231,255,.08),transparent 42%,rgba(57,255,136,.11) 74%,transparent);
+    radial-gradient(circle at 16% 18%,rgba(0,239,255,.28) 0%,transparent 24%),
+    radial-gradient(circle at 82% 72%,rgba(255,92,255,.24) 0%,transparent 22%),
+    linear-gradient(120deg,rgba(0,239,255,.1) 0%,transparent 28%,rgba(255,92,255,.12) 56%,transparent 84%),
+    repeating-linear-gradient(90deg,transparent 0 26px,rgba(0,239,255,.05) 26px 27px,transparent 27px 54px);
   animation:neonFlux 7s ease-in-out infinite;
 }
 body[data-theme="neon"]::after{
   background-image:
-    linear-gradient(rgba(0,231,255,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(57,255,136,.03) 1px,transparent 1px);
-  background-size:38px 38px;
+    linear-gradient(rgba(0,239,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,92,255,.03) 1px,transparent 1px),
+    linear-gradient(135deg,transparent 0 48%,rgba(255,255,255,.06) 49% 50%,transparent 51%);
+  background-size:38px 38px,38px 38px,180px 180px;
   animation:neonGrid 9s linear infinite;
 }
 body[data-theme="neon"] .card,
@@ -809,31 +811,36 @@ body[data-theme="nature-vivante"]::after{
   animation:leafFall 18s linear infinite;
 }
 body[data-theme="glace"]{
-  --navy:#d7eefb;
-  --navy2:#eef9ff;
-  --navy3:#a8d8f6;
-  --gold:#74b6e3;
-  --gold2:#ffffff;
-  --white:#183049;
-  --gray:#53738f;
-  --card-bg:rgba(255,255,255,.82);
-  --card-border:rgba(116,182,227,.24);
-  --shadow:0 20px 44px rgba(52,95,136,.12);
-  --cta-gradient:linear-gradient(135deg,#effbff,#cfeeff,#8ec8ef);
-  --select-surface:linear-gradient(180deg,#ffffff,#e9f7ff);
-  --select-border:rgba(116,182,227,.26);
+  --navy:#a8d4eb;
+  --navy2:#d9f1ff;
+  --navy3:#79b8d8;
+  --gold:#4ea5d9;
+  --gold2:#effbff;
+  --white:#0f2f4b;
+  --gray:#426783;
+  --card-bg:rgba(231,247,255,.78);
+  --card-border:rgba(78,165,217,.3);
+  --shadow:0 22px 48px rgba(38,88,128,.18);
+  --cta-gradient:linear-gradient(135deg,#effbff,#bfe7fb,#69b6dd);
+  --select-surface:linear-gradient(180deg,#f8feff,#dff4ff);
+  --select-border:rgba(78,165,217,.32);
 }
 body[data-theme="glace"]::before{
   background:
-    radial-gradient(circle at 16% 16%,rgba(255,255,255,.8) 0%,transparent 18%),
-    linear-gradient(135deg,rgba(255,255,255,.45),transparent 46%,rgba(173,220,249,.28) 76%,transparent);
+    linear-gradient(140deg,transparent 0 18%,rgba(255,255,255,.72) 19% 20%,transparent 21% 52%,rgba(168,226,255,.55) 53% 54%,transparent 55%),
+    linear-gradient(38deg,transparent 0 26%,rgba(205,241,255,.52) 27% 28%,transparent 29% 68%,rgba(255,255,255,.64) 69% 70%,transparent),
+    radial-gradient(circle at 16% 16%,rgba(255,255,255,.84) 0%,transparent 16%),
+    radial-gradient(circle at 82% 24%,rgba(207,243,255,.42) 0%,transparent 22%);
+  background-size:100% 100%,100% 100%,100% 100%,100% 100%;
   animation:frostPulse 8s ease-in-out infinite;
 }
 body[data-theme="glace"]::after{
   background-image:
-    radial-gradient(circle,rgba(255,255,255,.95) 0 1.3px,transparent 1.9px),
-    radial-gradient(circle,rgba(210,236,255,.82) 0 1px,transparent 1.6px);
-  background-size:120px 120px,180px 180px;
+    radial-gradient(circle,rgba(255,255,255,.96) 0 1.25px,transparent 1.9px),
+    radial-gradient(circle,rgba(198,233,255,.88) 0 1px,transparent 1.6px),
+    linear-gradient(125deg,transparent 0 47%,rgba(255,255,255,.14) 48% 48.4%,transparent 49%),
+    linear-gradient(55deg,transparent 0 54%,rgba(198,233,255,.12) 55% 55.4%,transparent 56%);
+  background-size:110px 110px,160px 160px,240px 240px,280px 280px;
   animation:snowFall 14s linear infinite;
 }
 body[data-theme="glace"] .card,
@@ -841,13 +848,14 @@ body[data-theme="glace"] .question-card,
 body[data-theme="glace"] .results-card,
 body[data-theme="glace"] .shop-card,
 body[data-theme="glace"] .player-topbar{
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 18px 36px rgba(130,178,208,.18);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.76),inset 0 0 18px rgba(255,255,255,.24),0 18px 38px rgba(85,146,184,.2);
+  backdrop-filter:blur(8px);
 }
 body[data-theme="glace"] .player-level-badge{
-  background:linear-gradient(135deg,#8cc9ee,#dff5ff);
-  color:#12314d;
-  border:1px solid rgba(74,132,181,.28);
-  box-shadow:0 12px 28px rgba(92,152,201,.22);
+  background:linear-gradient(135deg,#5fb6e5,#e9fbff);
+  color:#08253d;
+  border:1px solid rgba(62,122,171,.34);
+  box-shadow:0 12px 28px rgba(73,137,182,.24);
 }
 body[data-theme="electricite"]{
   --navy:#091136;
@@ -885,33 +893,49 @@ body[data-theme="electricite"] .tf-btn{
   animation:electricArc 2.2s linear infinite;
 }
 body[data-theme="ciel-nuages"]{
-  --navy:#b7e2ff;
-  --navy2:#e5f7ff;
-  --navy3:#8acfff;
-  --gold:#65aef0;
+  --navy:#cfeeff;
+  --navy2:#f7fcff;
+  --navy3:#9eddff;
+  --gold:#72bfff;
   --gold2:#ffffff;
-  --white:#184062;
-  --gray:#5b7f9e;
-  --card-bg:rgba(255,255,255,.82);
-  --card-border:rgba(125,194,245,.24);
-  --shadow:0 18px 42px rgba(70,131,180,.14);
-  --cta-gradient:linear-gradient(135deg,#f5fcff,#dff4ff,#90d1ff);
-  --select-surface:linear-gradient(180deg,#ffffff,#ebf8ff);
-  --select-border:rgba(125,194,245,.26);
+  --white:#1f4f74;
+  --gray:#6a8cab;
+  --card-bg:rgba(255,255,255,.9);
+  --card-border:rgba(163,216,255,.26);
+  --shadow:0 18px 42px rgba(98,164,213,.12);
+  --cta-gradient:linear-gradient(180deg,#ffffff,#eef9ff 58%,#bfe7ff);
+  --select-surface:linear-gradient(180deg,#ffffff,#f5fbff);
+  --select-border:rgba(163,216,255,.28);
 }
 body[data-theme="ciel-nuages"]::before{
   background:
-    radial-gradient(circle at 14% 18%,rgba(255,255,255,.88) 0 8%,transparent 9%),
-    radial-gradient(circle at 36% 14%,rgba(255,255,255,.72) 0 7%,transparent 8%),
-    radial-gradient(circle at 72% 28%,rgba(255,255,255,.74) 0 9%,transparent 10%),
-    linear-gradient(180deg,rgba(255,255,255,.32),transparent 56%);
-  animation:cloudDrift 22s linear infinite;
+    radial-gradient(circle at 50% 62%,rgba(255,255,255,.34) 0 30%,transparent 33%),
+    radial-gradient(circle at 32% 66%,rgba(255,255,255,.28) 0 22%,transparent 25%),
+    radial-gradient(circle at 68% 58%,rgba(255,255,255,.3) 0 24%,transparent 27%),
+    radial-gradient(circle at 58% 42%,rgba(255,255,255,.24) 0 18%,transparent 21%),
+    radial-gradient(circle at 50% 68%,rgba(255,255,255,.22) 0 34%,transparent 37%),
+    radial-gradient(circle at 48% 58%,rgba(255,255,255,.26) 0 24%,transparent 27%),
+    radial-gradient(circle at 30% 62%,rgba(255,255,255,.22) 0 18%,transparent 21%),
+    radial-gradient(circle at 70% 64%,rgba(255,255,255,.24) 0 20%,transparent 23%),
+    radial-gradient(circle at 55% 44%,rgba(255,255,255,.18) 0 16%,transparent 19%),
+    radial-gradient(circle at 50% 62%,rgba(255,255,255,.18) 0 28%,transparent 31%),
+    linear-gradient(180deg,rgba(255,255,255,.28),transparent 58%);
+  background-size:26% 20%,18% 14%,20% 15%,15% 11%,36% 25%,18% 14%,13% 10%,15% 11%,11% 9%,30% 22%,100% 100%;
+  background-position:6% 10%,2% 12%,11% 8%,8% 5%,4% 9%,58% 18%,55% 20%,64% 16%,60% 13%,54% 17%,0 0;
+  animation:cloudDrift 24s linear infinite;
 }
 body[data-theme="ciel-nuages"]::after{
   background-image:
-    radial-gradient(circle at 20% 22%,rgba(255,255,255,.65) 0 2px,transparent 2.8px),
-    radial-gradient(circle at 75% 18%,rgba(255,255,255,.55) 0 1.8px,transparent 2.5px);
-  background-size:180px 180px,240px 240px;
+    radial-gradient(circle at 50% 60%,rgba(255,255,255,.2) 0 26%,transparent 29%),
+    radial-gradient(circle at 32% 66%,rgba(255,255,255,.17) 0 18%,transparent 21%),
+    radial-gradient(circle at 68% 58%,rgba(255,255,255,.18) 0 20%,transparent 23%),
+    radial-gradient(circle at 56% 44%,rgba(255,255,255,.14) 0 14%,transparent 17%),
+    radial-gradient(circle at 50% 64%,rgba(214,239,255,.18) 0 30%,transparent 33%),
+    radial-gradient(circle at 50% 62%,rgba(255,255,255,.16) 0 24%,transparent 27%),
+    radial-gradient(circle at 34% 64%,rgba(255,255,255,.14) 0 16%,transparent 19%),
+    radial-gradient(circle at 66% 64%,rgba(255,255,255,.14) 0 16%,transparent 19%);
+  background-size:22% 16%,15% 11%,16% 12%,11% 8%,28% 20%,20% 14%,12% 9%,12% 9%;
+  background-position:22% 52%,17% 54%,27% 50%,24% 47%,68% 30%,68% 32%,62% 34%,74% 33%;
   animation:cloudFloat 18s ease-in-out infinite;
 }
 body[data-theme="ciel-nuages"] .card,
@@ -919,12 +943,13 @@ body[data-theme="ciel-nuages"] .question-card,
 body[data-theme="ciel-nuages"] .results-card,
 body[data-theme="ciel-nuages"] .shop-card{
   animation:skyFloat 6s ease-in-out infinite;
+  box-shadow:0 18px 40px rgba(132,184,220,.14);
 }
 body[data-theme="ciel-nuages"] .player-level-badge{
-  background:linear-gradient(135deg,#78bfff,#f7fdff);
-  color:#12385a;
-  border:1px solid rgba(81,146,201,.28);
-  box-shadow:0 12px 28px rgba(90,156,214,.22);
+  background:linear-gradient(180deg,#ffffff,#bfe7ff);
+  color:#17486d;
+  border:1px solid rgba(109,174,223,.28);
+  box-shadow:0 12px 28px rgba(118,182,230,.2);
 }
 body[data-theme="antique"]{
   --navy:#d7d0c5;
@@ -1005,6 +1030,29 @@ body[data-theme="antique"]::after{
 @keyframes electricArc{
   0%,100%{box-shadow:0 0 0 1px rgba(94,230,255,.16),0 0 0 rgba(255,217,77,0)}
   50%{box-shadow:0 0 0 1px rgba(94,230,255,.3),0 0 18px rgba(255,217,77,.26)}
+}
+@keyframes auroraFilament{
+  0%{background-position:0% 26%,100% 50%,40% 74%,0% 0%,100% 100%,0 0}
+  50%{background-position:100% 54%,12% 24%,58% 18%,10% 6%,88% 94%,0 0}
+  100%{background-position:200% 18%,-76% 82%,76% 66%,0% 0%,100% 100%,0 0}
+}
+@keyframes auroraCurtain{
+  0%{background-position:0% 42%,100% 58%,0 0,0 0}
+  50%{background-position:100% 20%,10% 84%,18px 8px,-16px -10px}
+  100%{background-position:200% 60%,-80% 24%,36px 16px,-32px -20px}
+}
+@keyframes pastelBloom{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(-8px,6px,0) scale(1.04)}
+}
+@keyframes pastelShimmer{
+  0%{background-position:-160% 0,140% 0,0 0,0 0}
+  100%{background-position:160% 0,-140% 0,40px 0,-40px 0}
+}
+@keyframes pastelTintShift{
+  0%,100%{opacity:.9;filter:hue-rotate(0deg) saturate(1)}
+  35%{opacity:1;filter:hue-rotate(12deg) saturate(1.05)}
+  70%{opacity:.96;filter:hue-rotate(24deg) saturate(1.12)}
 }
 @keyframes cloudDrift{
   0%{background-position:-120px 0,0 0,0 0,0 0}
@@ -2011,23 +2059,101 @@ body[data-theme="aurore"]{
 body[data-theme="aurora"]::before,
 body[data-theme="aurore"]::before{
   background:
-    linear-gradient(120deg,rgba(65,255,167,.26) 0%,rgba(65,255,167,0) 24%,rgba(145,112,255,.28) 52%,rgba(0,194,255,.2) 78%,rgba(65,255,167,.16) 100%),
-    radial-gradient(circle at 18% 18%,rgba(86,255,198,.16) 0%,transparent 20%),
-    radial-gradient(circle at 82% 76%,rgba(137,103,255,.18) 0%,transparent 22%),
-    linear-gradient(180deg,rgba(5,17,38,.4),rgba(5,17,38,.08));
-  background-size:400% 400%,240% 240%,240% 240%,200% 200%;
-  filter:blur(6px);
-  animation:auroraRibbon 24s ease-in-out infinite;
+    linear-gradient(104deg,transparent 0 16%,rgba(88,255,181,.34) 18% 22%,rgba(88,255,181,0) 27% 44%,rgba(116,234,255,.22) 47% 50%,transparent 55%),
+    linear-gradient(112deg,transparent 0 24%,rgba(155,118,255,.34) 27% 31%,rgba(155,118,255,0) 36% 56%,rgba(88,255,181,.22) 59% 62%,transparent 67%),
+    linear-gradient(120deg,transparent 0 36%,rgba(76,214,255,.28) 39% 43%,rgba(76,214,255,0) 48% 70%,rgba(182,128,255,.22) 73% 76%,transparent 82%),
+    radial-gradient(circle at 18% 18%,rgba(86,255,198,.12) 0%,transparent 20%),
+    radial-gradient(circle at 82% 76%,rgba(137,103,255,.14) 0%,transparent 22%),
+    linear-gradient(180deg,rgba(5,17,38,.44),rgba(5,17,38,.08));
+  background-size:240% 180%,280% 190%,320% 210%,240% 240%,240% 240%,200% 200%;
+  filter:blur(10px) saturate(1.2);
+  animation:auroraFilament 26s ease-in-out infinite;
 }
 body[data-theme="aurora"]::after,
 body[data-theme="aurore"]::after{
   background-image:
-    radial-gradient(circle,rgba(146,255,215,.22) 0 1.1px,transparent 1.8px),
-    radial-gradient(circle,rgba(178,156,255,.18) 0 1px,transparent 1.8px),
-    linear-gradient(rgba(124,231,216,.015) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(113,141,255,.015) 1px,transparent 1px);
-  background-size:150px 150px,210px 210px,42px 42px,42px 42px;
-  animation:ambientGrid 28s linear infinite,twinkleField 10s steps(6,end) infinite;
+    linear-gradient(108deg,transparent 0 22%,rgba(97,255,191,.18) 24% 26%,transparent 29% 55%,rgba(172,128,255,.16) 57% 59%,transparent 62%),
+    linear-gradient(118deg,transparent 0 34%,rgba(82,220,255,.14) 36% 38%,transparent 41% 66%,rgba(97,255,191,.12) 68% 70%,transparent 73%),
+    radial-gradient(circle,rgba(146,255,215,.2) 0 1.1px,transparent 1.8px),
+    radial-gradient(circle,rgba(178,156,255,.16) 0 1px,transparent 1.8px);
+  background-size:260% 180%,300% 200%,150px 150px,210px 210px;
+  animation:auroraCurtain 28s ease-in-out infinite,twinkleField 10s steps(6,end) infinite;
+}
+
+body[data-theme="pastel"]{
+  --navy:#fffafd;
+  --navy2:#ffffff;
+  --navy3:#f4f7ff;
+  --gold:#ffbfd6;
+  --gold2:#d7f5ff;
+  --white:#6d6487;
+  --gray:#9a90b6;
+  --card-bg:rgba(255,255,255,.94);
+  --card-border:rgba(214,221,255,.42);
+  --shadow:0 18px 40px rgba(194,196,230,.16);
+  --cta-gradient:linear-gradient(135deg,#ffeaf4,#eaf8ff,#f4eaff);
+  --select-surface:linear-gradient(180deg,#ffffff,#faf7ff);
+  --select-border:rgba(214,221,255,.44);
+}
+body[data-theme="pastel"]::before{
+  background:
+    radial-gradient(circle at 14% 18%,rgba(255,202,223,.28) 0%,transparent 26%),
+    radial-gradient(circle at 82% 20%,rgba(204,239,255,.26) 0%,transparent 24%),
+    radial-gradient(circle at 72% 76%,rgba(228,210,255,.24) 0%,transparent 22%),
+    radial-gradient(circle at 24% 78%,rgba(215,255,221,.22) 0%,transparent 20%);
+  animation:pastelBloom 18s ease-in-out infinite;
+}
+body[data-theme="pastel"]::after{
+  background-image:
+    linear-gradient(115deg,transparent 0%,rgba(255,214,234,.08) 18%,rgba(255,214,234,.34) 30%,transparent 42%,rgba(210,239,255,.22) 58%,transparent 72%,rgba(232,219,255,.26) 84%,transparent 100%),
+    linear-gradient(125deg,transparent 0%,rgba(214,255,224,.08) 16%,rgba(214,255,224,.24) 28%,transparent 40%,rgba(255,233,196,.18) 56%,transparent 72%,rgba(210,239,255,.18) 88%,transparent 100%),
+    linear-gradient(rgba(255,202,223,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(204,239,255,.02) 1px,transparent 1px);
+  background-size:240% 100%,280% 100%,40px 40px,40px 40px;
+  animation:pastelShimmer 11s linear infinite,pastelTintShift 18s ease-in-out infinite;
+}
+body[data-theme="pastel"] h1,
+body[data-theme="pastel"] .section-title,
+body[data-theme="pastel"] .results-title,
+body[data-theme="pastel"] .shop-title,
+body[data-theme="pastel"] .vip-panel h3{
+  background:linear-gradient(135deg,#e58fb3,#77bde3,#b396e6,#8fcf9c);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+body[data-theme="pastel"] .btn-primary,
+body[data-theme="pastel"] .nav-btn,
+body[data-theme="pastel"] .toggle-btn,
+body[data-theme="pastel"] .option-btn,
+body[data-theme="pastel"] .tf-btn{
+  color:#6d6487;
+  border-color:rgba(214,221,255,.44);
+}
+body[data-theme="pastel"] .btn-primary{
+  background:linear-gradient(135deg,#ffd5e6,#cfefff,#efe0ff);
+}
+body[data-theme="pastel"] .nav-btn:nth-child(4n+1),
+body[data-theme="pastel"] .toggle-btn:nth-child(4n+1),
+body[data-theme="pastel"] .option-btn:nth-child(4n+1){border-color:#ffc8dc;color:#c27a97;background:rgba(255,226,238,.78)}
+body[data-theme="pastel"] .nav-btn:nth-child(4n+2),
+body[data-theme="pastel"] .toggle-btn:nth-child(4n+2),
+body[data-theme="pastel"] .option-btn:nth-child(4n+2){border-color:#cfefff;color:#6fa7c7;background:rgba(235,247,255,.84)}
+body[data-theme="pastel"] .nav-btn:nth-child(4n+3),
+body[data-theme="pastel"] .toggle-btn:nth-child(4n+3),
+body[data-theme="pastel"] .option-btn:nth-child(4n+3){border-color:#e3d2ff;color:#9a80c6;background:rgba(245,239,255,.84)}
+body[data-theme="pastel"] .nav-btn:nth-child(4n),
+body[data-theme="pastel"] .toggle-btn:nth-child(4n),
+body[data-theme="pastel"] .option-btn:nth-child(4n){border-color:#d7f2d8;color:#7db08a;background:rgba(240,252,241,.84)}
+body[data-theme="pastel"] .card:nth-child(4n+1) h3{color:#c27a97}
+body[data-theme="pastel"] .card:nth-child(4n+2) h3{color:#6fa7c7}
+body[data-theme="pastel"] .card:nth-child(4n+3) h3{color:#9a80c6}
+body[data-theme="pastel"] .card:nth-child(4n) h3{color:#7db08a}
+body[data-theme="pastel"] .player-level-badge{
+  background:linear-gradient(135deg,#ffd8e8,#d3f4ff,#efe0ff);
+  color:#6d6487;
+  border:1px solid rgba(210,198,240,.34);
+  box-shadow:0 12px 30px rgba(214,200,240,.2);
 }
 
 body[data-theme="ocean"]::before{
@@ -3998,4 +4124,99 @@ body[data-theme="paper"] .modal-card{
 [data-theme="vintage"] .header svg {
     fill: #5a3a22 !important;
     color: #5a3a22 !important;
+}
+
+/* --- Verrouillage global du contraste texte --- */
+body{
+  --ui-text-strong:var(--white);
+  --ui-text-muted:color-mix(in srgb,var(--gray) 74%,var(--white) 26%);
+  --ui-text-soft:color-mix(in srgb,var(--gray) 82%,var(--white) 18%);
+  --ui-text-shadow:0 2px 12px rgba(5,10,28,.22);
+}
+body[data-theme="light"],
+body[data-theme="glace"],
+body[data-theme="ciel-nuages"],
+body[data-theme="ranked-diamond"],
+body[data-theme="diamant"]{
+  --ui-text-strong:#214866;
+  --ui-text-muted:#56718b;
+  --ui-text-soft:#728ba2;
+  --ui-text-shadow:none;
+}
+body[data-theme="pastel"]{
+  --ui-text-strong:#6d6487;
+  --ui-text-muted:#8d82a7;
+  --ui-text-soft:#a59bbb;
+  --ui-text-shadow:none;
+}
+body[data-theme="paper"],
+body[data-theme="vintage"],
+body[data-theme="antique"]{
+  --ui-text-strong:#533a24;
+  --ui-text-muted:#745a42;
+  --ui-text-soft:#8d7157;
+  --ui-text-shadow:none;
+}
+body .logo-text,
+body .player-name:not(.glow):not(.legend):not(.vip),
+body .player-global-title,
+body .question-text,
+body .settings-card-title,
+body .theme-panel-title,
+body .daily-card-title,
+body .shop-card h3,
+body .sheet-card h3,
+body .redaction-card h4,
+body .feedback-answer{
+  color:var(--ui-text-strong);
+  text-shadow:var(--ui-text-shadow);
+}
+body .hero p,
+body .section-subtitle,
+body .card p,
+body .chapter-info span,
+body .diff-btn .diff-desc,
+body:not([data-theme="pastel"]) .nav-btn,
+body:not([data-theme="pastel"]) .toggle-btn:not(.active),
+body .btn-secondary,
+body .back-btn,
+body .card .card-arrow,
+body .progress-info,
+body .duel-bot-meta,
+body .results-subtitle,
+body .error-explain,
+body .flashcard-hint,
+body .flashcard-explain,
+body .player-specialty,
+body .player-meta-line,
+body .avatar-edit-chip,
+body .meta-pill,
+body .xp-track-head,
+body .xp-track-hint,
+body .settings-help,
+body .theme-panel-subtitle,
+body .daily-card-copy,
+body .feedback-explanation{
+  color:var(--ui-text-muted);
+  text-shadow:none;
+}
+body:not([data-theme="pastel"]) .nav-btn:hover,
+body:not([data-theme="pastel"]) .btn-secondary:hover,
+body .back-btn:hover{
+  color:var(--ui-text-strong);
+}
+body[data-theme="light"] .streak-flame.idle,
+body[data-theme="glace"] .streak-flame.idle,
+body[data-theme="ciel-nuages"] .streak-flame.idle,
+body[data-theme="ranked-diamond"] .streak-flame.idle,
+body[data-theme="diamant"] .streak-flame.idle{
+  color:rgba(33,72,102,.38);
+}
+body[data-theme="pastel"] .streak-flame.idle{
+  color:rgba(109,100,135,.38);
+}
+body[data-theme="paper"] .streak-flame.idle,
+body[data-theme="vintage"] .streak-flame.idle,
+body[data-theme="antique"] .streak-flame.idle{
+  color:rgba(83,58,36,.36);
 }
