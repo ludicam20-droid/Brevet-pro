@@ -293,12 +293,12 @@ const XP_RULES={
 const DIFFICULTY_TARGETS={facile:8,normal:12,difficile:16};
 const MIN_RANKED_LEVEL=8;
 const DAILY_CHALLENGE_TEMPLATES=[
-  {id:'runs-2',label:'Faire 2 quiz',description:'Terminez deux quiz ou modes de révision aujourd’hui.',metric:'quizzesCompleted',target:2,rewardXp:40},
-  {id:'streak-5',label:'Réussir 5 questions d’affilée',description:'Enchaînez cinq bonnes réponses sans erreur.',metric:'bestCorrectStreak',target:5,rewardXp:45},
-  {id:'xp-100',label:'Gagner 100 XP',description:'Accumulez 100 XP de jeu dans la journée.',metric:'xpGained',target:100,rewardXp:55},
-  {id:'answers-15',label:'Répondre à 15 questions',description:'Avancez dans vos révisions avec quinze réponses au total.',metric:'questionsAnswered',target:15,rewardXp:35},
-  {id:'weak-1',label:'Faire 1 révision ciblée',description:'Lancez une session “Points faibles” aujourd’hui.',metric:'weakReviewsCompleted',target:1,rewardXp:35},
-  {id:'ranked-1',label:'Terminer 1 partie classée',description:'Finissez une session classée pour gagner un bonus.',metric:'rankedRuns',target:1,rewardXp:70,requiresLevel:MIN_RANKED_LEVEL}
+  {id:'runs-2',label:'Faire 2 quiz',description:'Terminez deux quiz ou modes de révision aujourd’hui.',metric:'quizzesCompleted',target:2,rewardXp:40,rewardCoins:25},
+  {id:'streak-5',label:'Réussir 5 questions d’affilée',description:'Enchaînez cinq bonnes réponses sans erreur.',metric:'bestCorrectStreak',target:5,rewardXp:45,rewardCoins:30},
+  {id:'xp-100',label:'Gagner 100 XP',description:'Accumulez 100 XP de jeu dans la journée.',metric:'xpGained',target:100,rewardXp:55,rewardCoins:35},
+  {id:'answers-15',label:'Répondre à 15 questions',description:'Avancez dans vos révisions avec quinze réponses au total.',metric:'questionsAnswered',target:15,rewardXp:35,rewardCoins:20},
+  {id:'weak-1',label:'Faire 1 révision ciblée',description:'Lancez une session “Points faibles” aujourd’hui.',metric:'weakReviewsCompleted',target:1,rewardXp:35,rewardCoins:25},
+  {id:'ranked-1',label:'Terminer 1 partie classée',description:'Finissez une session classée pour gagner un bonus.',metric:'rankedRuns',target:1,rewardXp:70,rewardCoins:45,requiresLevel:MIN_RANKED_LEVEL}
 ];
 const RANK_TIERS=[
   {name:'Bronze I',rp:0,diffs:['normal'],count:10,desc:'Questions normales, priorité aux bases solides.'},
@@ -364,14 +364,14 @@ const SPECIALTY_TITLES={
 const THEMES={
   dark:{label:'Classique',unlockLevel:1,preview:'linear-gradient(135deg,#16215d,#0f1535,#202f79)'},
   light:{label:'Clair',unlockLevel:1,preview:'linear-gradient(135deg,#ffffff,#eef4fb,#dfe9f7)'},
-  starry:{label:'Nuit Étoilée',unlockLevel:5,preview:'linear-gradient(135deg,#0a1b4f,#102b74,#1a4bb4)'},
-  'gold-noir':{label:'Or & Noir',unlockLevel:10,preview:'linear-gradient(135deg,#111111,#3b2f10,#a37a19)'},
-  circuit:{label:'Circuit Émeraude',unlockLevel:15,preview:'linear-gradient(135deg,#062527,#0f4c4f,#33a16f)'},
-  aurora:{label:'Aurore Boréale',unlockLevel:20,preview:'linear-gradient(135deg,#08253d,#114564,#59d6c2)'},
-  ocean:{label:'Océan',unlockLevel:22,preview:'linear-gradient(135deg,#07253c,#0c5f96,#7ed6ff)'},
-  sunset:{label:'Coucher de Soleil',unlockLevel:25,preview:'linear-gradient(135deg,#481b2f,#8f3f48,#ffb05a)'},
-  paper:{label:'Carnet Vintage',unlockLevel:30,preview:'linear-gradient(135deg,#fffaf1,#eadcc1,#c79b67)'},
-  nebula:{label:'Nébuleuse Rose',unlockLevel:35,preview:'linear-gradient(135deg,#170b2b,#4a246f,#ff8bd1)'},
+  starry:{label:'Nuit Étoilée',unlockLevel:5,passManaged:true,preview:'linear-gradient(135deg,#0a1b4f,#102b74,#1a4bb4)'},
+  'gold-noir':{label:'Or & Noir',unlockLevel:10,passManaged:true,preview:'linear-gradient(135deg,#111111,#3b2f10,#a37a19)'},
+  circuit:{label:'Circuit Émeraude',unlockLevel:15,passManaged:true,preview:'linear-gradient(135deg,#062527,#0f4c4f,#33a16f)'},
+  aurora:{label:'Aurore Boréale',unlockLevel:20,passManaged:true,preview:'linear-gradient(135deg,#08253d,#114564,#59d6c2)'},
+  ocean:{label:'Océan',unlockLevel:22,passManaged:true,preview:'linear-gradient(135deg,#07253c,#0c5f96,#7ed6ff)'},
+  sunset:{label:'Coucher de Soleil',unlockLevel:25,passManaged:true,preview:'linear-gradient(135deg,#481b2f,#8f3f48,#ffb05a)'},
+  paper:{label:'Carnet Vintage',unlockLevel:30,passManaged:true,preview:'linear-gradient(135deg,#fffaf1,#eadcc1,#c79b67)'},
+  nebula:{label:'Nébuleuse Rose',unlockLevel:35,passManaged:true,preview:'linear-gradient(135deg,#170b2b,#4a246f,#ff8bd1)'},
   'ranked-bronze':{label:'Bronze',unlockRp:60,preview:'linear-gradient(135deg,#392217,#6c4631,#8a5c41)'},
   'ranked-silver':{label:'Argent',unlockRp:320,preview:'linear-gradient(135deg,#223041,#536980,#a4b6c9)'},
   'ranked-gold':{label:'Or',unlockRp:560,preview:'linear-gradient(135deg,#322108,#8f6216,#d1a22f)'},
@@ -382,8 +382,13 @@ const THEMES={
   'nature-vivante':{label:'Nature vivante',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#204a2d,#7bb15e,#d8cfad)'},
   glace:{label:'Glace',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#dff5ff,#9fdcff,#ffffff)'},
   electricite:{label:'Électricité',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#0b1a54,#ffd84f,#5ee6ff)'},
-  'ciel-nuages':{label:'Ciel / Nuages',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#8ad0ff,#eef9ff,#ffffff)'},
-  antique:{label:'Antique',unlockStreak:7,preview:'linear-gradient(135deg,#e8dfcf,#b79b71,#f1d37f)'}
+  'ciel-nuages':{label:'Ciel et Nuage',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#8ad0ff,#eef9ff,#ffffff)'},
+  pastel:{label:'Pastel',unlockLevel:999,shopOnly:true,preview:'linear-gradient(135deg,#fff7fb,#eaf7ff,#f5ebff)'},
+  antique:{label:'Antique',unlockStreak:7,preview:'linear-gradient(135deg,#e8dfcf,#b79b71,#f1d37f)'},
+  manga:{label:'Manga',unlockLevel:999,passManaged:true,preview:'linear-gradient(135deg,#ffffff,#e8e8e8,#111111)'},
+  steampunk:{label:'Steampunk',unlockLevel:999,passManaged:true,preview:'linear-gradient(135deg,#2c1d15,#7a4d2d,#c48b4e)'},
+  magma:{label:'Magma',unlockLevel:999,passManaged:true,preview:'linear-gradient(135deg,#130908,#43140e,#ff7a1c)'},
+  'aura-divine':{label:'Aura divine',unlockLevel:999,passManaged:true,preview:'linear-gradient(135deg,#ffffff,#fff7dc,#d3b055)'}
 };
 const SHOP_ITEMS={
   shield:{icon:'🛡️',label:'Le Bouclier',price:200,desc:'Protège la série si tu rates un jour.',action:'shield'},
@@ -395,7 +400,8 @@ const SHOP_ITEMS={
   themeNature:{icon:'🍃',label:'Thème Nature vivante',price:280,desc:'Forêt zen en vert et beige avec feuilles qui tombent.',action:'theme',themeKey:'nature-vivante'},
   themeGlace:{icon:'❄️',label:'Thème Glace',price:280,desc:'Univers froid et propre avec givre et neige légère.',action:'theme',themeKey:'glace'},
   themeElectric:{icon:'⚡',label:'Thème Électricité',price:320,desc:'Énergie brute, éclairs aléatoires et arcs électriques sur les boutons.',action:'theme',themeKey:'electricite'},
-  themeSky:{icon:'☁️',label:'Thème Ciel / Nuages',price:280,desc:'Ambiance légère avec nuages qui défilent et éléments flottants.',action:'theme',themeKey:'ciel-nuages'}
+  themeSky:{icon:'☁️',label:'Thème Ciel et Nuage',price:280,desc:'Ambiance légère avec nuages qui défilent et éléments flottants.',action:'theme',themeKey:'ciel-nuages'},
+  themePastel:{icon:'🧁',label:'Thème Pastel',price:260,desc:'Fond blanc, boutons pastel et textes multicolores doux.',action:'theme',themeKey:'pastel'}
 };
 const MINIAVS_WORKSHOP={
   backgrounds:[
@@ -491,11 +497,56 @@ const MINIAVS_COLOR_GROUPS=['backgrounds','clothingColors','hairColors','skinCol
 const MINIAVS_COLOR_FIELDS=['backgroundColor','clothingColor','hairColor','skinColor'];
 const SOUND_PACKS={
   classic:{label:'Classique',unlockLevel:1,desc:'Carillons doux et propres.',wave:'sine',success:[784,988],error:[196,156],volume:.045},
-  '8bit':{label:'8-bit',unlockLevel:5,desc:'Bips arcade rétro pour les bonnes réponses.',wave:'square',success:[880,1175],error:[220,165],volume:.035},
-  crystal:{label:'Cristal',unlockLevel:12,desc:'Sons brillants et plus aériens.',wave:'triangle',success:[660,990],error:[210,180],volume:.04},
-  cosmic:{label:'Cosmique',unlockLevel:20,desc:'Un timbre plus ample pour les hauts niveaux.',wave:'sawtooth',success:[523,784],error:[185,146],volume:.03},
-  prestige:{label:'Prestige',unlockLevel:35,desc:'Finition noble pour les joueurs installés.',wave:'triangle',success:[740,1110],error:[174,138],volume:.05}
+  '8bit':{label:'8-bit',unlockLevel:5,passManaged:true,desc:'Bips arcade rétro pour les bonnes réponses.',wave:'square',success:[880,1175],error:[220,165],volume:.035},
+  crystal:{label:'Cristal',unlockLevel:12,passManaged:true,desc:'Sons brillants et plus aériens.',wave:'triangle',success:[660,990],error:[210,180],volume:.04},
+  cosmic:{label:'Cosmique',unlockLevel:20,passManaged:true,desc:'Un timbre plus ample pour les hauts niveaux.',wave:'sawtooth',success:[523,784],error:[185,146],volume:.03},
+  prestige:{label:'Prestige',unlockLevel:35,passManaged:true,desc:'Finition noble pour les joueurs installés.',wave:'triangle',success:[740,1110],error:[174,138],volume:.05}
 };
+const BREVET_PASS_PREMIUM_COST=800;
+const COIN_RULES={
+  streak:{startDay:2,base:20,step:10},
+  daily:{comboBonus:100},
+  perfect:{base:30,perLevel:2}
+};
+const PASS_TITLES={
+  'global:Novice':{label:'Global · Novice',text:'Novice',effect:'none',desc:'Titre de départ de BrevetPro.'},
+  'global:Explorateur':{label:'Global · Explorateur',text:'Explorateur',effect:'none',desc:'Titre simple du parcours gratuit.'},
+  'global:Expert':{label:'Global · Expert',text:'Expert',effect:'none',desc:'Titre simple du parcours gratuit.'},
+  'global:Maître du Brevet':{label:'Global · Maître du Brevet',text:'Maître du Brevet',effect:'none',desc:'Titre majeur du parcours gratuit.'},
+  'premium:Cadence Chromee':{label:'Premium · Cadence Chromée',text:'Cadence Chromée',effect:'copper',desc:'Titre animé métallisé du pass premium.'},
+  'premium:Turbo Revision':{label:'Premium · Turbo Révision',text:'Turbo Révision',effect:'electric',desc:'Titre animé à éclairs pour les joueurs premium.'},
+  'premium:Cosmos Mental':{label:'Premium · Cosmos Mental',text:'Cosmos Mental',effect:'aurora',desc:'Titre animé aux reflets cosmiques.'},
+  'premium:Empereur du Pass':{label:'Premium · Empereur du Pass',text:'Empereur du Pass',effect:'gold',desc:'Titre premium final avant la légende.'},
+  'legend:Legende du Brevet':{label:'Final · Légende du Brevet',text:'Légende du Brevet',effect:'rainbow',desc:'Titre final arc-en-ciel du Brevet Pass.'}
+};
+const BREVET_PASS_LEVELS={
+  2:{premium:[{type:'coins',amount:30}]},
+  4:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:1}]},
+  6:{premium:[{type:'coins',amount:30},{type:'theme',key:'aurora'}]},
+  8:{free:[{type:'coins',amount:20},{type:'theme',key:'starry'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Cadence Chromee'}]},
+  10:{premium:[{type:'coins',amount:30}]},
+  12:{free:[{type:'coins',amount:20},{type:'sound',key:'8bit'}],premium:[{type:'coins',amount:30},{type:'theme',key:'ocean'}]},
+  14:{premium:[{type:'coins',amount:30},{type:'sound',key:'cosmic'}]},
+  16:{free:[{type:'coins',amount:20},{type:'title',key:'global:Explorateur'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:2}]},
+  18:{premium:[{type:'coins',amount:30},{type:'theme',key:'sunset'}]},
+  20:{free:[{type:'coins',amount:20},{type:'theme',key:'gold-noir'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Turbo Revision'}]},
+  22:{premium:[{type:'coins',amount:30}]},
+  24:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'theme',key:'nebula'}]},
+  26:{premium:[{type:'coins',amount:30},{type:'theme',key:'manga'}]},
+  28:{free:[{type:'coins',amount:20},{type:'theme',key:'circuit'}],premium:[{type:'coins',amount:30},{type:'sound',key:'prestige'}]},
+  30:{premium:[{type:'coins',amount:30},{type:'xpboost',runs:2}]},
+  32:{free:[{type:'coins',amount:20},{type:'sound',key:'crystal'}],premium:[{type:'coins',amount:30},{type:'theme',key:'steampunk'}]},
+  34:{premium:[{type:'coins',amount:30}]},
+  36:{free:[{type:'coins',amount:20},{type:'title',key:'global:Expert'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Cosmos Mental'}]},
+  38:{premium:[{type:'coins',amount:30},{type:'theme',key:'magma'}]},
+  40:{free:[{type:'coins',amount:20},{type:'theme',key:'paper'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:3}]},
+  42:{premium:[{type:'coins',amount:30}]},
+  44:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Empereur du Pass'}]},
+  46:{premium:[{type:'coins',amount:30}]},
+  48:{free:[{type:'coins',amount:20},{type:'title',key:'global:Maître du Brevet'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:3}]},
+  50:{free:[{type:'coins',amount:20},{type:'title',key:'legend:Legende du Brevet'},{type:'theme',key:'aura-divine'}],premium:[{type:'coins',amount:50},{type:'xpboost',runs:3}]}
+};
+const BREVET_PASS_INDEX=buildBrevetPassRewardIndex();
 const REDACTION_TOPICS={
   histoire:[
     {
@@ -848,10 +899,71 @@ function generateAvatarUrl(config=playerProfile?.userAvatarConfig){
   return `https://api.dicebear.com/9.x/miniavs/svg?${params.toString()}`;
 }
 
-function getUnlockedSoundPackKeys(level){
+function normalizePassLevelArray(values=[]){
+  return Array.from(new Set(
+    (Array.isArray(values)?values:[])
+      .map(value=>Math.max(1,Math.min(XP_RULES.maxLevel,Math.floor(value||0))))
+      .filter(Boolean)
+  )).sort((a,b)=>a-b);
+}
+
+function buildBrevetPassRewardIndex(){
+  const index={theme:{},sound:{},title:{}};
+  Object.entries(BREVET_PASS_LEVELS).forEach(([levelKey,tracks])=>{
+    const level=Number(levelKey);
+    ['free','premium'].forEach(track=>{
+      (tracks?.[track]||[]).forEach(reward=>{
+        if(reward.type==='theme' || reward.type==='sound' || reward.type==='title'){
+          index[reward.type][reward.key]={level,track};
+        }
+      });
+    });
+  });
+  return index;
+}
+
+function getBattlePassTrackLabel(track='free'){
+  return track==='premium'?'Premium':'Gratuit';
+}
+
+function getBattlePassTrackRewards(level,track='free'){
+  return [...(BREVET_PASS_LEVELS[level]?.[track]||[])];
+}
+
+function hasBattlePassRewardsAtLevel(level){
+  return !!(getBattlePassTrackRewards(level,'free').length || getBattlePassTrackRewards(level,'premium').length);
+}
+
+function getLegacyUnlockedSoundPackKeys(level){
   return Object.entries(SOUND_PACKS)
-    .filter(([,pack])=>level>=pack.unlockLevel)
+    .filter(([,pack])=>level>=(pack.unlockLevel||1))
     .map(([key])=>key);
+}
+
+function getUnlockedSoundPackKeys(){
+  return Array.from(new Set(['classic',...(playerProfile?.unlockedSoundPacks||[])]));
+}
+
+function isBattlePassTrackClaimed(level,track='free',profile=playerProfile){
+  if(!profile) return false;
+  const claimed=track==='premium'?profile.battlePassClaimedPremium:profile.battlePassClaimedFree;
+  return normalizePassLevelArray(claimed).includes(level);
+}
+
+function isBattlePassTrackUnlocked(level,track='free',profile=playerProfile){
+  if(!profile) return false;
+  const currentLevel=profile.levelInfo?.level||profile.level||1;
+  if(level>currentLevel) return false;
+  if(track==='premium' && !profile.battlePassPremium) return false;
+  return true;
+}
+
+function getPassTitleMeta(titleKey){
+  return PASS_TITLES[titleKey]||PASS_TITLES['global:Novice'];
+}
+
+function getTitleEffectClass(effect='none'){
+  return effect && effect!=='none' ? `effect-${effect}` : '';
 }
 
 function getAvatarBorderTier(level){
@@ -947,6 +1059,19 @@ function playSound(kind='success'){
   playEffect(kind);
 }
 
+function playCoinSound(){
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+  const pack=getSoundPack(playerProfile?.soundPack);
+  const notes=pack.coin||[1046,1568,2093];
+  const wave=pack.wave||'triangle';
+  const volume=Math.min(0.06,(pack.volume||0.04)+0.012);
+  const now=ctx.currentTime;
+  notes.forEach((frequency,index)=>{
+    playTone(ctx,now+(index*0.045),frequency,0.1,wave,volume);
+  });
+}
+
 function escapeHTML(value){
   return String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;',
@@ -993,6 +1118,17 @@ function getLevelInfo(totalXp){
   const nextLevelXp=level>=XP_RULES.maxLevel?0:getLevelRequirement(level);
   const progressPct=level>=XP_RULES.maxLevel?100:Math.min(100,Math.round((remaining/nextLevelXp)*100));
   return {level,currentLevelXp:remaining,nextLevelXp,progressPct};
+}
+
+function getStreakCoinReward(streakCount){
+  const safeCount=Math.max(0,Math.floor(streakCount||0));
+  if(safeCount<COIN_RULES.streak.startDay) return 0;
+  return COIN_RULES.streak.base+((safeCount-COIN_RULES.streak.startDay)*COIN_RULES.streak.step);
+}
+
+function getPerfectQuizCoinReward(level=playerProfile?.levelInfo?.level||1){
+  const safeLevel=Math.max(1,Math.floor(level||1));
+  return COIN_RULES.perfect.base+((safeLevel-1)*COIN_RULES.perfect.perLevel);
 }
 
 function pickTitle(list,level){
@@ -1718,6 +1854,10 @@ function showScreen(id){
   if(id==='screen-ranked-hub') updateRankedUI();
   if(id==='screen-daily-challenges') renderDailyChallenges();
   if(id==='screen-shop') renderShop();
+  if(id==='screen-pass') renderBrevetPassScreen();
+  if(id==='screen-themes') renderThemeSelector();
+  if(id==='screen-titles') renderTitleSelector();
+  if(id==='screen-settings') renderSettingsPanel();
   if(id==='screen-vip'){
     updateVipUI();
     renderHistory('stats-history-list');
@@ -1937,8 +2077,9 @@ function awardCoins(amount,reason='',silent=false){
   savePlayerProfile();
   refreshPlayerUI();
   spawnCoinBurst(actual);
+  playCoinSound();
   if(!silent){
-    showToast(`+${actual} BrevetCoins${reason?` · ${reason}`:''}`,'success');
+    showToast(`+${actual} BrevetCoins${reason?` (${reason})`:''}`,'success');
   }
   return actual;
 }
@@ -2188,12 +2329,16 @@ function registerDuelOutcome(){
   }
 }
 
+function isRapidModeQuestion(question){
+  return !!question && !['open','input'].includes(question.type);
+}
+
 function buildMixedQuestionPool(count=12,diffs=['facile','normal','difficile']){
   const pool=[];
   SUBJECT_KEYS.forEach(subject=>{
     Object.keys(DB[subject]||{}).forEach(chapter=>{
       pool.push(...(DB[subject][chapter]||[])
-        .filter(q=>diffs.includes(q.diff))
+        .filter(q=>diffs.includes(q.diff) && isRapidModeQuestion(q))
         .map(q=>({...q,_subj:q._subj||subject,_chapter:q._chapter||chapter})));
     });
   });
@@ -2526,14 +2671,18 @@ function buildSurvivalPool(subject=null,chapters=[]){
   if(subject && chapters.length){
     const pool=[];
     chapters.forEach(chapter=>{
-      pool.push(...(DB[subject]?.[chapter]||[]).map(q=>({...q,_subj:q._subj||subject,_chapter:q._chapter||chapter})));
+      pool.push(...(DB[subject]?.[chapter]||[])
+        .filter(isRapidModeQuestion)
+        .map(q=>({...q,_subj:q._subj||subject,_chapter:q._chapter||chapter})));
     });
     return shuffle(pool);
   }
   const pool=[];
   SUBJECT_KEYS.forEach(subjectKey=>{
     Object.keys(DB[subjectKey]||{}).forEach(chapter=>{
-      pool.push(...(DB[subjectKey][chapter]||[]).map(q=>({...q,_subj:q._subj||subjectKey,_chapter:q._chapter||chapter})));
+      pool.push(...(DB[subjectKey][chapter]||[])
+        .filter(isRapidModeQuestion)
+        .map(q=>({...q,_subj:q._subj||subjectKey,_chapter:q._chapter||chapter})));
     });
   });
   return shuffle(pool);
@@ -2688,6 +2837,7 @@ function loadPlayerProfile(){
   const normalizeThemeKey=themeKey=>themeAliases[themeKey]||themeKey||'dark';
   const migratedTheme=normalizeThemeKey(localStorage.getItem(STORAGE_KEYS.theme)||raw.currentTheme||'dark');
   const statsRaw=raw.stats||{};
+  const legacyLevelInfo=getLevelInfo(Math.max(0,Math.floor(raw.totalXp||0)));
   const profile={
     pseudo:String(raw.pseudo||'').trim(),
     avatarConfigured:!!raw.userAvatarConfig,
@@ -2696,6 +2846,15 @@ function loadPlayerProfile(){
     openSelfEvalMode:!!raw.openSelfEvalMode,
     xpBySubject:{...getDefaultXpBySubject(),...(raw.xpBySubject||{})},
     unlockedThemes:Array.isArray(raw.unlockedThemes)?raw.unlockedThemes.map(normalizeThemeKey):['dark','light'],
+    unlockedSoundPacks:Array.isArray(raw.unlockedSoundPacks)
+      ? raw.unlockedSoundPacks.filter(key=>SOUND_PACKS[key])
+      : getLegacyUnlockedSoundPackKeys(legacyLevelInfo.level),
+    unlockedPassTitles:Array.isArray(raw.unlockedPassTitles)
+      ? raw.unlockedPassTitles.filter(key=>PASS_TITLES[key])
+      : GLOBAL_TITLES.filter(item=>legacyLevelInfo.level>=item.level).map(item=>`global:${item.title}`),
+    battlePassPremium:!!raw.battlePassPremium,
+    battlePassClaimedFree:normalizePassLevelArray(raw.battlePassClaimedFree||[]),
+    battlePassClaimedPremium:normalizePassLevelArray(raw.battlePassClaimedPremium||[]),
     currentTheme:migratedTheme,
     selectedTitle:raw.selectedTitle||'global:Novice',
     userAvatarConfig:normalizeUserAvatarConfig(raw.userAvatarConfig||{},raw.pseudo||raw.selectedAvatar||'BrevetPro',50),
@@ -2721,6 +2880,8 @@ function loadPlayerProfile(){
     }
   };
   profile.unlockedThemes=Array.from(new Set(['dark','light',...profile.unlockedThemes]));
+  profile.unlockedSoundPacks=Array.from(new Set(['classic',...profile.unlockedSoundPacks]));
+  profile.unlockedPassTitles=Array.from(new Set(['global:Novice',...profile.unlockedPassTitles]));
   if(!THEMES[profile.currentTheme]) profile.currentTheme='dark';
   return profile;
 }
@@ -2734,6 +2895,11 @@ function savePlayerProfile(){
     openSelfEvalMode:playerProfile.openSelfEvalMode,
     xpBySubject:playerProfile.xpBySubject,
     unlockedThemes:playerProfile.unlockedThemes,
+    unlockedSoundPacks:playerProfile.unlockedSoundPacks,
+    unlockedPassTitles:playerProfile.unlockedPassTitles,
+    battlePassPremium:playerProfile.battlePassPremium,
+    battlePassClaimedFree:playerProfile.battlePassClaimedFree,
+    battlePassClaimedPremium:playerProfile.battlePassClaimedPremium,
     currentTheme:playerProfile.currentTheme,
     selectedTitle:playerProfile.selectedTitle,
     userAvatarConfig:playerProfile.userAvatarConfig,
@@ -2840,6 +3006,7 @@ function createDailyChallengeState(dateKey=getLocalDateKey()){
   }));
   return {
     date:dateKey,
+    comboClaimed:false,
     quests,
     stats:{
       quizzesCompleted:0,
@@ -2873,6 +3040,7 @@ function normalizeDailyChallengeState(raw){
     : [];
   const nextState={
     date:today,
+    comboClaimed:!!raw.comboClaimed,
     quests:quests.length===3?quests:createDailyChallengeState(today).quests,
     stats:{
       quizzesCompleted:Math.max(0,Math.floor(statsRaw.quizzesCompleted||0)),
@@ -2929,12 +3097,12 @@ function renderDailyChallenges(){
   }
   if(summaryCopy){
     summaryCopy.textContent=completedCount===3
-      ? 'Bravo, les trois quêtes du jour sont validées. Revenez demain pour une nouvelle rotation.'
+      ? `Bravo, les trois quêtes du jour sont validées. Bonus combo : +${COIN_RULES.daily.comboBonus} BrevetCoins.`
       : `Date du jour : ${new Date().toLocaleDateString('fr-FR')} · ${3-completedCount} défi${3-completedCount>1?'s':''} restant${3-completedCount>1?'s':''}.`;
   }
   if(homeCopy){
     homeCopy.textContent=completedCount===3
-      ? 'Les 3 défis du jour sont terminés. Revenez demain pour de nouveaux bonus.'
+      ? `Les 3 défis du jour sont terminés. Bonus combo de ${COIN_RULES.daily.comboBonus} BrevetCoins encaissé.`
       : `${completedCount}/3 défi${completedCount>1?'s':''} terminé${completedCount>1?'s':''} aujourd’hui.`;
   }
   if(!list) return;
@@ -2946,7 +3114,7 @@ function renderDailyChallenges(){
       <div class="daily-card ${done?'done':''}">
         <div class="daily-card-head">
           <div class="daily-card-title">${escapeHtml(quest.label)}</div>
-          <span class="daily-card-reward">+${quest.rewardXp} XP</span>
+          <span class="daily-card-reward">+${quest.rewardXp} XP · +${quest.rewardCoins||0} coins</span>
         </div>
         <div class="daily-card-copy">${escapeHtml(quest.description)}</div>
         <div class="daily-progress-row">
@@ -2975,9 +3143,17 @@ function syncDailyChallenges(){
       dailyChallengeRewardLock=true;
       addXP(quest.rewardXp,null);
       dailyChallengeRewardLock=false;
-      awardCoins(30,'Défi complété',true);
+      awardCoins(quest.rewardCoins||0,`Défi quotidien : ${quest.label}`);
     }
   });
+  const completedCount=dailyChallengeState.quests.filter(quest=>quest.claimed).length;
+  if(completedCount===dailyChallengeState.quests.length && !dailyChallengeState.comboClaimed){
+    dailyChallengeState.comboClaimed=true;
+    changed=true;
+    playEffect('challenge');
+    triggerVibration('level');
+    awardCoins(COIN_RULES.daily.comboBonus,'Combo des 3 défis du jour !');
+  }
   if(changed) saveDailyChallenges();
   renderDailyChallenges();
 }
@@ -3009,6 +3185,13 @@ function registerDailyRunCompletion(mode='standard'){
 
 function getThemeUnlockText(theme){
   if(!theme) return '';
+  const themeKey=Object.entries(THEMES).find(([,value])=>value===theme)?.[0]||'';
+  if(theme.passManaged){
+    const placement=BREVET_PASS_INDEX.theme[themeKey];
+    return placement
+      ? `Brevet Pass ${placement.track==='premium'?'Premium ':''}· niv. ${placement.level}`.replace('  ',' ')
+      : 'Brevet Pass';
+  }
   if(theme.shopOnly){
     return 'Boutique';
   }
@@ -3021,6 +3204,77 @@ function getThemeUnlockText(theme){
   return `Niveau ${theme.unlockLevel||1}`;
 }
 
+function getSoundPackUnlockText(soundKey){
+  const pack=SOUND_PACKS[soundKey];
+  if(!pack) return '';
+  if(pack.passManaged){
+    const placement=BREVET_PASS_INDEX.sound[soundKey];
+    return placement
+      ? `Brevet Pass ${placement.track==='premium'?'Premium ':''}· niv. ${placement.level}`.replace('  ',' ')
+      : 'Brevet Pass';
+  }
+  return `Niveau ${pack.unlockLevel||1}`;
+}
+
+function getThemeSourceMeta(themeKey,theme=THEMES[themeKey]){
+  if(!theme) return {label:'Spécial',detail:'Déblocage spécial',sortSource:99,sortValue:9999,badgeClass:'special'};
+  if(themeKey==='dark' || themeKey==='light'){
+    return {
+      label:'Base',
+      detail:'Disponible dès le départ',
+      sortSource:0,
+      sortValue:themeKey==='dark'?0:1,
+      badgeClass:'base'
+    };
+  }
+  if(theme.passManaged){
+    const placement=BREVET_PASS_INDEX.theme[themeKey];
+    const isPremium=placement?.track==='premium';
+    return {
+      label:isPremium?'Pass Premium':'Brevet Pass',
+      detail:placement?`Niveau ${placement.level}`:'Palier du pass',
+      sortSource:1,
+      sortValue:(placement?.level||999)*10+(isPremium?1:0),
+      badgeClass:isPremium?'premium':'pass'
+    };
+  }
+  if(theme.unlockRp){
+    return {
+      label:'Mode classé',
+      detail:getRankInfo(theme.unlockRp).name,
+      sortSource:2,
+      sortValue:theme.unlockRp,
+      badgeClass:'ranked'
+    };
+  }
+  if(theme.unlockStreak){
+    return {
+      label:'Série',
+      detail:`${theme.unlockStreak} jours`,
+      sortSource:3,
+      sortValue:theme.unlockStreak,
+      badgeClass:'streak'
+    };
+  }
+  if(theme.shopOnly){
+    const shopItem=Object.values(SHOP_ITEMS).find(item=>item.themeKey===themeKey);
+    return {
+      label:'Boutique',
+      detail:shopItem?`${shopItem.price} BrevetCoins`:'Achetable',
+      sortSource:4,
+      sortValue:shopItem?.price||999,
+      badgeClass:'shop'
+    };
+  }
+  return {
+    label:'Niveau',
+    detail:`Niveau ${theme.unlockLevel||1}`,
+    sortSource:5,
+    sortValue:theme.unlockLevel||999,
+    badgeClass:'level'
+  };
+}
+
 function escapeHtml(value){
   return String(value??'')
     .replace(/&/g,'&amp;')
@@ -3030,63 +3284,98 @@ function escapeHtml(value){
     .replace(/'/g,'&#39;');
 }
 
-function getLevelRewardItems(level){
-  if(level<1 || level>XP_RULES.maxLevel) return [];
-  const rewards=[];
-  const globalTitle=GLOBAL_TITLES.find(item=>item.level===level);
-  if(globalTitle){
-    rewards.push({
+function getBattlePassRewardDescriptor(reward,track='free',level=1){
+  if(!reward) return {icon:'✨',label:'Récompense',shortLabel:'Récompense',desc:'Déblocage du Brevet Pass.',track,level,type:'unknown'};
+  if(reward.type==='coins'){
+    return {
+      icon:'🪙',
+      label:`${reward.amount} BrevetCoins`,
+      shortLabel:`${reward.amount} coins`,
+      desc:'Ajout immédiat dans ton portefeuille.',
+      track,
+      level,
+      type:'coins'
+    };
+  }
+  if(reward.type==='theme'){
+    const theme=THEMES[reward.key];
+    return {
+      icon:'🎨',
+      label:`Thème ${theme?.label||reward.key}`,
+      shortLabel:theme?.label||'Thème',
+      desc:'Débloqué dans le sélecteur de thèmes.',
+      track,
+      level,
+      type:'theme'
+    };
+  }
+  if(reward.type==='sound'){
+    const pack=SOUND_PACKS[reward.key];
+    return {
+      icon:'🔊',
+      label:`Pack ${pack?.label||reward.key}`,
+      shortLabel:pack?.label||'Pack sonore',
+      desc:pack?.desc||'Nouveau pack sonore disponible.',
+      track,
+      level,
+      type:'sound'
+    };
+  }
+  if(reward.type==='title'){
+    const meta=getPassTitleMeta(reward.key);
+    return {
       icon:'🏅',
-      label:`Titre global : ${globalTitle.title}`,
-      desc:'Nouveau titre à équiper dans le sélecteur de titres.'
-    });
+      label:meta.text,
+      shortLabel:meta.text,
+      desc:meta.desc||'Nouveau titre disponible.',
+      effect:meta.effect||'none',
+      track,
+      level,
+      type:'title'
+    };
   }
-  Object.entries(THEMES)
-    .filter(([,theme])=>theme.unlockLevel===level)
-    .forEach(([,theme])=>{
-      rewards.push({
-        icon:'🎨',
-        label:`Thème : ${theme.label}`,
-        desc:'Ajouté automatiquement au sélecteur de thèmes.'
-      });
-    });
-  Object.entries(SOUND_PACKS)
-    .filter(([,pack])=>pack.unlockLevel===level)
-    .forEach(([,pack])=>{
-      rewards.push({
-        icon:'🔊',
-        label:`Pack sonore : ${pack.label}`,
-        desc:pack.desc
-      });
-    });
-  if(level===MIN_RANKED_LEVEL){
-    rewards.push({
-      icon:'🏆',
-      label:'Mode classé',
-      desc:'Débloque les parties classées et la montée en RP.'
-    });
+  if(reward.type==='xpboost'){
+    return {
+      icon:'⚡',
+      label:`Boost XP x2`,
+      shortLabel:`Boost x2`,
+      desc:`+${reward.runs||1} quiz boosté${(reward.runs||1)>1?'s':''}.`,
+      track,
+      level,
+      type:'xpboost'
+    };
   }
-  if(level>0 && level%10===0){
-    rewards.push({
-      icon:'🛡️',
-      label:'Bouclier de série',
-      desc:'+1 bouclier pour protéger automatiquement ta flamme.'
-    });
+  return {icon:'✨',label:'Récompense mystère',shortLabel:'Récompense',desc:'Déblocage du Brevet Pass.',track,level,type:reward.type||'unknown'};
+}
+
+function renderBattlePassRewardIcon(reward){
+  if(!reward) return '✨';
+  if(reward.type==='coins'){
+    return '<img src="brevetcoin.png" alt="BrevetCoin" class="reward-coin-icon">';
   }
-  if(level===XP_RULES.maxLevel){
-    rewards.push({
-      icon:'👑',
-      label:'Niveau maximum',
-      desc:'Tu atteins le niveau maximum de BrevetPro.'
-    });
-  }
-  return rewards;
+  return escapeHtml(reward.icon||'✨');
+}
+
+function getLevelRewardItems(level){
+  if(level<1 || level>XP_RULES.maxLevel || !hasBattlePassRewardsAtLevel(level)) return [];
+  return ['free','premium'].flatMap(track=>
+    getBattlePassTrackRewards(level,track).map(reward=>{
+      const descriptor=getBattlePassRewardDescriptor(reward,track,level);
+      return {
+        ...descriptor,
+        claimed:isBattlePassTrackClaimed(level,track),
+        unlocked:isBattlePassTrackUnlocked(level,track),
+        premiumLocked:track==='premium' && !playerProfile?.battlePassPremium
+      };
+    })
+  );
 }
 
 function getNextRewardMilestone(fromLevel){
   for(let level=Math.max(1,fromLevel); level<=XP_RULES.maxLevel; level++){
-    const rewards=getLevelRewardItems(level);
-    if(rewards.length) return {level,rewards};
+    if(hasBattlePassRewardsAtLevel(level)){
+      return {level,rewards:getLevelRewardItems(level)};
+    }
   }
   return null;
 }
@@ -3094,11 +3383,12 @@ function getNextRewardMilestone(fromLevel){
 function renderXpRewardCards(rewards=[]){
   if(!rewards.length) return '';
   return rewards.map(reward=>`
-    <div class="xp-reward-card">
-      <div class="xp-reward-icon">${escapeHtml(reward.icon)}</div>
+    <div class="xp-reward-card ${reward.track||'free'} ${reward.premiumLocked?'locked':''}">
+      <div class="xp-reward-icon">${renderBattlePassRewardIcon(reward)}</div>
       <div class="xp-reward-copy">
         <strong>${escapeHtml(reward.label)}</strong>
         <span>${escapeHtml(reward.desc)}</span>
+        <span class="xp-reward-track">${reward.premiumLocked?'Premium requis':`${getBattlePassTrackLabel(reward.track)} · niv. ${reward.level}`}</span>
       </div>
     </div>
   `).join('');
@@ -3107,6 +3397,7 @@ function renderXpRewardCards(rewards=[]){
 function isThemeUnlocked(themeKey,level=playerProfile?.levelInfo?.level||1,peakRp=rankedProfile?.peakRp||rankedProfile?.rp||0,streakCount=getStreakStatus().displayCount){
   const theme=THEMES[themeKey];
   if(!theme) return false;
+  if(theme.passManaged) return !!playerProfile?.unlockedThemes?.includes(themeKey);
   if(theme.shopOnly) return !!playerProfile?.unlockedThemes?.includes(themeKey);
   const levelOk=theme.unlockLevel ? level>=theme.unlockLevel : true;
   const rankOk=theme.unlockRp ? peakRp>=theme.unlockRp : true;
@@ -3114,19 +3405,100 @@ function isThemeUnlocked(themeKey,level=playerProfile?.levelInfo?.level||1,peakR
   return levelOk && rankOk && streakOk;
 }
 
+function applyBattlePassRewardToProfile(reward,summary){
+  if(!playerProfile || !reward || !summary) return;
+  const descriptor=getBattlePassRewardDescriptor(reward,summary.track,summary.level);
+  if(reward.type==='coins'){
+    const amount=Math.max(0,Math.floor(reward.amount||0));
+    if(!amount) return;
+    playerProfile.coins=Math.max(0,(playerProfile.coins||0)+amount);
+    playerProfile.stats.coinsEarned=(playerProfile.stats.coinsEarned||0)+amount;
+    summary.coinGain+=amount;
+    summary.items.push(descriptor);
+    return;
+  }
+  if(reward.type==='theme' && THEMES[reward.key] && !playerProfile.unlockedThemes.includes(reward.key)){
+    playerProfile.unlockedThemes.push(reward.key);
+    summary.items.push(descriptor);
+    return;
+  }
+  if(reward.type==='sound' && SOUND_PACKS[reward.key] && !playerProfile.unlockedSoundPacks.includes(reward.key)){
+    playerProfile.unlockedSoundPacks.push(reward.key);
+    summary.items.push(descriptor);
+    return;
+  }
+  if(reward.type==='title' && PASS_TITLES[reward.key] && !playerProfile.unlockedPassTitles.includes(reward.key)){
+    playerProfile.unlockedPassTitles.push(reward.key);
+    summary.items.push(descriptor);
+    return;
+  }
+  if(reward.type==='xpboost'){
+    const runs=Math.max(1,Math.floor(reward.runs||1));
+    playerProfile.inventory.xpBoostRuns=(playerProfile.inventory.xpBoostRuns||0)+runs;
+    summary.items.push(descriptor);
+  }
+}
+
+function claimBattlePassTrack(level,track='free',{silent=false}={}){
+  if(!playerProfile) return null;
+  const rewards=getBattlePassTrackRewards(level,track);
+  if(!rewards.length) return null;
+  if(!isBattlePassTrackUnlocked(level,track) || isBattlePassTrackClaimed(level,track)) return null;
+  const summary={level,track,items:[],coinGain:0};
+  rewards.forEach(reward=>applyBattlePassRewardToProfile(reward,summary));
+  const claimKey=track==='premium'?'battlePassClaimedPremium':'battlePassClaimedFree';
+  playerProfile[claimKey]=normalizePassLevelArray([...(playerProfile[claimKey]||[]),level]);
+  if(!silent && summary.items.length){
+    if(summary.coinGain>0){
+      spawnCoinBurst(summary.coinGain);
+      playCoinSound();
+    }
+    const extras=summary.items
+      .filter(item=>item.type!=='coins')
+      .map(item=>item.shortLabel)
+      .join(' · ');
+    showToast(
+      summary.coinGain>0
+        ? `+${summary.coinGain} BrevetCoins (${getBattlePassTrackLabel(track)} · niveau ${level} du Pass)${extras?` · ${extras}`:''}`
+        : `Brevet Pass ${getBattlePassTrackLabel(track)} · niveau ${level} : ${summary.items.map(item=>item.shortLabel).join(' · ')}`,
+      'level'
+    );
+  }
+  return summary;
+}
+
+function claimBattlePassRewardsInRange(startLevel,endLevel,{tracks=['free','premium'],silent=false}={}){
+  const summaries=[];
+  for(let level=Math.max(1,startLevel); level<=Math.min(XP_RULES.maxLevel,endLevel); level++){
+    tracks.forEach(track=>{
+      const summary=claimBattlePassTrack(level,track,{silent});
+      if(summary) summaries.push(summary);
+    });
+  }
+  return summaries;
+}
+
+function initializeBrevetPassProgress(silent=true){
+  if(!playerProfile) return [];
+  const currentLevel=playerProfile.levelInfo?.level||getLevelInfo(playerProfile.totalXp).level;
+  const tracks=playerProfile.battlePassPremium?['free','premium']:['free'];
+  return claimBattlePassRewardsInRange(1,currentLevel,{tracks,silent});
+}
+
 function syncProfileComputedData(){
   if(!playerProfile) return;
   playerProfile.inventory=normalizeInventory(playerProfile.inventory||{});
+  playerProfile.battlePassClaimedFree=normalizePassLevelArray(playerProfile.battlePassClaimedFree||[]);
+  playerProfile.battlePassClaimedPremium=normalizePassLevelArray(playerProfile.battlePassClaimedPremium||[]);
+  playerProfile.unlockedSoundPacks=Array.from(new Set(['classic',...(playerProfile.unlockedSoundPacks||[])]));
+  playerProfile.unlockedPassTitles=Array.from(new Set(['global:Novice',...(playerProfile.unlockedPassTitles||[])]));
   const levelInfo=getLevelInfo(playerProfile.totalXp);
   const streakCount=getStreakStatus().displayCount;
   playerProfile.levelInfo=levelInfo;
   playerProfile.level=levelInfo.level;
   if(!playerProfile.pseudo) playerProfile.pseudo='';
-  playerProfile.globalTitle=pickTitle(GLOBAL_TITLES,levelInfo.level);
-  while((playerProfile.shieldMilestone||0)+10<=levelInfo.level){
-    playerProfile.shieldMilestone=(playerProfile.shieldMilestone||0)+10;
-    playerProfile.streakShields=(playerProfile.streakShields||0)+1;
-  }
+  const unlockedPassTitleKeys=Object.keys(PASS_TITLES).filter(key=>playerProfile.unlockedPassTitles.includes(key));
+  playerProfile.globalTitle=getPassTitleMeta(unlockedPassTitleKeys[unlockedPassTitleKeys.length-1]||'global:Novice').text;
   const unlocked=Object.entries(THEMES)
     .filter(([themeKey])=>isThemeUnlocked(themeKey,levelInfo.level,rankedProfile?.peakRp||rankedProfile?.rp||0,streakCount))
     .map(([themeKey])=>themeKey);
@@ -3136,7 +3508,7 @@ function syncProfileComputedData(){
     playerProfile.pseudo||'BrevetPro',
     levelInfo.level
   );
-  playerProfile.unlockedSoundPacks=getUnlockedSoundPackKeys(levelInfo.level);
+  playerProfile.unlockedSoundPacks=getUnlockedSoundPackKeys();
   const leader=getSubjectLeader(playerProfile.xpBySubject);
   playerProfile.specialtySubject=leader;
   if(leader){
@@ -3154,14 +3526,20 @@ function syncProfileComputedData(){
     playerProfile.soundPack=playerProfile.unlockedSoundPacks[0]||'classic';
   }
   playerProfile.ownedTitles=[
-    ...GLOBAL_TITLES.filter(item=>levelInfo.level>=item.level).map(item=>({key:`global:${item.title}`,label:`Global · ${item.title}`,text:item.title})),
+    ...Object.keys(PASS_TITLES)
+      .filter(key=>playerProfile.unlockedPassTitles.includes(key))
+      .map(key=>{
+        const meta=getPassTitleMeta(key);
+        return {key,label:meta.label,text:meta.text,effect:meta.effect||'none'};
+      }),
     ...SUBJECT_KEYS.flatMap(subjectKey=>{
       const titles=SPECIALTY_TITLES[subjectKey]||[];
       const subjectLevel=getLevelInfo(playerProfile.xpBySubject[subjectKey]||0).level;
       return titles.filter(item=>subjectLevel>=item.level).map(item=>({
         key:`${subjectKey}:${item.title}`,
         label:`${SUBJ_META[subjectKey].name} · ${item.title}`,
-        text:item.title
+        text:item.title,
+        effect:'none'
       }));
     })
   ];
@@ -3169,21 +3547,161 @@ function syncProfileComputedData(){
     playerProfile.selectedTitle=playerProfile.ownedTitles[0]?.key||'global:Novice';
   }
   playerProfile.displayedTitle=playerProfile.ownedTitles.find(title=>title.key===playerProfile.selectedTitle)?.text||playerProfile.globalTitle;
+  playerProfile.displayedTitleEffect=playerProfile.ownedTitles.find(title=>title.key===playerProfile.selectedTitle)?.effect||'none';
   playerProfile.favoriteSubject=getFavoriteSubject(playerProfile.stats.answersBySubject,playerProfile.xpBySubject);
   playerProfile.inventory.shield=Math.max(playerProfile.inventory.shield||0,playerProfile.streakShields||0);
   playerProfile.stats.xp=playerProfile.totalXp;
 }
 
 function getNextThemeGoal(level){
-  const peakRp=rankedProfile?.peakRp||rankedProfile?.rp||0;
-  const locked=Object.entries(THEMES).filter(([themeKey])=>!isThemeUnlocked(themeKey,level,peakRp));
-  if(!locked.length) return 'Tous les thèmes sont débloqués';
-  const next=locked.sort((a,b)=>{
-    const aScore=(a[1].unlockLevel?Math.max(0,a[1].unlockLevel-level):0)+(a[1].unlockRp?Math.max(0,a[1].unlockRp-peakRp)/100:0);
-    const bScore=(b[1].unlockLevel?Math.max(0,b[1].unlockLevel-level):0)+(b[1].unlockRp?Math.max(0,b[1].unlockRp-peakRp)/100:0);
-    return aScore-bScore;
-  })[0];
-  return `${next[1].label} via ${getThemeUnlockText(next[1])}`;
+  if(level>=XP_RULES.maxLevel) return 'Pass terminé';
+  const next=getNextRewardMilestone(level+1);
+  if(!next) return 'Pass terminé';
+  const hasFree=next.rewards.some(reward=>reward.track==='free');
+  const hasPremium=next.rewards.some(reward=>reward.track==='premium');
+  const trackLabel=hasFree&&hasPremium?'gratuit + premium':hasPremium?'premium':'gratuit';
+  return `Niv. ${next.level} · ${trackLabel}`;
+}
+
+function getBattlePassProgressPercent(info=playerProfile?.levelInfo){
+  if(!info) return 0;
+  if(info.level>=XP_RULES.maxLevel) return 100;
+  const totalSteps=Math.max(1,XP_RULES.maxLevel-1);
+  return Math.max(0,Math.min(100,(((info.level-1)+(info.progressPct/100))/totalSteps)*100));
+}
+
+function renderBrevetPassRewardPills(level,track='free'){
+  const rewards=getBattlePassTrackRewards(level,track);
+  if(!rewards.length){
+    return `<span class="pass-reward-pill empty">${track==='premium'?'Aucune récompense premium':'Palier sans récompense'}</span>`;
+  }
+  return rewards.map(reward=>{
+    const descriptor=getBattlePassRewardDescriptor(reward,track,level);
+    return `<span class="pass-reward-pill ${track}">${renderBattlePassRewardIcon(descriptor)} ${escapeHtml(descriptor.shortLabel)}</span>`;
+  }).join('');
+}
+
+function buyBrevetPassPremium(){
+  if(!playerProfile) return;
+  if(playerProfile.battlePassPremium){
+    showToast('Brevet Pass Premium déjà actif.','info');
+    return;
+  }
+  if(!spendCoins(BREVET_PASS_PREMIUM_COST)) return;
+  playerProfile.battlePassPremium=true;
+  const summaries=claimBattlePassRewardsInRange(
+    1,
+    playerProfile.levelInfo?.level||1,
+    {tracks:['premium'],silent:true}
+  );
+  const unlockedLabels=summaries.flatMap(summary=>summary.items.filter(item=>item.type!=='coins').map(item=>item.shortLabel));
+  const coinGain=summaries.reduce((total,summary)=>total+(summary.coinGain||0),0);
+  if(coinGain>0){
+    spawnCoinBurst(coinGain);
+    playCoinSound();
+  }
+  syncProfileComputedData();
+  savePlayerProfile();
+  refreshPlayerUI();
+  showToast(
+    coinGain>0
+      ? `+${coinGain} BrevetCoins (Rattrapage Brevet Pass Premium)${unlockedLabels.length?` · ${unlockedLabels.slice(0,4).join(' · ')}${unlockedLabels.length>4?' …':''}`:''}`
+      : unlockedLabels.length
+        ? `Brevet Pass Premium activé : ${unlockedLabels.slice(0,4).join(' · ')}${unlockedLabels.length>4?' …':''}`
+        : 'Brevet Pass Premium activé.',
+    'success'
+  );
+}
+
+function renderBrevetPassScreen(){
+  if(!playerProfile) return;
+  syncProfileComputedData();
+  const info=playerProfile.levelInfo;
+  const fill=document.getElementById('pass-progress-fill');
+  const levelNode=document.getElementById('pass-current-level');
+  const caption=document.getElementById('pass-progress-caption');
+  const nextNode=document.getElementById('pass-next-reward');
+  const balance=document.getElementById('pass-balance');
+  const status=document.getElementById('pass-premium-status');
+  const copy=document.getElementById('pass-premium-copy');
+  const button=document.getElementById('pass-premium-button');
+  const buttonPrice=document.getElementById('pass-premium-price');
+  const counts=document.getElementById('pass-reward-counts');
+  const cards=document.getElementById('pass-cards');
+  const nextMilestone=getNextRewardMilestone(info.level+1);
+  const freeClaimed=(playerProfile.battlePassClaimedFree||[]).length;
+  const premiumClaimed=(playerProfile.battlePassClaimedPremium||[]).length;
+  if(fill) fill.style.width=`${getBattlePassProgressPercent(info)}%`;
+  if(levelNode) levelNode.textContent=`Niveau ${info.level} / ${XP_RULES.maxLevel}`;
+  if(caption){
+    caption.textContent=info.level>=XP_RULES.maxLevel
+      ? 'Brevet Pass terminé. Tu peux encore récupérer la voie premium si elle n’est pas active.'
+      : `${info.currentLevelXp} / ${info.nextLevelXp} XP vers le niveau ${Math.min(info.level+1,XP_RULES.maxLevel)}`;
+  }
+  if(nextNode){
+    nextNode.textContent=nextMilestone
+      ? `Prochain palier : niveau ${nextMilestone.level}`
+      : 'Dernier palier atteint';
+  }
+  if(balance) balance.innerHTML=renderCoinAmount(playerProfile.coins||0);
+  if(status){
+    status.textContent=playerProfile.battlePassPremium
+      ? 'Version Premium active'
+      : 'Version gratuite active';
+  }
+  if(copy){
+    copy.textContent=playerProfile.battlePassPremium
+      ? 'Tu récupères automatiquement les récompenses gratuites et premium à chaque niveau du Pass.'
+      : 'La voie gratuite donne une récompense tous les 4 niveaux. Le Premium ajoute une seconde colonne tous les 2 niveaux.';
+  }
+  if(button){
+    button.disabled=!!playerProfile.battlePassPremium;
+    button.textContent=playerProfile.battlePassPremium ? 'Premium déjà débloqué' : 'Débloquer le Premium';
+  }
+  if(buttonPrice){
+    buttonPrice.innerHTML=playerProfile.battlePassPremium ? 'Accès permanent actif' : renderCoinAmount(BREVET_PASS_PREMIUM_COST,'');
+  }
+  if(counts){
+    counts.innerHTML=`
+      <span class="pass-stat-pill">🎯 ${freeClaimed} paliers gratuits récupérés</span>
+      <span class="pass-stat-pill premium">💎 ${premiumClaimed} paliers premium récupérés</span>
+      <span class="pass-stat-pill">🎨 ${playerProfile.unlockedThemes.length} thèmes possédés</span>
+    `;
+  }
+  if(!cards) return;
+  cards.innerHTML=Array.from({length:XP_RULES.maxLevel},(_,index)=>{
+    const level=index+1;
+    const hasFree=getBattlePassTrackRewards(level,'free').length>0;
+    const hasPremium=getBattlePassTrackRewards(level,'premium').length>0;
+    const current=level===info.level;
+    const reached=level<=info.level;
+    const freeClaimedHere=isBattlePassTrackClaimed(level,'free');
+    const premiumClaimedHere=isBattlePassTrackClaimed(level,'premium');
+    const premiumLocked=!playerProfile.battlePassPremium;
+    const levelStatus=current?'En cours':freeClaimedHere||premiumClaimedHere?'Réclamé':reached?'Atteint':'À venir';
+    return `
+      <article class="pass-level-card ${current?'current':''} ${reached?'reached':'future'} ${(hasFree||hasPremium)?'rewarded':'plain'}">
+        <div class="pass-level-head">
+          <div class="pass-level-number">Niv. ${level}</div>
+          <div class="pass-level-state">${levelStatus}</div>
+        </div>
+        <div class="pass-track-row free ${freeClaimedHere?'claimed':reached?'ready':'future'}">
+          <div class="pass-track-label">
+            <strong>Gratuit</strong>
+            <span>${hasFree?(freeClaimedHere?'Récupéré':reached?'Débloqué':'Verrouillé'):'Pas de récompense'}</span>
+          </div>
+          <div class="pass-track-rewards">${renderBrevetPassRewardPills(level,'free')}</div>
+        </div>
+        <div class="pass-track-row premium ${(premiumClaimedHere && playerProfile.battlePassPremium)?'claimed':(reached && playerProfile.battlePassPremium)?'ready':premiumLocked?'locked':'future'}">
+          <div class="pass-track-label">
+            <strong>Premium</strong>
+            <span>${hasPremium?(premiumClaimedHere?'Récupéré':playerProfile.battlePassPremium?(reached?'Débloqué':'À venir'):'Verrouillé'):'Pas de récompense'}</span>
+          </div>
+          <div class="pass-track-rewards">${renderBrevetPassRewardPills(level,'premium')}</div>
+        </div>
+      </article>
+    `;
+  }).join('');
 }
 
 function applyTheme(themeKey,shouldPersist=true){
@@ -3206,34 +3724,41 @@ function renderThemeSelector(){
   container.innerHTML='';
   const unlockedCount=Object.keys(THEMES).filter(themeKey=>playerProfile.unlockedThemes.includes(themeKey)).length;
   status.textContent=`${unlockedCount} thème${unlockedCount>1?'s':''} disponible${unlockedCount>1?'s':''}`;
-  Object.entries(THEMES).forEach(([themeKey,theme])=>{
+  const orderedThemes=Object.entries(THEMES).sort(([themeKeyA,themeA],[themeKeyB,themeB])=>{
+    const sourceA=getThemeSourceMeta(themeKeyA,themeA);
+    const sourceB=getThemeSourceMeta(themeKeyB,themeB);
+    if(sourceA.sortSource!==sourceB.sortSource) return sourceA.sortSource-sourceB.sortSource;
+    if(sourceA.sortValue!==sourceB.sortValue) return sourceA.sortValue-sourceB.sortValue;
+    return themeA.label.localeCompare(themeB.label,'fr');
+  });
+  orderedThemes.forEach(([themeKey,theme])=>{
     const btn=document.createElement('button');
     const unlocked=playerProfile.unlockedThemes.includes(themeKey);
+    const sourceMeta=getThemeSourceMeta(themeKey,theme);
     btn.className='theme-btn'+(playerProfile.currentTheme===themeKey?' selected':'');
     btn.disabled=!unlocked;
     btn.onclick=()=>applyTheme(themeKey);
     btn.innerHTML=`
       <div class="theme-swatch" style="background:${theme.preview}"></div>
-      <div class="theme-name">${theme.label}</div>
-      <div class="theme-meta">${unlocked?'Disponible maintenant':`Déblocage : ${getThemeUnlockText(theme)}`}</div>
-      ${unlocked?'':`<div class="theme-lock">🔒 ${getThemeUnlockText(theme)}</div>`}
+      <div class="theme-card-head">
+        <div class="theme-name">${theme.label}</div>
+        <span class="theme-source-badge ${sourceMeta.badgeClass}">${sourceMeta.label}</span>
+      </div>
+      <div class="theme-meta">Source : ${sourceMeta.label} · ${sourceMeta.detail}</div>
+      ${unlocked
+        ? `<div class="theme-unlock-source">✅ Disponible maintenant</div>`
+        : `<div class="theme-lock">🔒 ${getThemeUnlockText(theme)}</div>`}
     `;
     container.appendChild(btn);
   });
 }
 
 function toggleThemePanel(){
-  const panel=document.getElementById('theme-panel');
-  if(!panel) return;
-  panel.classList.toggle('open');
-  if(panel.classList.contains('open')) renderThemeSelector();
+  showScreen('screen-themes');
 }
 
 function toggleTitlePanel(){
-  const panel=document.getElementById('title-panel');
-  if(!panel) return;
-  panel.classList.toggle('open');
-  if(panel.classList.contains('open')) renderTitleSelector();
+  showScreen('screen-titles');
 }
 
 function renderTitleSelector(){
@@ -3243,7 +3768,11 @@ function renderTitleSelector(){
   const preview=document.getElementById('owned-title-preview');
   if(!select||!status||!preview) return;
   select.innerHTML=playerProfile.ownedTitles.map(title=>`<option value="${title.key}" ${title.key===playerProfile.selectedTitle?'selected':''}>${title.label}</option>`).join('');
-  preview.innerHTML=playerProfile.ownedTitles.map(title=>`<span class="title-chip">${title.key===playerProfile.selectedTitle?'✅':'🏅'} ${title.text}</span>`).join('');
+  preview.innerHTML=playerProfile.ownedTitles.map(title=>`
+    <span class="title-chip ${getTitleEffectClass(title.effect)} ${title.key===playerProfile.selectedTitle?'selected':''}">
+      ${title.key===playerProfile.selectedTitle?'✅':'🏅'} ${escapeHtml(title.text)}
+    </span>
+  `).join('');
   status.textContent=`${playerProfile.ownedTitles.length} titre${playerProfile.ownedTitles.length>1?'s':''} débloqué${playerProfile.ownedTitles.length>1?'s':''}`;
 }
 
@@ -3488,7 +4017,7 @@ function renderSettingsPanel(){
   if(select){
     select.innerHTML=Object.entries(SOUND_PACKS).map(([key,pack])=>{
       const unlocked=playerProfile.unlockedSoundPacks.includes(key);
-      return `<option value="${key}" ${key===playerProfile.soundPack?'selected':''} ${unlocked?'':'disabled'}>${pack.label}${unlocked?'':` · niveau ${pack.unlockLevel}`}</option>`;
+      return `<option value="${key}" ${key===playerProfile.soundPack?'selected':''} ${unlocked?'':'disabled'}>${pack.label}${unlocked?'':` · ${getSoundPackUnlockText(key)}`}</option>`;
     }).join('');
   }
   if(desc){
@@ -3512,16 +4041,13 @@ function renderSettingsPanel(){
 }
 
 function toggleSettingsPanel(){
-  const panel=document.getElementById('settings-panel');
-  if(!panel) return;
-  panel.classList.toggle('open');
-  if(panel.classList.contains('open')) renderSettingsPanel();
+  showScreen('screen-settings');
 }
 
 function selectSoundPack(value){
   if(!playerProfile) return;
   if(!playerProfile.unlockedSoundPacks.includes(value)){
-    showToast(`Pack sonore niveau ${SOUND_PACKS[value]?.unlockLevel||1}`,'locked');
+    showToast(`Pack sonore : ${getSoundPackUnlockText(value)}`,'locked');
     renderSettingsPanel();
     return;
   }
@@ -3606,6 +4132,7 @@ function handleImportProgress(event){
       if(!restored) throw new Error('empty-import');
       playerProfile=loadPlayerProfile();
       syncProfileComputedData();
+      initializeBrevetPassProgress(true);
       streakState=loadStreakState();
       rankedProfile=loadRankedProfile();
       weakQuestionIds=loadWeakQuestions().filter(id=>QUESTION_LOOKUP[id]);
@@ -3681,7 +4208,9 @@ function renderXpModal(){
   setText(
     'xp-modal-subtitle',
     currentLevel>=XP_RULES.maxLevel
-      ? 'Tu as atteint le niveau maximum. Toutes les récompenses de niveau sont maintenant débloquées.'
+      ? (playerProfile.battlePassPremium
+          ? 'Tu as terminé le Brevet Pass Premium. Toutes les récompenses du pass sont maintenant visibles.'
+          : 'Tu as terminé la voie gratuite du Brevet Pass. Les récompenses premium restent verrouillées tant que le pass n’est pas acheté.')
       : `Encore ${remainingXp} XP pour atteindre le niveau ${nextLevel}.`
   );
   setText('xp-modal-next-level-pill',currentLevel>=XP_RULES.maxLevel?`Lvl ${currentLevel}`:`Lvl ${nextLevel}`);
@@ -3698,8 +4227,8 @@ function renderXpModal(){
   setText(
     'xp-modal-reward-heading',
     currentLevel>=XP_RULES.maxLevel
-      ? 'Récompenses déjà obtenues au niveau maximum'
-      : `Récompenses du niveau ${nextLevel}`
+      ? 'Récompenses visibles au niveau maximum'
+      : `Récompenses Brevet Pass du niveau ${nextLevel}`
   );
   const fill=document.getElementById('xp-modal-track-fill');
   if(fill) fill.style.width=info.progressPct+'%';
@@ -3711,8 +4240,8 @@ function renderXpModal(){
     emptyNode.hidden=!shouldShowEmpty;
     if(shouldShowEmpty){
       emptyNode.textContent=currentLevel>=XP_RULES.maxLevel
-        ? 'Toutes les récompenses de niveau sont déjà récupérées.'
-        : `Le niveau ${nextLevel} n’ajoute pas de déblocage majeur.`;
+        ? 'Tous les paliers de ton Brevet Pass ont déjà été parcourus.'
+        : `Le niveau ${nextLevel} n’ajoute pas de récompense majeure au Brevet Pass.`;
     }
   }
   const upcomingNode=document.getElementById('xp-modal-upcoming');
@@ -3775,7 +4304,11 @@ function refreshPlayerUI(){
   const info=playerProfile.levelInfo;
   const streakStatus=getStreakStatus();
   document.getElementById('player-level-badge').textContent=`Lvl ${info.level}`;
-  document.getElementById('player-global-title').textContent=playerProfile.displayedTitle;
+  const globalTitleNode=document.getElementById('player-global-title');
+  if(globalTitleNode){
+    globalTitleNode.textContent=playerProfile.displayedTitle;
+    globalTitleNode.className=`player-global-title ${getTitleEffectClass(playerProfile.displayedTitleEffect)}`.trim();
+  }
   document.getElementById('player-total-xp').textContent=`${playerProfile.totalXp} XP cumulés`;
   const coinNode=document.getElementById('player-coins');
   if(coinNode){
@@ -3787,7 +4320,7 @@ function refreshPlayerUI(){
   }
   document.getElementById('player-shields').textContent=`🛡 ${playerProfile.streakShields} bouclier${playerProfile.streakShields>1?'s':''}`;
   document.getElementById('player-sound-pack').textContent=`🔊 Son : ${getSoundPack(playerProfile.soundPack).label}`;
-  document.getElementById('player-next-theme').textContent=`Thème suivant : ${getNextThemeGoal(info.level)}`;
+  document.getElementById('player-next-theme').textContent=`Pass suivant : ${getNextThemeGoal(info.level)}`;
   document.getElementById('player-xp-range').textContent=info.level>=XP_RULES.maxLevel
     ? 'Niveau maximum atteint'
     : `${info.currentLevelXp} / ${info.nextLevelXp} XP vers le niveau ${info.level+1}`;
@@ -3796,8 +4329,8 @@ function refreshPlayerUI(){
   const xpHint=document.getElementById('player-xp-hint');
   if(xpHint){
     xpHint.textContent=info.level>=XP_RULES.maxLevel
-      ? 'Clique sur la barre pour revoir tes récompenses de niveau'
-      : `Clique sur la barre pour voir ce que tu débloques au niveau ${Math.min(info.level+1,XP_RULES.maxLevel)}`;
+      ? 'Clique sur la barre pour revoir ton Brevet Pass terminé'
+      : `Clique sur la barre pour voir le palier du Brevet Pass au niveau ${Math.min(info.level+1,XP_RULES.maxLevel)}`;
   }
   const nameNode=document.getElementById('player-name');
   if(nameNode){
@@ -3827,6 +4360,7 @@ function refreshPlayerUI(){
   renderWeakReviewCard();
   renderDailyChallenges();
   renderShop();
+  renderBrevetPassScreen();
   updateRankedUI();
   updateVipUI();
   renderXpModal();
@@ -3943,6 +4477,11 @@ function resetAdminProfile(){
   playerProfile.selectedTitle='global:Novice';
   playerProfile.userAvatarConfig=getDefaultAvatarConfig('BrevetPro');
   playerProfile.soundPack='classic';
+  playerProfile.unlockedSoundPacks=['classic'];
+  playerProfile.unlockedPassTitles=['global:Novice'];
+  playerProfile.battlePassPremium=false;
+  playerProfile.battlePassClaimedFree=[];
+  playerProfile.battlePassClaimedPremium=[];
   playerProfile.streakShields=0;
   playerProfile.shieldMilestone=0;
   playerProfile.badges=[];
@@ -3991,7 +4530,7 @@ function updateStreak(){
   }else if(status.canUseShield){
     playerProfile.streakShields=Math.max(0,playerProfile.streakShields-1);
     streakState.count+=1;
-    toastMessage=`🛡 Bouclier utilisé. Série de ${streakState.count} jours ! Tu es en feu ! 🔥`;
+    toastMessage=`🛡 Bouclier utilisé. Série sauvée à ${streakState.count} jours.`;
   }else{
     streakState.count=1;
   }
@@ -4004,15 +4543,18 @@ function updateStreak(){
   savePlayerProfile();
   refreshPlayerUI();
 
-  if(!toastMessage && streakState.count>=2 && streakState.count>previousDisplay){
-    toastMessage=`Série de ${streakState.count} jours ! Tu es en feu ! 🔥`;
+  if(!toastMessage && streakState.count===1 && previousDisplay!==1){
+    toastMessage='Série lancée ! Reviens demain pour toucher ton premier bonus de BrevetCoins.';
   }
   const newThemes=playerProfile.unlockedThemes.filter(themeKey=>!previousThemes.has(themeKey));
   if(newThemes.length){
     state.unlockedThemesThisRun.push(...newThemes.filter(themeKey=>!state.unlockedThemesThisRun.includes(themeKey)));
     showToast(`Thème débloqué : ${THEMES[newThemes[0]].label}`,'theme');
   }
-  awardCoins(Math.max(10,streakState.count*10),'Série du jour',true);
+  const streakCoins=getStreakCoinReward(streakState.count);
+  if(streakCoins>0){
+    awardCoins(streakCoins,`Série de ${streakState.count} jours !`);
+  }
   if(toastMessage) showToast(toastMessage,'streak');
   return true;
 }
@@ -4029,7 +4571,6 @@ function addXP(amount,subject=state.subject,applyMultiplier=true){
   const previousLevel=playerProfile.levelInfo?.level||1;
   const previousThemes=new Set(playerProfile.unlockedThemes||[]);
   const previousPacks=new Set(playerProfile.unlockedSoundPacks||[]);
-  const previousShields=playerProfile.streakShields||0;
   const previousWorkshopUnlocks=getWorkshopUnlockCount(previousLevel);
   playerProfile.totalXp+=actual;
   if(subject && playerProfile.xpBySubject[subject]!==undefined){
@@ -4042,28 +4583,33 @@ function addXP(amount,subject=state.subject,applyMultiplier=true){
     saveDailyChallenges();
   }
   syncProfileComputedData();
+  if(playerProfile.levelInfo.level>previousLevel){
+    const tracks=playerProfile.battlePassPremium?['free','premium']:['free'];
+    claimBattlePassRewardsInRange(previousLevel+1,playerProfile.levelInfo.level,{tracks,silent:false});
+    syncProfileComputedData();
+  }
   const newThemes=playerProfile.unlockedThemes.filter(themeKey=>!previousThemes.has(themeKey));
   const newPacks=playerProfile.unlockedSoundPacks.filter(key=>!previousPacks.has(key));
-  const shieldGain=(playerProfile.streakShields||0)-previousShields;
   const workshopUnlockGain=getWorkshopUnlockCount(playerProfile.levelInfo.level)-previousWorkshopUnlocks;
   if(newThemes.length){
     state.unlockedThemesThisRun.push(...newThemes.filter(themeKey=>!state.unlockedThemesThisRun.includes(themeKey)));
-    showToast(`Thème débloqué : ${THEMES[newThemes[0]].label}`,'theme');
+    const nonPassTheme=newThemes.find(themeKey=>!THEMES[themeKey]?.passManaged);
+    if(nonPassTheme){
+      showToast(`Thème débloqué : ${THEMES[nonPassTheme].label}`,'theme');
+    }
   }
   if(workshopUnlockGain>0){
     showToast('Toutes les options de l’Atelier sont maintenant disponibles.','avatar');
   }
   if(newPacks.length){
-    showToast(`Pack débloqué : ${SOUND_PACKS[newPacks[0]].label}`,'sound');
-  }
-  if(shieldGain>0){
-    showToast(`+${shieldGain} bouclier${shieldGain>1?'s':''} de série`,'shield');
+    const nonPassPack=newPacks.find(key=>!SOUND_PACKS[key]?.passManaged);
+    if(nonPassPack){
+      showToast(`Pack débloqué : ${SOUND_PACKS[nonPassPack].label}`,'sound');
+    }
   }
   if(playerProfile.levelInfo.level>previousLevel){
-    const levelGain=playerProfile.levelInfo.level-previousLevel;
     playEffect('level');
     triggerVibration('level');
-    awardCoins(levelGain*100,'Passage de niveau',true);
     showToast(`Niveau ${playerProfile.levelInfo.level} atteint !`,'level');
   }
   savePlayerProfile();
@@ -4377,8 +4923,9 @@ function updateDifficultyOptions(){
    ============================================================ */
 function buildPool(){
   const exactPool=getQuestionsForDifficulty(state.subject,state.chapters,state.difficulty);
+  const filteredPool=state.options.duel?exactPool.filter(isRapidModeQuestion):exactPool;
   const target=DIFFICULTY_TARGETS[state.difficulty];
-  return exactPool.slice(0,Math.min(target,exactPool.length));
+  return filteredPool.slice(0,Math.min(target,filteredPool.length));
 }
 
 function buildWeakReviewPool(){
@@ -4932,8 +5479,11 @@ function timeUp(){
 
 function finalizeRunMilestones(total,elapsed,isBB=false){
   if(!playerProfile) return;
-  if(!isSurvivalRun() && !isBB && total>=10 && state.score===total){
-    awardCoins(50,'Quiz parfait',true);
+  if(!isSurvivalRun() && !isBB && total===10 && state.score===10){
+    awardCoins(
+      getPerfectQuizCoinReward(playerProfile.levelInfo?.level||1),
+      `Perfect 10/10 · niveau ${playerProfile.levelInfo?.level||1}`
+    );
   }
   if(state.runXpBoostActive && (playerProfile.inventory.xpBoostRuns||0)>0){
     playerProfile.inventory.xpBoostRuns=Math.max(0,(playerProfile.inventory.xpBoostRuns||0)-1);
@@ -5269,6 +5819,7 @@ document.addEventListener('keydown',e=>{
 window.addEventListener('load',()=>{
   playerProfile=loadPlayerProfile();
   syncProfileComputedData();
+  initializeBrevetPassProgress(true);
   streakState=loadStreakState();
   rankedProfile=loadRankedProfile();
   weakQuestionIds=loadWeakQuestions().filter(id=>QUESTION_LOOKUP[id]);

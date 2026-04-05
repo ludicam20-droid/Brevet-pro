@@ -38,7 +38,7 @@
         <span id="player-streak"><span class="streak-flame idle">🔥</span> Série : 0 jour</span>
         <span class="meta-pill" id="player-shields">🛡 0 bouclier</span>
         <span class="meta-pill" id="player-sound-pack">🔊 Son : Classique</span>
-        <span id="player-next-theme">Thème suivant : Niveau 5</span>
+        <span id="player-next-theme">Pass suivant : Niv. 4 · gratuit</span>
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@
       <span id="player-multiplier">Bonus série x1.0</span>
     </div>
     <div class="xp-track"><div class="xp-track-fill" id="xp-track-fill"></div></div>
-    <div class="xp-track-hint" id="player-xp-hint">Clique sur la barre pour voir le prochain déblocage</div>
+    <div class="xp-track-hint" id="player-xp-hint">Clique sur la barre pour voir le prochain palier du Brevet Pass</div>
   </div>
 </div>
 
@@ -61,6 +61,7 @@
       <button class="nav-btn" onclick="toggleTitlePanel()">🏅 Titres</button>
       <button class="nav-btn" onclick="showScreen('screen-daily-challenges')">🗓️ Défis</button>
       <button class="nav-btn" onclick="showScreen('screen-shop')">🛍️ Boutique</button>
+      <button class="nav-btn" onclick="showScreen('screen-pass')">🎟️ Brevet Pass</button>
       <button class="nav-btn" onclick="toggleSettingsPanel()">⚙️ Paramètres</button>
       <button class="nav-btn" onclick="openVipScreen()">📊 Statistiques</button>
       <button class="nav-btn" onclick="showScreen('screen-flash-select')">⚡ Flashcards</button>
@@ -70,74 +71,6 @@
     <div class="hero-badge">✨ Révision Brevet 2025 — Toutes Matières — 3ème</div>
     <h1>Votre révision complète du Brevet</h1>
     <p>Quiz adaptatifs pour toutes les matières, flashcards et suivi de progression.</p>
-  </div>
-  <div class="theme-panel" id="theme-panel">
-    <div class="theme-panel-head">
-      <div>
-        <div class="theme-panel-title">Thèmes visuels à débloquer</div>
-        <div class="theme-panel-subtitle">Les thèmes premium s'ajoutent automatiquement au sélecteur au fil des niveaux et des rangs classés.</div>
-      </div>
-      <span class="theme-panel-status" id="theme-panel-status">2 thèmes disponibles</span>
-    </div>
-    <div class="theme-grid" id="theme-selector"></div>
-  </div>
-  <div class="title-panel" id="title-panel">
-    <div class="theme-panel-head">
-      <div>
-        <div class="theme-panel-title">Choisir un titre possédé</div>
-        <div class="theme-panel-subtitle">Sélectionnez le titre affiché sous votre niveau parmi tous ceux déjà débloqués.</div>
-      </div>
-      <span class="theme-panel-status" id="title-panel-status">0 titre débloqué</span>
-    </div>
-    <div class="title-panel-row">
-      <div class="title-select-wrap">
-        <label for="title-select">Titre affiché</label>
-        <select class="title-select" id="title-select" onchange="selectDisplayedTitle(this.value)"></select>
-      </div>
-      <button class="btn-secondary" onclick="toggleTitlePanel()">Fermer</button>
-    </div>
-    <div class="title-preview" id="owned-title-preview"></div>
-  </div>
-  <div class="settings-panel" id="settings-panel">
-    <div class="theme-panel-head">
-      <div>
-        <div class="theme-panel-title">Paramètres du profil</div>
-        <div class="theme-panel-subtitle">Choisissez votre pack sonore, testez les effets audio et accédez rapidement à vos options de profil.</div>
-      </div>
-      <span class="theme-panel-status" id="settings-panel-status">1 pack sonore disponible</span>
-    </div>
-    <div class="settings-grid">
-      <div class="settings-card">
-        <div class="settings-card-title">Packs sonores</div>
-        <div class="settings-help">Succès, erreur et paliers utilisent l'API Audio du navigateur. De nouveaux packs se débloquent avec les niveaux.</div>
-        <div class="sound-row">
-          <select class="sound-pack-select title-select" id="sound-pack-select" onchange="selectSoundPack(this.value)"></select>
-          <button class="btn-secondary" onclick="previewSoundPack()">Tester</button>
-        </div>
-        <div class="settings-help" id="sound-pack-desc"></div>
-      </div>
-      <div class="settings-card">
-        <div class="settings-card-title">Profil joueur</div>
-        <div class="settings-help" id="profile-settings-copy">Cliquez sur votre avatar dans le bandeau du haut pour ouvrir l'Atelier miniavs. Les bordures évoluent automatiquement avec votre niveau.</div>
-        <div class="sound-row">
-          <button class="btn-secondary" onclick="openAvatarModal()">Changer d'avatar</button>
-          <button class="btn-secondary" onclick="openVipScreen()">Statistiques</button>
-        </div>
-        <div class="locked-note" id="vip-settings-note">Tableau de bord détaillé accessible à tout moment.</div>
-      </div>
-      <div class="settings-card">
-        <div class="settings-card-title">Sauvegarde & Accessibilité</div>
-        <div class="settings-help">Exportez votre progression en JSON, restaurez-la sur un autre appareil et activez l'auto-évaluation pour les réponses ouvertes.</div>
-        <div class="sound-row">
-          <button class="btn-secondary" onclick="exportProgress()">Sauvegarder ma progression</button>
-          <button class="btn-secondary" onclick="triggerImportProgress()">Restaurer</button>
-        </div>
-        <div class="sound-row">
-          <button class="btn-secondary" id="open-self-eval-btn" onclick="toggleOpenSelfEvalMode()">Auto-évaluation : OFF</button>
-        </div>
-        <div class="locked-note" id="backup-settings-note">Un fichier JSON est téléchargé localement. Aucun compte n'est nécessaire.</div>
-      </div>
-    </div>
   </div>
 
   <!-- BREVET BLANC CTA -->
@@ -185,6 +118,138 @@
     <div class="card duel"       onclick="startDuelChallenge()"><span class="card-icon">🤖</span><h3>Duel contre l'IA</h3><p>Affronte BrevetAI sur une série mixte et gagne +100 XP si tu le bats.</p><span class="card-arrow">→</span></div>
     <div class="card survival"   onclick="startSurvivalMode({label:'Mix total'})"><span class="card-icon">🔥</span><h3>Lancer le Mode Survie</h3><p>30 secondes, chrono géant, combo et pression continue jusqu'au Game Over.</p><span class="card-arrow">→</span></div>
     <div class="card shop"       onclick="showScreen('screen-shop')"><span class="card-icon">🛍️</span><h3>Boutique</h3><p>Dépense tes BrevetCoins pour des objets, boosts XP et thèmes premium.</p><span class="card-arrow">→</span></div>
+  </div>
+</div>
+
+<!-- ======== THEMES ======== -->
+<div id="screen-themes" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">🎨 Thèmes</div>
+  <div class="section-subtitle">Choisis ici ton ambiance visuelle. Les thèmes sont triés par ordre de déblocage et par source.</div>
+  <div class="theme-panel screen-panel" id="theme-panel">
+    <div class="theme-panel-head">
+      <div>
+        <div class="theme-panel-title">Thèmes visuels à débloquer</div>
+        <div class="theme-panel-subtitle">Chaque carte indique clairement si le thème vient du Brevet Pass, de la boutique, du classé ou de la série.</div>
+      </div>
+      <span class="theme-panel-status" id="theme-panel-status">2 thèmes disponibles</span>
+    </div>
+    <div class="theme-grid" id="theme-selector"></div>
+  </div>
+</div>
+
+<!-- ======== TITLES ======== -->
+<div id="screen-titles" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">🏅 Titres</div>
+  <div class="section-subtitle">Sélectionne le titre affiché sous ton niveau parmi ceux déjà débloqués.</div>
+  <div class="title-panel screen-panel" id="title-panel">
+    <div class="theme-panel-head">
+      <div>
+        <div class="theme-panel-title">Choisir un titre possédé</div>
+        <div class="theme-panel-subtitle">Tous les titres gagnés apparaissent ici automatiquement.</div>
+      </div>
+      <span class="theme-panel-status" id="title-panel-status">0 titre débloqué</span>
+    </div>
+    <div class="title-panel-row">
+      <div class="title-select-wrap">
+        <label for="title-select">Titre affiché</label>
+        <select class="title-select" id="title-select" onchange="selectDisplayedTitle(this.value)"></select>
+      </div>
+      <button class="btn-secondary" onclick="showScreen('screen-home')">Retour</button>
+    </div>
+    <div class="title-preview" id="owned-title-preview"></div>
+  </div>
+</div>
+
+<!-- ======== SETTINGS ======== -->
+<div id="screen-settings" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">⚙️ Paramètres</div>
+  <div class="section-subtitle">Retrouve ici le son, la sauvegarde, l’accessibilité et les options de profil.</div>
+  <div class="settings-panel screen-panel" id="settings-panel">
+    <div class="theme-panel-head">
+      <div>
+        <div class="theme-panel-title">Paramètres du profil</div>
+        <div class="theme-panel-subtitle">Choisis ton pack sonore, teste les effets audio et gère tes options de profil et de sauvegarde.</div>
+      </div>
+      <span class="theme-panel-status" id="settings-panel-status">1 pack sonore disponible</span>
+    </div>
+    <div class="settings-grid">
+      <div class="settings-card">
+        <div class="settings-card-title">Packs sonores</div>
+        <div class="settings-help">Succès, erreur et paliers utilisent l'API Audio du navigateur. De nouveaux packs se débloquent avec les niveaux.</div>
+        <div class="sound-row">
+          <select class="sound-pack-select title-select" id="sound-pack-select" onchange="selectSoundPack(this.value)"></select>
+          <button class="btn-secondary" onclick="previewSoundPack()">Tester</button>
+        </div>
+        <div class="settings-help" id="sound-pack-desc"></div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-card-title">Profil joueur</div>
+        <div class="settings-help" id="profile-settings-copy">Cliquez sur votre avatar dans le bandeau du haut pour ouvrir l'Atelier miniavs. Les bordures évoluent automatiquement avec votre niveau.</div>
+        <div class="sound-row">
+          <button class="btn-secondary" onclick="openAvatarModal()">Changer d'avatar</button>
+          <button class="btn-secondary" onclick="openVipScreen()">Statistiques</button>
+        </div>
+        <div class="locked-note" id="vip-settings-note">Tableau de bord détaillé accessible à tout moment.</div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-card-title">Sauvegarde & Accessibilité</div>
+        <div class="settings-help">Exportez votre progression en JSON, restaurez-la sur un autre appareil et activez l'auto-évaluation pour les réponses ouvertes.</div>
+        <div class="sound-row">
+          <button class="btn-secondary" onclick="exportProgress()">Sauvegarder ma progression</button>
+          <button class="btn-secondary" onclick="triggerImportProgress()">Restaurer</button>
+        </div>
+        <div class="sound-row">
+          <button class="btn-secondary" id="open-self-eval-btn" onclick="toggleOpenSelfEvalMode()">Auto-évaluation : OFF</button>
+        </div>
+        <div class="locked-note" id="backup-settings-note">Un fichier JSON est téléchargé localement. Aucun compte n'est nécessaire.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== BREVET PASS ======== -->
+<div id="screen-pass" class="screen">
+  <header class="site-header">
+    <div class="logo" onclick="showScreen('screen-home')"><div class="logo-icon">📚</div><div class="logo-text">Brevet<span>Pro</span></div></div>
+  </header>
+  <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
+  <div class="section-title">🎟️ Brevet Pass</div>
+  <div class="section-subtitle">50 niveaux, une voie gratuite et une voie premium qui remplace les anciennes récompenses de niveau.</div>
+  <div class="pass-shell">
+    <div class="pass-hero screen-panel">
+      <div class="pass-hero-top">
+        <div>
+          <div class="modal-badge" id="pass-premium-status">Version gratuite active</div>
+          <div class="pass-hero-title">Progression du Brevet Pass</div>
+          <div class="pass-hero-copy" id="pass-premium-copy">La voie gratuite donne une récompense tous les 4 niveaux. Le Premium ajoute une seconde colonne tous les 2 niveaux.</div>
+        </div>
+        <div class="pass-hero-side">
+          <div class="shop-balance" id="pass-balance"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
+          <button class="btn-primary" id="pass-premium-button" onclick="buyBrevetPassPremium()">Débloquer le Premium</button>
+          <div class="pass-premium-price" id="pass-premium-price"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 800</span></div>
+        </div>
+      </div>
+      <div class="pass-progress-head">
+        <strong id="pass-current-level">Niveau 1 / 50</strong>
+        <span id="pass-next-reward">Prochain palier : niveau 4</span>
+      </div>
+      <div class="pass-progress-bar"><div class="pass-progress-fill" id="pass-progress-fill"></div></div>
+      <div class="pass-progress-caption" id="pass-progress-caption">0 / 100 XP vers le niveau 2</div>
+      <div class="pass-reward-counts" id="pass-reward-counts"></div>
+    </div>
+    <div class="pass-cards" id="pass-cards"></div>
   </div>
 </div>
 
