@@ -1,39 +1,89 @@
-const CACHE_NAME = 'brevetpro-v6'; // CHANGE CE CHIFFRE À CHAQUE MISE À JOUR (v11, v12...)
-const ASSETS = [
+const CACHE_VERSION='brevetpro-v5';
+const APP_CACHE=`${CACHE_VERSION}-app`;
+const RUNTIME_CACHE=`${CACHE_VERSION}-runtime`;
+
+const PRECACHE_ASSETS=[
   './',
   './index.html',
-  './manifest.json'
-  // Ajoute ici tes dossiers si besoin (ex: './assets/avatar1.png')
+  './style.css',
+  './app.js',
+  './db-data.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './brevetcoin-ui.png'
 ];
 
-// Installation : on met en cache
-self.addEventListener('install', (e) => {
-  self.skipWaiting(); // FORCE le nouveau SW à s'activer tout de suite
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+self.addEventListener('install',event=>{
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(APP_CACHE).then(cache=>cache.addAll(PRECACHE_ASSETS))
   );
 });
 
-// Activation : on supprime les ANCIENS caches
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key=>![APP_CACHE,RUNTIME_CACHE].includes(key))
+        .map(key=>caches.delete(key))
+    );
+    if('navigationPreload' in self.registration){
+      await self.registration.navigationPreload.enable();
+    }
+    await self.clients.claim();
+  })());
+});
+
+function isFontRequest(url){
+  return url.origin.includes('fonts.googleapis.com') || url.origin.includes('fonts.gstatic.com');
+}
+
+async function staleWhileRevalidate(request,cacheName=RUNTIME_CACHE){
+  const cache=await caches.open(cacheName);
+  const cached=await cache.match(request);
+  const networkPromise=fetch(request)
+    .then(response=>{
+      if(response && response.ok){
+        cache.put(request,response.clone());
+      }
+      return response;
     })
-  );
-  return self.clients.claim(); // Prend le contrôle des pages immédiatement
-});
+    .catch(()=>cached);
+  return cached || networkPromise;
+}
 
-// Stratégie : Réseau d'abord, sinon Cache
-// C'est ça qui permet de voir les modifs direct si tu as de la 4G/Wifi
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
-  );
+async function networkFirst(request,cacheName=RUNTIME_CACHE){
+  const cache=await caches.open(cacheName);
+  try{
+    const response=await fetch(request);
+    if(response && response.ok){
+      cache.put(request,response.clone());
+    }
+    return response;
+  }catch(error){
+    const cached=await cache.match(request);
+    if(cached) return cached;
+    throw error;
+  }
+}
+
+self.addEventListener('fetch',event=>{
+  const {request}=event;
+  if(request.method!=='GET') return;
+
+  const url=new URL(request.url);
+  const isLocalAsset=url.origin===self.location.origin;
+  const isNavigation=request.mode==='navigate';
+  const isStaticAsset=isLocalAsset && /\.(?:js|css|png|webp|svg|json)$/i.test(url.pathname);
+
+  if(isNavigation){
+    event.respondWith(networkFirst(request,APP_CACHE));
+    return;
+  }
+
+  if(isStaticAsset || isFontRequest(url)){
+    event.respondWith(staleWhileRevalidate(request,isLocalAsset?APP_CACHE:RUNTIME_CACHE));
+  }
 });

@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrevetPro — Toutes Matières — 3ème</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
 <link rel="manifest" href="manifest.json">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,7 +38,7 @@
       </div>
       <div class="player-meta-line">
         <span id="player-total-xp">0 XP cumulés</span>
-        <span class="meta-pill coin-pill" id="player-coins"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></span>
+        <span class="meta-pill coin-pill" id="player-coins"><span class="coin-inline"><img src="brevetcoin-ui.png" alt="BrevetCoin"> 0 BrevetCoins</span></span>
         <span id="player-streak"><span class="streak-flame idle">🔥</span> Série : 0 jour</span>
         <span class="meta-pill" id="player-shields">🛡 0 bouclier</span>
         <span class="meta-pill" id="player-sound-pack">🔊 Son : Classique</span>
@@ -236,9 +240,9 @@
           <div class="pass-hero-copy" id="pass-premium-copy">La voie gratuite donne une récompense tous les 4 niveaux. Le Premium ajoute une seconde colonne tous les 2 niveaux.</div>
         </div>
         <div class="pass-hero-side">
-          <div class="shop-balance" id="pass-balance"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
+          <div class="shop-balance" id="pass-balance"><span class="coin-inline"><img src="brevetcoin-ui.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
           <button class="btn-primary" id="pass-premium-button" onclick="buyBrevetPassPremium()">Débloquer le Premium</button>
-          <div class="pass-premium-price" id="pass-premium-price"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 800</span></div>
+          <div class="pass-premium-price" id="pass-premium-price"><span class="coin-inline"><img src="brevetcoin-ui.png" alt="BrevetCoin"> 800</span></div>
         </div>
       </div>
       <div class="pass-progress-head">
@@ -537,7 +541,7 @@
   <div class="back-row"><button class="back-btn" onclick="showScreen('screen-home')">← Accueil</button></div>
   <div class="section-title">🛍️ Boutique BrevetPro</div>
   <div class="section-subtitle">Achète des objets utiles avec tes BrevetCoins et débloque des thèmes premium. Le thème Antique se débloque automatiquement avec une série de 7 jours.</div>
-  <div class="shop-balance" id="shop-balance"><span class="coin-inline"><img src="brevetcoin.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
+  <div class="shop-balance" id="shop-balance"><span class="coin-inline"><img src="brevetcoin-ui.png" alt="BrevetCoin"> 0 BrevetCoins</span></div>
   <div class="shop-grid" id="shop-grid"></div>
 </div>
 
