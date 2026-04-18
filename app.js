@@ -1655,11 +1655,65 @@ let dailyChallengeRewardLock=false;
 let storageBootReady=false;
 let currentSheetSubject='histoire';
 let speechState={active:false,isBB:false,text:''};
+const bootSplashStartedAt=Date.now();
 
 /* ============================================================
    UTILITAIRES
    ============================================================ */
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function needsMobileBootSplash(){
+  return window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+}
+
+function getBootSplashElements(){
+  return {
+    splash:document.getElementById('app-boot-splash'),
+    stage:document.getElementById('app-boot-stage'),
+    progress:document.getElementById('app-boot-progress-fill')
+  };
+}
+
+function updateBootSplash(message='Préparation de l espace de révision...',progress=18){
+  const {splash,stage,progress:progressFill}=getBootSplashElements();
+  if(!splash) return;
+  if(!needsMobileBootSplash()){
+    splash.style.display='none';
+    document.body.classList.remove('app-booting');
+    return;
+  }
+  document.body.classList.add('app-booting');
+  if(stage) stage.textContent=message;
+  if(progressFill){
+    const safeProgress=Math.max(8,Math.min(100,Math.round(progress)));
+    progressFill.style.width=`${safeProgress}%`;
+  }
+}
+
+function hideBootSplash(){
+  const {splash}=getBootSplashElements();
+  if(!splash) return;
+  if(!needsMobileBootSplash()){
+    splash.style.display='none';
+    document.body.classList.remove('app-booting');
+    return;
+  }
+  const closeSplash=()=>{
+    splash.classList.add('is-ready');
+    document.body.classList.remove('app-booting');
+    window.setTimeout(()=>{
+      splash.style.display='none';
+    },430);
+  };
+  const elapsed=Date.now()-bootSplashStartedAt;
+  window.setTimeout(closeSplash,Math.max(0,800-elapsed));
+}
+
+function waitForNextFrame(){
+  return new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+}
+
+updateBootSplash('Préparation de l espace de révision...',14);
 
 function showScreen(id){
   if(id==='screen-history'){
@@ -5672,9 +5726,12 @@ document.addEventListener('keydown',e=>{
 /* ============================================================
    INIT
    ============================================================ */
-window.addEventListener('load',()=>{
+window.addEventListener('load',async()=>{
+  updateBootSplash('Chargement du profil joueur...',24);
+  if(needsMobileBootSplash()) await waitForNextFrame();
   playerProfile=loadPlayerProfile();
   syncProfileComputedData();
+  updateBootSplash('Synchronisation du Brevet Pass...',42);
   initializeBrevetPassProgress(true);
   streakState=loadStreakState();
   rankedProfile=loadRankedProfile();
@@ -5690,11 +5747,16 @@ window.addEventListener('load',()=>{
   }
   saveDailyChallenges();
   document.body.setAttribute('data-theme',playerProfile.currentTheme||'dark');
+  updateBootSplash('Préparation de l accueil...',74);
+  if(needsMobileBootSplash()) await waitForNextFrame();
   refreshPlayerUI();
   scheduleQuestionBankWarmup();
   document.getElementById('progress-import-input')?.addEventListener('change',handleImportProgress);
   bindAdminLogoAccess();
   maybeOpenOnboarding();
+  updateBootSplash('C est prêt !',100);
+  if(needsMobileBootSplash()) await waitForNextFrame();
+  hideBootSplash();
 });
 
 if ('serviceWorker' in navigator) {
