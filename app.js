@@ -3962,7 +3962,6 @@ function renderBrevetPassScreen(){
     counts.innerHTML=`
       <span class="pass-stat-pill">🎯 ${freeClaimed} paliers gratuits récupérés</span>
       <span class="pass-stat-pill premium">💎 ${premiumClaimed} paliers premium récupérés</span>
-      <span class="pass-stat-pill">🪜 ${rewardLevels.length} paliers à récompense</span>
       <span class="pass-stat-pill">🎨 ${playerProfile.unlockedThemes.length} thèmes possédés</span>
     `;
   }
