@@ -1,4 +1,16 @@
-﻿/* ========== ROOT VARIABLES ========== */
+/* On force le fond sur toute la structure */
+html, body {
+  background-color: var(--navy); /* Ta couleur par défaut */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* On s'assure que les thèmes s'appliquent à la racine */
+:root[data-theme="starry"] { --bg-color: #0f1535; }
+/* ... etc pour tes autres thèmes ... */
+/* ========== ROOT VARIABLES ========== */
 :root {
   --navy:        #0f1535;
   --navy2:       #1a2254;
