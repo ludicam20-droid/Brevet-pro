@@ -20,22 +20,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app-boot-splash" id="app-boot-splash" role="status" aria-live="polite" aria-label="Chargement de BrevetPro">
-  <div class="app-boot-card">
-    <div class="app-boot-brand">
-      <div class="app-boot-logo">📚</div>
-      <div class="app-boot-copy">
-        <strong>BrevetPro</strong>
-        <span id="app-boot-stage">Préparation de l'espace de révision...</span>
-      </div>
-    </div>
-    <div class="app-boot-loader" aria-hidden="true"></div>
-    <div class="app-boot-progress">
-      <span id="app-boot-progress-fill"></span>
-    </div>
-    <div class="app-boot-hint">Chargement optimisé pour mobile</div>
-  </div>
-</div>
 <div class="player-topbar">
   <div class="player-identity">
     <button class="player-avatar-btn" id="player-avatar-btn" data-border-tier="bronze" onclick="openAvatarModal()">
@@ -55,7 +39,7 @@
       <div class="player-meta-line">
         <span id="player-total-xp">0 XP cumulés</span>
         <span class="meta-pill coin-pill" id="player-coins"><span class="coin-inline"><img src="brevetcoin-ui.png" alt="BrevetCoin"> 0 BrevetCoins</span></span>
-        <span id="player-streak"><span class="streak-flame idle">🔥</span> Série : 0 jour</span>
+        <span id="player-streak"><span class="streak-flame idle"><span class="streak-flame-core"></span><span class="streak-flame-inner"></span><span class="streak-flame-spark"></span></span>Série : 0 jour</span>
         <span class="meta-pill" id="player-shields">🛡 0 bouclier</span>
         <span class="meta-pill" id="player-sound-pack">🔊 Son : Classique</span>
         <span id="player-next-theme">Pass suivant : Niv. 4 · gratuit</span>
@@ -135,7 +119,7 @@
     <div class="card vip"        onclick="openVipScreen()"><span class="card-icon">📊</span><h3>Statistiques</h3><p id="vip-card-subtitle">Regroupez ici progression, historique récent, temps de révision et performance globale.</p><span class="card-arrow">→</span></div>
     <div class="card flash"      onclick="showScreen('screen-flash-select')"><span class="card-icon">⚡</span><h3>Flashcards</h3><p>Révision rapide par cartes : dates, définitions, formules…</p><span class="card-arrow">→</span></div>
     <div class="card weak"       onclick="startWeakReview()"><span class="card-icon">🎯</span><h3>Réviser mes points faibles</h3><p id="weak-card-copy">Aucune question ratée enregistrée pour le moment.</p><span class="card-arrow">→</span></div>
-    <div class="card duel"       onclick="startDuelChallenge()"><span class="card-icon">🤖</span><h3>Duel contre l'IA</h3><p>Affronte BrevetAI sur une série mixte et gagne +100 XP si tu le bats.</p><span class="card-arrow">→</span></div>
+    <div class="card duel"       onclick="openDuelSetup()"><span class="card-icon">🤖</span><h3>Duel contre l'IA</h3><p>Affronte BrevetAI sur une série mixte et gagne +100 XP si tu le bats.</p><span class="card-arrow">→</span></div>
     <div class="card survival"   onclick="startSurvivalMode({label:'Mix total'})"><span class="card-icon">🔥</span><h3>Lancer le Mode Survie</h3><p>30 secondes, chrono géant, combo et pression continue jusqu'au Game Over.</p><span class="card-arrow">→</span></div>
     <div class="card shop"       onclick="showScreen('screen-shop')"><span class="card-icon">🛍️</span><h3>Boutique</h3><p>Dépense tes BrevetCoins pour des objets, boosts XP et thèmes premium.</p><span class="card-arrow">→</span></div>
   </div>
@@ -308,6 +292,10 @@
     <button class="toggle-btn" id="btn-mix" onclick="toggleOption('mix',this)">🔀 Types mixtes</button>
     <button class="toggle-btn" id="btn-survival" onclick="toggleOption('survival',this)">🔥 Mode Survie XP</button>
     <button class="toggle-btn" id="btn-duel" onclick="toggleOption('duel',this)">🤖 Duel contre l'IA</button>
+  </div>
+  <div class="duel-speed-row" id="duel-speed-row" hidden>
+    <div class="duel-speed-copy" id="duel-speed-copy">BrevetAI : Normal</div>
+    <div class="duel-speed-buttons" id="duel-speed-buttons"></div>
   </div>
   <button class="btn-primary" onclick="startQuiz()">🚀 Lancer le quiz</button>
 </div>
@@ -684,15 +672,50 @@
         <span class="xp-modal-stat-value" id="xp-modal-bonus">x1.0</span>
       </div>
     </div>
-    <div class="xp-modal-section">
-      <div class="xp-modal-section-title" id="xp-modal-reward-heading">Récompenses du niveau 2</div>
-      <div class="xp-reward-list" id="xp-modal-rewards"></div>
-      <div class="xp-modal-empty" id="xp-modal-empty" hidden>Aucun déblocage spécial sur ce niveau.</div>
-      <div class="xp-modal-upcoming" id="xp-modal-upcoming" hidden></div>
-    </div>
     <div class="atelier-actions">
       <button class="btn-secondary" onclick="closeXpModal()">Fermer</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="duel-setup-modal" onclick="if(event.target===this)closeDuelSetup()">
+  <div class="modal-card duel-setup-card">
+    <div class="modal-badge">🤖 BrevetAI</div>
+    <div class="modal-title">Choisir la vitesse du duel</div>
+    <div class="modal-subtitle">Sélectionne le rythme du bot avant de lancer la partie. Plus la difficulté est haute, plus BrevetAI répond vite et profite de tes erreurs.</div>
+    <div class="duel-setup-grid" id="duel-setup-options"></div>
+    <div class="locked-note duel-setup-note">Le bot garde toujours une petite chance de se tromper, même en mode Furie.</div>
+    <div class="atelier-actions">
+      <button class="btn-primary" onclick="startConfiguredDuel()">Lancer le duel</button>
+      <button class="btn-secondary" onclick="closeDuelSetup()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="xpboost-modal" onclick="if(event.target===this)closeXpBoostPurchaseModal()">
+  <div class="modal-card xpboost-modal-card">
+    <div class="modal-badge">⚡ Boost XP x2</div>
+    <div class="modal-title">Boost acheté</div>
+    <div class="modal-subtitle" id="xpboost-modal-copy">Ton boost XP x2 est prêt à être activé.</div>
+    <div class="xpboost-actions">
+      <button class="btn-primary" onclick="handleXpBoostPurchaseChoice(true)">Activer maintenant</button>
+      <button class="btn-secondary" onclick="handleXpBoostPurchaseChoice(false)">Garder pour plus tard</button>
+    </div>
+  </div>
+</div>
+
+<div class="streak-celebration-overlay" id="streak-celebration-overlay" hidden>
+  <div class="streak-celebration-card">
+    <div class="streak-celebration-badge">Série quotidienne</div>
+    <div class="streak-celebration-flame" id="streak-celebration-flame">
+      <span class="streak-celebration-outer"></span>
+      <span class="streak-celebration-middle"></span>
+      <span class="streak-celebration-inner"></span>
+      <span class="streak-celebration-glow"></span>
+      <span class="streak-celebration-count" id="streak-celebration-count">1</span>
+    </div>
+    <div class="streak-celebration-title" id="streak-celebration-title">Série lancée</div>
+    <div class="streak-celebration-copy" id="streak-celebration-copy">Jour 1 validé. Reviens demain pour allumer encore plus la flamme.</div>
   </div>
 </div>
 

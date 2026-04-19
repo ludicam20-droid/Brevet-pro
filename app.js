@@ -135,7 +135,7 @@ const SHOP_ITEMS={
   shield:{icon:'🛡️',label:'Le Bouclier',price:200,desc:'Protège la série si tu rates un jour.',action:'shield'},
   hourglass:{icon:'⏳',label:'Le Sablier',price:150,desc:'Ajoute +15 s en mode Survie.',action:'hourglass'},
   eraser:{icon:'🌓',label:'Bonus 50/50',price:100,desc:'Retire 2 mauvaises réponses sur un QCM.',action:'eraser'},
-  xpboost:{icon:'⚡',label:'Boost XP x2',price:300,desc:'Double l XP sur les 3 prochains quiz.',action:'xpboost'},
+  xpboost:{icon:'⚡',label:'Boost XP x2',price:300,desc:'Double l XP pendant 10 minutes de quiz actifs.',action:'xpboost'},
   themeNeon:{icon:'💡',label:'Thème Néon',price:260,desc:'Lueur néon vivante et contours lumineux sur toute l interface.',action:'theme',themeKey:'neon'},
   themeAlert:{icon:'🚨',label:'Thème Alerte Rouge',price:260,desc:'Ambiance alarme rouge avec pulsation sombre et bords d urgence.',action:'theme',themeKey:'alerte-rouge'},
   themeNature:{icon:'🍃',label:'Thème Nature vivante',price:280,desc:'Forêt zen en vert et beige avec feuilles qui tombent.',action:'theme',themeKey:'nature-vivante'},
@@ -237,12 +237,19 @@ const MINIAVS_FIELD_ORDER=['eyes','hair','mouth','clothing','accessory','mustach
 const MINIAVS_COLOR_GROUPS=['backgrounds','clothingColors','hairColors','skinColors'];
 const MINIAVS_COLOR_FIELDS=['backgroundColor','clothingColor','hairColor','skinColor'];
 const SOUND_PACKS={
-  classic:{label:'Classique',unlockLevel:1,desc:'Carillons doux et propres.',wave:'sine',success:[784,988],error:[196,156],volume:.045},
-  '8bit':{label:'8-bit',unlockLevel:5,passManaged:true,desc:'Bips arcade rétro pour les bonnes réponses.',wave:'square',success:[880,1175],error:[220,165],volume:.035},
-  crystal:{label:'Cristal',unlockLevel:12,passManaged:true,desc:'Sons brillants et plus aériens.',wave:'triangle',success:[660,990],error:[210,180],volume:.04},
-  cosmic:{label:'Cosmique',unlockLevel:20,passManaged:true,desc:'Un timbre plus ample pour les hauts niveaux.',wave:'sawtooth',success:[523,784],error:[185,146],volume:.03},
-  prestige:{label:'Prestige',unlockLevel:35,passManaged:true,desc:'Finition noble pour les joueurs installés.',wave:'triangle',success:[740,1110],error:[174,138],volume:.05}
+  classic:{label:'Classique',unlockLevel:1,desc:'Carillons doux et propres.',wave:'sine',success:[784,988],error:[196,156],click:[660],toggle:[523,659],screen:[698,880],streak:[523,659,784],duel:[392,494],coin:[1046,1318,1760],volume:.045},
+  '8bit':{label:'8-bit',unlockLevel:5,passManaged:true,desc:'Bips arcade rétro pour les bonnes réponses.',wave:'square',success:[880,1175],error:[220,165],click:[784],toggle:[330,494],screen:[988,1318],streak:[523,659,784],duel:[262,330],coin:[988,1318,1976],volume:.035},
+  crystal:{label:'Cristal',unlockLevel:12,passManaged:true,desc:'Sons brillants et plus aériens.',wave:'triangle',success:[660,990],error:[210,180],click:[740],toggle:[554,740],screen:[880,1175],streak:[660,880,1175],duel:[370,554],coin:[1320,1760,2093],volume:.04},
+  cosmic:{label:'Cosmique',unlockLevel:20,passManaged:true,desc:'Un timbre plus ample pour les hauts niveaux.',wave:'sawtooth',success:[523,784],error:[185,146],click:[622],toggle:[466,622],screen:[784,1046],streak:[523,698,932],duel:[311,392],coin:[932,1244,1661],volume:.03},
+  prestige:{label:'Prestige',unlockLevel:35,passManaged:true,desc:'Finition noble pour les joueurs installés.',wave:'triangle',success:[740,1110],error:[174,138],click:[830],toggle:[622,830],screen:[988,1480],streak:[740,988,1480],duel:[415,554],coin:[1244,1661,2217],volume:.05}
 };
+const DUEL_DIFFICULTIES={
+  calme:{label:'Calme',chip:'Zen',delayFactor:1.34,jitterFactor:1.16,mistakeChance:0.16,slowdownMs:2400,wrongAdvanceFactor:0.16},
+  normal:{label:'Normal',chip:'Normal',delayFactor:1,jitterFactor:1,mistakeChance:0.10,slowdownMs:2000,wrongAdvanceFactor:0.24},
+  rapide:{label:'Rapide',chip:'Rapide',delayFactor:0.82,jitterFactor:0.84,mistakeChance:0.07,slowdownMs:1600,wrongAdvanceFactor:0.3},
+  furie:{label:'Furie',chip:'Furie',delayFactor:0.68,jitterFactor:0.72,mistakeChance:0.04,slowdownMs:1100,wrongAdvanceFactor:0.38}
+};
+const DEFAULT_DUEL_DIFFICULTY='normal';
 const BREVET_PASS_PREMIUM_COST=800;
 const COIN_RULES={
   streak:{startDay:2,base:20,step:10},
@@ -261,31 +268,31 @@ const PASS_TITLES={
   'legend:Legende du Brevet':{label:'Final · Légende du Brevet',text:'Légende du Brevet',effect:'rainbow',desc:'Titre final arc-en-ciel du Brevet Pass.'}
 };
 const BREVET_PASS_LEVELS={
-  2:{premium:[{type:'coins',amount:30}]},
-  4:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:1}]},
-  6:{premium:[{type:'coins',amount:30},{type:'theme',key:'aurora'}]},
-  8:{free:[{type:'coins',amount:20},{type:'theme',key:'starry'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Cadence Chromee'}]},
-  10:{premium:[{type:'coins',amount:30}]},
-  12:{free:[{type:'coins',amount:20},{type:'sound',key:'8bit'}],premium:[{type:'coins',amount:30},{type:'theme',key:'ocean'}]},
-  14:{premium:[{type:'coins',amount:30},{type:'sound',key:'cosmic'}]},
-  16:{free:[{type:'coins',amount:20},{type:'title',key:'global:Explorateur'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:2}]},
-  18:{premium:[{type:'coins',amount:30},{type:'theme',key:'sunset'}]},
-  20:{free:[{type:'coins',amount:20},{type:'theme',key:'gold-noir'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Turbo Revision'}]},
-  22:{premium:[{type:'coins',amount:30}]},
-  24:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'theme',key:'nebula'}]},
-  26:{premium:[{type:'coins',amount:30},{type:'theme',key:'manga'}]},
-  28:{free:[{type:'coins',amount:20},{type:'theme',key:'circuit'}],premium:[{type:'coins',amount:30},{type:'sound',key:'prestige'}]},
-  30:{premium:[{type:'coins',amount:30},{type:'xpboost',runs:2}]},
-  32:{free:[{type:'coins',amount:20},{type:'sound',key:'crystal'}],premium:[{type:'coins',amount:30},{type:'theme',key:'steampunk'}]},
-  34:{premium:[{type:'coins',amount:30}]},
-  36:{free:[{type:'coins',amount:20},{type:'title',key:'global:Expert'}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Cosmos Mental'}]},
-  38:{premium:[{type:'coins',amount:30},{type:'theme',key:'magma'}]},
-  40:{free:[{type:'coins',amount:20},{type:'theme',key:'paper'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:3}]},
-  42:{premium:[{type:'coins',amount:30}]},
-  44:{free:[{type:'coins',amount:20}],premium:[{type:'coins',amount:30},{type:'title',key:'premium:Empereur du Pass'}]},
-  46:{premium:[{type:'coins',amount:30}]},
-  48:{free:[{type:'coins',amount:20},{type:'title',key:'global:Maître du Brevet'}],premium:[{type:'coins',amount:30},{type:'xpboost',runs:3}]},
-  50:{free:[{type:'coins',amount:20},{type:'title',key:'legend:Legende du Brevet'},{type:'theme',key:'aura-divine'}],premium:[{type:'coins',amount:50},{type:'xpboost',runs:3}]}
+  2:{premium:[{type:'coins',amount:50}]},
+  4:{free:[{type:'coins',amount:25}],premium:[{type:'xpboost',runs:1}]},
+  6:{premium:[{type:'theme',key:'aurora'}]},
+  8:{free:[{type:'theme',key:'starry'}],premium:[{type:'title',key:'premium:Cadence Chromee'}]},
+  10:{premium:[{type:'coins',amount:60}]},
+  12:{free:[{type:'sound',key:'8bit'}],premium:[{type:'theme',key:'ocean'}]},
+  14:{premium:[{type:'sound',key:'cosmic'}]},
+  16:{free:[{type:'title',key:'global:Explorateur'}],premium:[{type:'xpboost',runs:1}]},
+  18:{premium:[{type:'theme',key:'sunset'}]},
+  20:{free:[{type:'theme',key:'gold-noir'}],premium:[{type:'title',key:'premium:Turbo Revision'}]},
+  22:{premium:[{type:'coins',amount:70}]},
+  24:{free:[{type:'coins',amount:40}],premium:[{type:'theme',key:'nebula'}]},
+  26:{premium:[{type:'sound',key:'prestige'}]},
+  28:{free:[{type:'theme',key:'circuit'}],premium:[{type:'theme',key:'manga'}]},
+  30:{premium:[{type:'xpboost',runs:1}]},
+  32:{free:[{type:'sound',key:'crystal'}],premium:[{type:'theme',key:'steampunk'}]},
+  34:{premium:[{type:'coins',amount:80}]},
+  36:{free:[{type:'title',key:'global:Expert'}],premium:[{type:'title',key:'premium:Cosmos Mental'}]},
+  38:{premium:[{type:'theme',key:'magma'}]},
+  40:{free:[{type:'theme',key:'paper'}],premium:[{type:'xpboost',runs:2}]},
+  42:{premium:[{type:'coins',amount:90}]},
+  44:{free:[{type:'coins',amount:60}],premium:[{type:'title',key:'premium:Empereur du Pass'}]},
+  46:{premium:[{type:'coins',amount:100}]},
+  48:{free:[{type:'title',key:'global:Maître du Brevet'}],premium:[{type:'coins',amount:110}]},
+  50:{free:[{type:'title',key:'legend:Legende du Brevet'},{type:'theme',key:'aura-divine'}],premium:[{type:'coins',amount:150}]}
 };
 const BREVET_PASS_INDEX=buildBrevetPassRewardIndex();
 const REDACTION_TOPICS={
@@ -753,6 +760,9 @@ function getNextWorkshopUnlock(level){
 
 let audioContext=null;
 let avatarWorkshopDraft=null;
+let ambientNodes=[];
+let ambientThemeKey='';
+let ambientNoiseBuffer=null;
 
 function ensureAudioContext(){
   if(typeof window==='undefined') return null;
@@ -761,6 +771,142 @@ function ensureAudioContext(){
   if(!audioContext) audioContext=new AudioCtor();
   if(audioContext.state==='suspended') audioContext.resume().catch(()=>{});
   return audioContext;
+}
+
+function getAmbientNoiseBuffer(ctx){
+  if(ambientNoiseBuffer) return ambientNoiseBuffer;
+  const length=ctx.sampleRate*2;
+  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++){
+    data[i]=(Math.random()*2-1)*0.4;
+  }
+  ambientNoiseBuffer=buffer;
+  return buffer;
+}
+
+function stopThemeAmbience(){
+  ambientNodes.forEach(node=>{
+    try{
+      if(node.stop) node.stop();
+      if(node.disconnect) node.disconnect();
+    }catch(error){
+      console.warn('Ambient stop warning',error);
+    }
+  });
+  ambientNodes=[];
+  ambientThemeKey='';
+}
+
+function createAmbientOscillator(ctx,{frequency,wave='sine',gain=.0026,detune=0}={}){
+  const osc=ctx.createOscillator();
+  const gainNode=ctx.createGain();
+  osc.type=wave;
+  osc.frequency.value=frequency;
+  osc.detune.value=detune;
+  gainNode.gain.value=gain;
+  osc.connect(gainNode);
+  gainNode.connect(ctx.destination);
+  osc.start();
+  ambientNodes.push(osc,gainNode);
+}
+
+function createAmbientNoise(ctx,{gain=.0016,cutoff=900,Q=.0001}={}){
+  const noise=ctx.createBufferSource();
+  const filter=ctx.createBiquadFilter();
+  const gainNode=ctx.createGain();
+  noise.buffer=getAmbientNoiseBuffer(ctx);
+  noise.loop=true;
+  filter.type='lowpass';
+  filter.frequency.value=cutoff;
+  filter.Q.value=Q;
+  gainNode.gain.value=gain;
+  noise.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(ctx.destination);
+  noise.start();
+  ambientNodes.push(noise,filter,gainNode);
+}
+
+function syncThemeAmbience(force=false){
+  if(!playerProfile) return;
+  const ctx=ensureAudioContext();
+  if(!ctx) return;
+  const themeKey=playerProfile.currentTheme||'dark';
+  if(!force && ambientThemeKey===themeKey && ambientNodes.length) return;
+  stopThemeAmbience();
+  ambientThemeKey=themeKey;
+  switch(themeKey){
+    case 'pastel':
+      createAmbientOscillator(ctx,{frequency:330,wave:'sine',gain:.0015});
+      createAmbientOscillator(ctx,{frequency:494,wave:'triangle',gain:.0008,detune:5});
+      break;
+    case 'nature-vivante':
+      createAmbientOscillator(ctx,{frequency:196,wave:'triangle',gain:.0019});
+      createAmbientOscillator(ctx,{frequency:294,wave:'sine',gain:.0011,detune:8});
+      createAmbientNoise(ctx,{gain:.0012,cutoff:1200});
+      break;
+    case 'glace':
+      createAmbientOscillator(ctx,{frequency:392,wave:'triangle',gain:.0013});
+      createAmbientOscillator(ctx,{frequency:587,wave:'sine',gain:.0009,detune:-6});
+      createAmbientNoise(ctx,{gain:.0011,cutoff:1800});
+      break;
+    case 'ciel-nuages':
+      createAmbientOscillator(ctx,{frequency:262,wave:'sine',gain:.0016});
+      createAmbientOscillator(ctx,{frequency:392,wave:'triangle',gain:.0011,detune:4});
+      break;
+    case 'electricite':
+      createAmbientOscillator(ctx,{frequency:110,wave:'sawtooth',gain:.0017});
+      createAmbientOscillator(ctx,{frequency:220,wave:'square',gain:.0009,detune:7});
+      break;
+    case 'aurora':
+      createAmbientOscillator(ctx,{frequency:174,wave:'triangle',gain:.0015});
+      createAmbientOscillator(ctx,{frequency:261,wave:'sine',gain:.001,detune:-9});
+      break;
+    case 'ocean':
+      createAmbientOscillator(ctx,{frequency:130,wave:'sine',gain:.0016});
+      createAmbientOscillator(ctx,{frequency:196,wave:'triangle',gain:.0009,detune:3});
+      createAmbientNoise(ctx,{gain:.0011,cutoff:1400});
+      break;
+    case 'sunset':
+      createAmbientOscillator(ctx,{frequency:146,wave:'triangle',gain:.0014});
+      createAmbientOscillator(ctx,{frequency:220,wave:'sine',gain:.0009,detune:-4});
+      break;
+    case 'magma':
+      createAmbientOscillator(ctx,{frequency:55,wave:'sawtooth',gain:.0018});
+      createAmbientOscillator(ctx,{frequency:82,wave:'triangle',gain:.0012,detune:6});
+      createAmbientNoise(ctx,{gain:.001,cutoff:650});
+      break;
+    case 'manga':
+      createAmbientOscillator(ctx,{frequency:208,wave:'square',gain:.0012});
+      createAmbientOscillator(ctx,{frequency:311,wave:'triangle',gain:.0007,detune:10});
+      break;
+    case 'steampunk':
+      createAmbientOscillator(ctx,{frequency:98,wave:'sawtooth',gain:.0014});
+      createAmbientOscillator(ctx,{frequency:147,wave:'triangle',gain:.0009,detune:4});
+      break;
+    case 'antique':
+      createAmbientOscillator(ctx,{frequency:196,wave:'sine',gain:.0013});
+      createAmbientOscillator(ctx,{frequency:392,wave:'triangle',gain:.0008,detune:12});
+      break;
+    case 'neon':
+      createAmbientOscillator(ctx,{frequency:123,wave:'sawtooth',gain:.0015});
+      createAmbientOscillator(ctx,{frequency:246,wave:'square',gain:.0008,detune:-4});
+      break;
+    case 'paper':
+    case 'vintage':
+      createAmbientOscillator(ctx,{frequency:185,wave:'triangle',gain:.001});
+      createAmbientOscillator(ctx,{frequency:277,wave:'sine',gain:.0007,detune:7});
+      break;
+    case 'aura-divine':
+      createAmbientOscillator(ctx,{frequency:196,wave:'sine',gain:.0017});
+      createAmbientOscillator(ctx,{frequency:392,wave:'triangle',gain:.0011,detune:6});
+      createAmbientOscillator(ctx,{frequency:587,wave:'sine',gain:.0007,detune:-6});
+      break;
+    default:
+      stopThemeAmbience();
+      break;
+  }
 }
 
 function playTone(ctx,when,frequency,duration,wave,volume){
@@ -787,6 +933,7 @@ function playEffect(type='success'){
   if(!playerProfile) return;
   const ctx=ensureAudioContext();
   if(!ctx) return;
+  syncThemeAmbience();
   const pack=getSoundPack(playerProfile.soundPack);
   const soundType=type==='level' || type==='challenge' ? 'success' : type;
   const notes=pack[soundType]||pack.success;
@@ -803,6 +950,7 @@ function playSound(kind='success'){
 function playCoinSound(){
   const ctx=ensureAudioContext();
   if(!ctx) return;
+  syncThemeAmbience();
   const pack=getSoundPack(playerProfile?.soundPack);
   const notes=pack.coin||[1046,1568,2093];
   const wave=pack.wave||'triangle';
@@ -811,6 +959,20 @@ function playCoinSound(){
   notes.forEach((frequency,index)=>{
     playTone(ctx,now+(index*0.045),frequency,0.1,wave,volume);
   });
+}
+
+function installAudioUnlockBridge(){
+  if(typeof window==='undefined') return;
+  const unlock=()=>{
+    const ctx=ensureAudioContext();
+    if(ctx) syncThemeAmbience(true);
+    window.removeEventListener('pointerdown',unlock);
+    window.removeEventListener('keydown',unlock);
+    window.removeEventListener('touchstart',unlock);
+  };
+  window.addEventListener('pointerdown',unlock,{once:true});
+  window.addEventListener('keydown',unlock,{once:true});
+  window.addEventListener('touchstart',unlock,{once:true});
 }
 
 function escapeHTML(value){
@@ -1643,7 +1805,8 @@ let state = {
   survival:createDefaultSurvivalState(),
   questionAid:createDefaultQuestionAidState(),
   pendingSelfEval:null,
-  runXpBoostActive:false
+  runXpBoostActive:false,
+  pendingStreakCelebration:null
 };
 let flashState={cards:[],idx:0,flipped:false};
 let playerProfile=null;
@@ -1655,65 +1818,36 @@ let dailyChallengeRewardLock=false;
 let storageBootReady=false;
 let currentSheetSubject='histoire';
 let speechState={active:false,isBB:false,text:''};
-const bootSplashStartedAt=Date.now();
+let streakCelebrationTimer=null;
+let streakAutoReturnTimer=null;
 
 /* ============================================================
    UTILITAIRES
    ============================================================ */
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-function needsMobileBootSplash(){
-  return window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
-}
-
-function getBootSplashElements(){
-  return {
-    splash:document.getElementById('app-boot-splash'),
-    stage:document.getElementById('app-boot-stage'),
-    progress:document.getElementById('app-boot-progress-fill')
+function syncBrowserThemeColor(themeKey){
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(!meta) return;
+  const themeColors={
+    dark:'#0f1535',
+    light:'#eef4fb',
+    glace:'#d9f1ff',
+    'ciel-nuages':'#f7fcff',
+    pastel:'#fffafd',
+    antique:'#fbf3e8',
+    paper:'#fff8ee',
+    vintage:'#f7ead8',
+    neon:'#061625',
+    'alerte-rouge':'#22070a',
+    electricite:'#0b1a54',
+    manga:'#050505',
+    'aura-divine':'#fff8e3',
+    'ranked-diamond':'#eefaff',
+    diamant:'#eefaff'
   };
+  meta.setAttribute('content',themeColors[themeKey]||'#0f1535');
 }
-
-function updateBootSplash(message='Préparation de l espace de révision...',progress=18){
-  const {splash,stage,progress:progressFill}=getBootSplashElements();
-  if(!splash) return;
-  if(!needsMobileBootSplash()){
-    splash.style.display='none';
-    document.body.classList.remove('app-booting');
-    return;
-  }
-  document.body.classList.add('app-booting');
-  if(stage) stage.textContent=message;
-  if(progressFill){
-    const safeProgress=Math.max(8,Math.min(100,Math.round(progress)));
-    progressFill.style.width=`${safeProgress}%`;
-  }
-}
-
-function hideBootSplash(){
-  const {splash}=getBootSplashElements();
-  if(!splash) return;
-  if(!needsMobileBootSplash()){
-    splash.style.display='none';
-    document.body.classList.remove('app-booting');
-    return;
-  }
-  const closeSplash=()=>{
-    splash.classList.add('is-ready');
-    document.body.classList.remove('app-booting');
-    window.setTimeout(()=>{
-      splash.style.display='none';
-    },430);
-  };
-  const elapsed=Date.now()-bootSplashStartedAt;
-  window.setTimeout(closeSplash,Math.max(0,800-elapsed));
-}
-
-function waitForNextFrame(){
-  return new Promise(resolve=>requestAnimationFrame(()=>resolve()));
-}
-
-updateBootSplash('Préparation de l espace de révision...',14);
 
 function showScreen(id){
   if(id==='screen-history'){
@@ -1721,9 +1855,11 @@ function showScreen(id){
     return;
   }
   stopSpeech();
+  if(id!=='screen-results') clearStreakAutoReturn();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','enter'));
   const screen=document.getElementById(id);
   if(!screen) return;
+  playEffect('screen');
   screen.classList.add('active');
   requestAnimationFrame(()=>screen.classList.add('enter'));
   window.scrollTo(0,0);
@@ -1745,6 +1881,8 @@ function showScreen(id){
     updateVipUI();
     renderHistory('stats-history-list');
   }
+  if(id==='screen-difficulty') renderDuelDifficultyRow();
+  if(id==='screen-home') requestAnimationFrame(()=>maybePlayPendingStreakCelebration());
 }
 
 const TOAST_TYPES={
@@ -1828,12 +1966,21 @@ function formatTenths(seconds=0){
   return safe>=10 ? `${safe.toFixed(0)}s` : `${safe.toFixed(1)}s`;
 }
 
+function formatMinutesAndSeconds(totalSeconds=0){
+  const safe=Math.max(0,Math.floor(totalSeconds||0));
+  const minutes=Math.floor(safe/60);
+  const seconds=safe%60;
+  return `${minutes}:${String(seconds).padStart(2,'0')}`;
+}
+
 function normalizeInventory(raw={}){
+  const legacyRuns=Math.max(0,Math.floor(raw.xpBoostRuns||0));
   return {
     shield:Math.max(0,Math.floor(raw.shield||0)),
     hourglass:Math.max(0,Math.floor(raw.hourglass||0)),
     eraser:Math.max(0,Math.floor(raw.eraser||0)),
-    xpBoostRuns:Math.max(0,Math.floor(raw.xpBoostRuns||0))
+    xpBoostMinutes:Math.max(0,Math.floor(raw.xpBoostMinutes||legacyRuns*10||0)),
+    xpBoostExpiresAt:Math.max(0,Math.floor(raw.xpBoostExpiresAt||0))
   };
 }
 
@@ -1852,8 +1999,129 @@ function isDuelRun(){
   return state.mode==='duel';
 }
 
-function getDuelBotProfile(level=1){
+function getStoredXpBoostMinutes(){
+  return Math.max(0,Math.floor(playerProfile?.inventory?.xpBoostMinutes||0));
+}
+
+function hasActiveXpBoost(){
+  return Math.max(0,Math.floor(playerProfile?.inventory?.xpBoostExpiresAt||0))>Date.now();
+}
+
+function getActiveXpBoostRemainingSeconds(){
+  return Math.max(0,Math.ceil((Math.max(0,Math.floor(playerProfile?.inventory?.xpBoostExpiresAt||0))-Date.now())/1000));
+}
+
+function getStoredXpBoostPacks(){
+  return Math.floor(getStoredXpBoostMinutes()/10);
+}
+
+function getStreakMultiplier(){
+  const streakCount=Math.max(0,getStreakStatus().displayCount||0);
+  return Math.min(5,1+(Math.max(0,streakCount-1)*0.1));
+}
+
+function renderStreakFlameMarkup(isReady=false){
+  return `
+    <span class="streak-flame ${isReady?'ready':'idle'}">
+      <span class="streak-flame-core"></span>
+      <span class="streak-flame-inner"></span>
+      <span class="streak-flame-spark"></span>
+    </span>
+  `;
+}
+
+function clearStreakAutoReturn(){
+  if(streakAutoReturnTimer){
+    clearTimeout(streakAutoReturnTimer);
+    streakAutoReturnTimer=null;
+  }
+}
+
+function clearStreakCelebrationHide(){
+  if(streakCelebrationTimer){
+    clearTimeout(streakCelebrationTimer);
+    streakCelebrationTimer=null;
+  }
+}
+
+function buildStreakCelebrationPayload(previousCount,nextCount){
+  const safePrevious=Math.max(0,Math.floor(previousCount||0));
+  const safeNext=Math.max(1,Math.floor(nextCount||1));
+  return {
+    from:safePrevious,
+    count:safeNext,
+    firstDay:safePrevious<=0 && safeNext===1,
+    multiplier:getStreakMultiplier(),
+    played:false
+  };
+}
+
+function maybePlayPendingStreakCelebration(){
+  const overlay=document.getElementById('streak-celebration-overlay');
+  const payload=state.pendingStreakCelebration;
+  if(!overlay || !payload || payload.played) return;
+  payload.played=true;
+  const flame=document.getElementById('streak-celebration-flame');
+  const title=document.getElementById('streak-celebration-title');
+  const copy=document.getElementById('streak-celebration-copy');
+  const count=document.getElementById('streak-celebration-count');
+  if(count) count.textContent=String(payload.count);
+  if(title){
+    title.textContent=payload.firstDay
+      ? 'Série lancée'
+      : `${payload.count} jours d’affilée`;
+  }
+  if(copy){
+    copy.textContent=payload.firstDay
+      ? 'Jour 1 validé. Reviens demain pour allumer encore plus la flamme.'
+      : `Ta flamme crépite plus fort. Bonus XP actuel : x${payload.multiplier.toFixed(1)}.`;
+  }
+  overlay.hidden=false;
+  overlay.classList.remove('ignite','surge');
+  if(flame){
+    flame.classList.remove('ignite','surge');
+    flame.classList.add(payload.firstDay?'ignite':'surge');
+  }
+  overlay.classList.add('open',payload.firstDay?'ignite':'surge');
+  playEffect('streak');
+  triggerVibration(payload.firstDay?'success':'level');
+  clearStreakCelebrationHide();
+  streakCelebrationTimer=setTimeout(()=>{
+    overlay.classList.remove('open','ignite','surge');
+    if(flame) flame.classList.remove('ignite','surge');
+    streakCelebrationTimer=null;
+    setTimeout(()=>{
+      overlay.hidden=true;
+      if(state.pendingStreakCelebration===payload){
+        state.pendingStreakCelebration=null;
+      }
+    },260);
+  },2600);
+}
+
+function schedulePendingStreakCelebration(){
+  clearStreakAutoReturn();
+  if(!state.pendingStreakCelebration) return;
+  streakAutoReturnTimer=setTimeout(()=>{
+    streakAutoReturnTimer=null;
+    if(getActiveScreenId()==='screen-results' && state.pendingStreakCelebration){
+      showScreen('screen-home');
+    }
+  },1400);
+}
+
+function getDuelDifficultyConfig(key=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY){
+  return DUEL_DIFFICULTIES[key]||DUEL_DIFFICULTIES[DEFAULT_DUEL_DIFFICULTY];
+}
+
+function formatDuelDifficultyMeta(key=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY){
+  const config=getDuelDifficultyConfig(key);
+  return `${config.label} · ${config.chip}`;
+}
+
+function getDuelBotProfile(level=1,difficultyKey=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY){
   const duelLevel=Math.max(1,Math.min(15,Math.floor(level||1)));
+  const config=getDuelDifficultyConfig(difficultyKey);
   const profiles=[
     {max:2,avatar:'🤖',difficulty:'Mode découverte',pace:'Lent'},
     {max:5,avatar:'🦾',difficulty:'Mode révision',pace:'Cadencé'},
@@ -1863,15 +2131,73 @@ function getDuelBotProfile(level=1){
     {max:15,avatar:'👾',difficulty:'Mode ultime',pace:'Extrême'}
   ];
   const profile=profiles.find(entry=>duelLevel<=entry.max)||profiles[profiles.length-1];
-  return {...profile,duelLevel};
+  return {...profile,duelLevel,selectedDifficulty:config.label};
 }
 
-function getDuelBotQuestionDelayMs(level=1){
+function getDuelBotQuestionDelayMs(level=1,difficultyKey=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY){
   const duelLevel=Math.max(1,Math.min(15,Math.floor(level||1)));
+  const config=getDuelDifficultyConfig(difficultyKey);
   const ratio=(duelLevel-1)/14;
-  const baseDelay=7200-(ratio*5200);
-  const jitter=1100-(ratio*450);
+  const baseDelay=(7200-(ratio*5200))*config.delayFactor;
+  const jitter=(1100-(ratio*450))*config.jitterFactor;
   return Math.max(1200,Math.round(baseDelay+(((Math.random()*2)-1)*jitter)));
+}
+
+function renderDuelDifficultyButtons(targetId,selectedKey=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY){
+  const host=document.getElementById(targetId);
+  if(!host) return;
+  host.innerHTML=Object.entries(DUEL_DIFFICULTIES).map(([key,config])=>`
+    <button class="duel-speed-btn ${selectedKey===key?'selected':''}" onclick="setDuelDifficulty('${key}')">
+      <strong>${config.chip}</strong>
+      <span>${config.label}</span>
+    </button>
+  `).join('');
+}
+
+function renderDuelDifficultyRow(){
+  const row=document.getElementById('duel-speed-row');
+  if(row) row.hidden=!state.options.duel;
+  renderDuelDifficultyButtons('duel-speed-buttons');
+  renderDuelDifficultyButtons('duel-setup-options');
+  const label=document.getElementById('duel-speed-copy');
+  if(label){
+    const config=getDuelDifficultyConfig();
+    label.textContent=`BrevetAI : ${config.label}`;
+  }
+}
+
+function setDuelDifficulty(key,silent=false){
+  if(!playerProfile || !DUEL_DIFFICULTIES[key]) return;
+  playerProfile.duelDifficulty=key;
+  savePlayerProfile();
+  renderDuelDifficultyRow();
+  if(isDuelRun()){
+    const profile=getDuelBotProfile(playerProfile?.levelInfo?.level||1,key);
+    state.duel.botDifficultyLabel=DUEL_DIFFICULTIES[key].label;
+    state.duel.botPaceLabel=profile.pace;
+    updateDuelHud(performance.now());
+  }
+  if(!silent){
+    playEffect('toggle');
+    showToast(`Duel IA réglé sur ${DUEL_DIFFICULTIES[key].label}.`,'info');
+  }
+}
+
+function openDuelSetup(){
+  if(!playerProfile) return;
+  renderDuelDifficultyRow();
+  playEffect('click');
+  document.getElementById('duel-setup-modal')?.classList.add('open');
+}
+
+function closeDuelSetup(){
+  playEffect('click');
+  document.getElementById('duel-setup-modal')?.classList.remove('open');
+}
+
+function startConfiguredDuel(){
+  closeDuelSetup();
+  startDuelChallenge();
 }
 
 function clearDuelTimers(){
@@ -2005,7 +2331,7 @@ function updateDuelHud(now=performance.now()){
   if(botValue) botValue.textContent=`${Math.round(botProgress*100)}%`;
   if(botAvatar) botAvatar.textContent=state.duel.botAvatar;
   if(botName) botName.textContent=state.duel.botName;
-  if(botMeta) botMeta.textContent=`Niv. ${getDuelBotProfile(playerProfile?.levelInfo?.level||1).duelLevel} · ${state.duel.botDifficultyLabel} · ${state.duel.botPaceLabel}`;
+  if(botMeta) botMeta.textContent=`Niv. ${getDuelBotProfile(playerProfile?.levelInfo?.level||1,playerProfile?.duelDifficulty).duelLevel} · ${state.duel.botDifficultyLabel} · ${state.duel.botPaceLabel}`;
 
   let lead='tie';
   let leaderText='Duel serré';
@@ -2065,13 +2391,15 @@ function maybePlayDuelWarning(now=performance.now()){
 
 function scheduleNextBotQuestion(now=performance.now()){
   if(!isDuelRun()) return;
+  const difficultyKey=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY;
+  const difficultyConfig=getDuelDifficultyConfig(difficultyKey);
   if(state.duel.botAnswers>=state.questions.length){
     state.duel.botFinishedAt=state.duel.botFinishedAt||Date.now();
     return;
   }
   state.duel.botQuestionStart=now;
-  state.duel.botWillAnswerCorrect=Math.random()>=0.10;
-  state.duel.botQuestionDelayMs=getDuelBotQuestionDelayMs(playerProfile?.levelInfo?.level||1)+(state.duel.botWillAnswerCorrect?0:2000);
+  state.duel.botWillAnswerCorrect=Math.random()>=difficultyConfig.mistakeChance;
+  state.duel.botQuestionDelayMs=getDuelBotQuestionDelayMs(playerProfile?.levelInfo?.level||1,difficultyKey)+(state.duel.botWillAnswerCorrect?0:difficultyConfig.slowdownMs);
   state.duel.statusText=state.duel.botWillAnswerCorrect
     ? `${DUEL_BOT_NAME} répond...`
     : `${DUEL_BOT_NAME} risque une erreur et ralentit.`;
@@ -2137,7 +2465,8 @@ function finalizeDuelOutcome(result){
 function handlePlayerAnswerForDuel(ok){
   if(!isDuelRun() || !state.duel.active || state.duel.pendingResult) return false;
   if(!ok){
-    const immediateAdvance=Math.min(1500,Math.max(700,state.duel.botQuestionDelayMs*0.24));
+    const difficultyConfig=getDuelDifficultyConfig(playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY);
+    const immediateAdvance=Math.min(1800,Math.max(650,state.duel.botQuestionDelayMs*difficultyConfig.wrongAdvanceFactor));
     state.duel.botQuestionStart-=immediateAdvance;
     state.duel.statusText=`Mauvaise réponse : ${DUEL_BOT_NAME} gagne du terrain.`;
   }else{
@@ -2187,15 +2516,67 @@ function startDuelMode(){
   if(!isDuelRun()) return;
   clearDuelTimers();
   state.duel=createDefaultDuelState();
-  const botProfile=getDuelBotProfile(playerProfile?.levelInfo?.level||1);
+  const difficultyKey=playerProfile?.duelDifficulty||DEFAULT_DUEL_DIFFICULTY;
+  const botProfile=getDuelBotProfile(playerProfile?.levelInfo?.level||1,difficultyKey);
   state.duel.active=true;
   state.duel.botAvatar=botProfile.avatar;
-  state.duel.botDifficultyLabel=botProfile.difficulty;
+  state.duel.botDifficultyLabel=getDuelDifficultyConfig(difficultyKey).label;
   state.duel.botPaceLabel=botProfile.pace;
   setDuelHudVisible(true);
   scheduleNextBotQuestion(performance.now());
   updateDuelHud(performance.now());
   state.duel.animationFrame=requestAnimationFrame(tickDuelBot);
+}
+
+function openXpBoostPurchaseModal(){
+  const modal=document.getElementById('xpboost-modal');
+  const copy=document.getElementById('xpboost-modal-copy');
+  if(copy){
+    const stored=getStoredXpBoostMinutes();
+    const activeSeconds=getActiveXpBoostRemainingSeconds();
+    copy.textContent=activeSeconds>0
+      ? `Un nouveau boost de 10 min est prêt. Actif encore ${formatMinutesAndSeconds(activeSeconds)}.`
+      : stored>0
+        ? `${Math.floor(stored/10)} boost${Math.floor(stored/10)>1?'s':''} de 10 min en réserve.`
+        : 'Ton boost XP x2 est prêt à être activé.';
+  }
+  playEffect('success');
+  modal?.classList.add('open');
+}
+
+function closeXpBoostPurchaseModal(silent=false){
+  if(!silent) playEffect('click');
+  document.getElementById('xpboost-modal')?.classList.remove('open');
+}
+
+function activateStoredXpBoost({minutes=10,silent=false}={}){
+  if(!playerProfile) return false;
+  const available=getStoredXpBoostMinutes();
+  if(available<minutes){
+    if(!silent) showToast('Aucun boost XP en réserve.','warning');
+    return false;
+  }
+  const now=Date.now();
+  const currentExpiry=Math.max(now,Math.floor(playerProfile.inventory.xpBoostExpiresAt||0));
+  playerProfile.inventory.xpBoostMinutes=Math.max(0,available-minutes);
+  playerProfile.inventory.xpBoostExpiresAt=currentExpiry+(minutes*60000);
+  savePlayerProfile();
+  refreshPlayerUI();
+  renderShop();
+  if(!silent){
+    playEffect('success');
+    showToast(`Boost XP activé pour ${minutes} min.`,'success');
+  }
+  return true;
+}
+
+function handleXpBoostPurchaseChoice(activateNow){
+  if(activateNow) activateStoredXpBoost({minutes:10});
+  else{
+    renderShop();
+    showToast('Boost XP gardé en réserve pour plus tard.','info');
+  }
+  closeXpBoostPurchaseModal(true);
 }
 
 function registerDuelOutcome(){
@@ -2242,6 +2623,7 @@ async function startDuelChallenge(){
   resetDuelState();
   clearSurvivalTimer();
   stopTimer();
+  const duelConfig=getDuelDifficultyConfig();
   state.options.duel=true;
   state.options.survival=false;
   const selected=buildMixedQuestionPool(Math.max(10,DIFFICULTY_TARGETS.normal),['facile','normal','difficile']);
@@ -2269,10 +2651,11 @@ async function startDuelChallenge(){
   document.getElementById('q-subject-tag').textContent='🤖 Duel IA';
   document.getElementById('q-subject-tag').className='quiz-tag gold';
   document.getElementById('q-chapter-tag').textContent='Mix toutes matières';
-  document.getElementById('q-diff-tag').textContent=DUEL_BOT_NAME;
+  document.getElementById('q-diff-tag').textContent=`${DUEL_BOT_NAME} · ${duelConfig.label}`;
   document.getElementById('q-total').textContent=selected.length;
   document.getElementById('timer-display').style.display='none';
   showScreen('screen-quiz');
+  playEffect('duel');
   startDuelMode();
   renderQuestion();
 }
@@ -2289,7 +2672,11 @@ function getShopOwnedLabel(itemKey){
     case 'shield': return `${playerProfile.streakShields||0} bouclier${(playerProfile.streakShields||0)>1?'s':''} en réserve`;
     case 'hourglass': return `${playerProfile.inventory.hourglass||0} sablier${(playerProfile.inventory.hourglass||0)>1?'s':''} disponible${(playerProfile.inventory.hourglass||0)>1?'s':''}`;
     case 'eraser': return `${playerProfile.inventory.eraser||0} bonus 50/50 disponible${(playerProfile.inventory.eraser||0)>1?'s':''}`;
-    case 'xpboost': return `${playerProfile.inventory.xpBoostRuns||0} quiz boosté${(playerProfile.inventory.xpBoostRuns||0)>1?'s':''} restant${(playerProfile.inventory.xpBoostRuns||0)>1?'s':''}`;
+    case 'xpboost':
+      if(hasActiveXpBoost()){
+        return `Actif : ${formatMinutesAndSeconds(getActiveXpBoostRemainingSeconds())} · réserve : ${getStoredXpBoostPacks()} boost(s)`;
+      }
+      return `${getStoredXpBoostPacks()} boost${getStoredXpBoostPacks()>1?'s':''} de 10 min en réserve`;
     default:return '';
   }
 }
@@ -2302,6 +2689,9 @@ function renderShop(){
   if(!grid) return;
   const entries=Object.entries(SHOP_ITEMS);
   const utilityCards=entries.filter(([,item])=>item.action!=='theme').map(([itemKey,item])=>{
+    const extraButton=itemKey==='xpboost' && getStoredXpBoostMinutes()>=10
+      ? `<button class="btn-secondary" onclick="activateStoredXpBoost({minutes:10})">${hasActiveXpBoost()?'Prolonger de 10 min':'Activer maintenant'}</button>`
+      : '';
     return `
       <div class="shop-card">
         <div class="shop-card-head">
@@ -2314,6 +2704,7 @@ function renderShop(){
         <button class="btn-primary" onclick="buyShopItem('${itemKey}')">
           Acheter
         </button>
+        ${extraButton}
       </div>
     `;
   }).join('');
@@ -2368,7 +2759,7 @@ function buyShopItem(itemKey){
       playerProfile.inventory.eraser=(playerProfile.inventory.eraser||0)+1;
       break;
     case 'xpboost':
-      playerProfile.inventory.xpBoostRuns=(playerProfile.inventory.xpBoostRuns||0)+3;
+      playerProfile.inventory.xpBoostMinutes=(playerProfile.inventory.xpBoostMinutes||0)+10;
       break;
     case 'theme':
       if(item.themeKey && !playerProfile.unlockedThemes.includes(item.themeKey)){
@@ -2381,6 +2772,12 @@ function buyShopItem(itemKey){
   refreshPlayerUI();
   renderShop();
   renderThemeSelector();
+  if(item.action==='xpboost'){
+    openXpBoostPurchaseModal();
+    showToast(`${item.label} acheté !`,'success');
+    return;
+  }
+  playEffect('success');
   showToast(`${item.label} acheté !`,'success');
 }
 
@@ -2389,7 +2786,8 @@ function resetRunHelpers(){
   state.questionAid=createDefaultQuestionAidState();
   state.pendingSelfEval=null;
   state.runSubjectCounts={};
-  state.runXpBoostActive=(playerProfile?.inventory?.xpBoostRuns||0)>0;
+  state.runXpBoostActive=hasActiveXpBoost();
+  state.pendingStreakCelebration=null;
   stopSpeech();
   updateComboHud();
   renderQuizUtilityBar();
@@ -2437,6 +2835,7 @@ function advanceCombo(){
   state.combo.multiplier=nextMultiplier;
   updateComboHud();
   if(nextMultiplier>previousMultiplier){
+    playEffect('streak');
     triggerVibration('success');
     spawnComboText(`COMBO X${nextMultiplier} !`);
   }
@@ -2506,11 +2905,12 @@ function renderQuizUtilityBar(){
   const speechLabel=speechState.active?'⏹ Stop voix':'🔊 Lire la question';
   const eraserCount=playerProfile?.inventory?.eraser||0;
   const hourglassCount=playerProfile?.inventory?.hourglass||0;
+  const boostLabel=state.runXpBoostActive?`⚡ Boost XP x2 · ${formatMinutesAndSeconds(getActiveXpBoostRemainingSeconds())}`:'⚡ Boost XP x1';
   bar.innerHTML=`
     <button class="question-tool-btn" onclick="toggleQuestionSpeech(false)">${speechLabel}</button>
     <button class="question-tool-btn ${canUseEraser()?'':'disabled'}" ${canUseEraser()?'':'disabled'} onclick="useEraser()">🌓 50/50 (${eraserCount})</button>
     <button class="question-tool-btn ${canUseHourglass()?'':'disabled'}" ${canUseHourglass()?'':'disabled'} onclick="useHourglass()">⏳ Sablier (${hourglassCount})</button>
-    <div class="question-tool-badge ${state.runXpBoostActive?'active':''}">⚡ Boost XP ${state.runXpBoostActive?'x2 actif':'x1'}</div>
+    <div class="question-tool-badge ${state.runXpBoostActive?'active':''}">${boostLabel}</div>
   `;
 }
 
@@ -2744,6 +3144,7 @@ function loadPlayerProfile(){
     selectedTitle:raw.selectedTitle||'global:Novice',
     userAvatarConfig:normalizeUserAvatarConfig(raw.userAvatarConfig||{},raw.pseudo||raw.selectedAvatar||'BrevetPro',50),
     soundPack:raw.soundPack||'classic',
+    duelDifficulty:DUEL_DIFFICULTIES[raw.duelDifficulty]?raw.duelDifficulty:DEFAULT_DUEL_DIFFICULTY,
     streakShields:Math.max(0,Math.floor(raw.streakShields||0)),
     shieldMilestone:Math.max(0,Math.floor(raw.shieldMilestone||0)),
     badges:Array.isArray(raw.badges)?raw.badges.filter(Boolean):[],
@@ -2840,10 +3241,6 @@ function getStreakStatus(){
 
 function getProjectedStreakCount(){
   return getStreakStatus().projectedCount;
-}
-
-function getStreakMultiplier(){
-  return getProjectedStreakCount()>3?1.2:1;
 }
 
 function loadWeakQuestions(){
@@ -3221,11 +3618,12 @@ function getBattlePassRewardDescriptor(reward,track='free',level=1){
     };
   }
   if(reward.type==='xpboost'){
+    const minutes=(reward.minutes||((reward.runs||1)*10));
     return {
       icon:'⚡',
       label:`Boost XP x2`,
-      shortLabel:`Boost x2`,
-      desc:`+${reward.runs||1} quiz boosté${(reward.runs||1)>1?'s':''}.`,
+      shortLabel:`Boost ${minutes} min`,
+      desc:`Double l XP pendant ${minutes} minute${minutes>1?'s':''}.`,
       track,
       level,
       type:'xpboost'
@@ -3323,8 +3721,8 @@ function applyBattlePassRewardToProfile(reward,summary){
     return;
   }
   if(reward.type==='xpboost'){
-    const runs=Math.max(1,Math.floor(reward.runs||1));
-    playerProfile.inventory.xpBoostRuns=(playerProfile.inventory.xpBoostRuns||0)+runs;
+    const minutes=Math.max(10,Math.floor(reward.minutes||((reward.runs||1)*10)));
+    playerProfile.inventory.xpBoostMinutes=(playerProfile.inventory.xpBoostMinutes||0)+minutes;
     summary.items.push(descriptor);
   }
 }
@@ -3378,6 +3776,7 @@ function initializeBrevetPassProgress(silent=true){
 function syncProfileComputedData(){
   if(!playerProfile) return;
   playerProfile.inventory=normalizeInventory(playerProfile.inventory||{});
+  playerProfile.duelDifficulty=DUEL_DIFFICULTIES[playerProfile.duelDifficulty]?playerProfile.duelDifficulty:DEFAULT_DUEL_DIFFICULTY;
   playerProfile.battlePassClaimedFree=normalizePassLevelArray(playerProfile.battlePassClaimedFree||[]);
   playerProfile.battlePassClaimedPremium=normalizePassLevelArray(playerProfile.battlePassClaimedPremium||[]);
   playerProfile.unlockedSoundPacks=Array.from(new Set(['classic',...(playerProfile.unlockedSoundPacks||[])]));
@@ -3460,14 +3859,21 @@ function getBattlePassProgressPercent(info=playerProfile?.levelInfo){
   return Math.max(0,Math.min(100,(((info.level-1)+(info.progressPct/100))/totalSteps)*100));
 }
 
-function renderBrevetPassRewardPills(level,track='free'){
+function renderBrevetPassRewardCards(level,track='free'){
   const rewards=getBattlePassTrackRewards(level,track);
-  if(!rewards.length){
-    return `<span class="pass-reward-pill empty">${track==='premium'?'Aucune récompense premium':'Palier sans récompense'}</span>`;
-  }
   return rewards.map(reward=>{
     const descriptor=getBattlePassRewardDescriptor(reward,track,level);
-    return `<span class="pass-reward-pill ${track}">${renderBattlePassRewardIcon(descriptor)} ${escapeHtml(descriptor.shortLabel)}</span>`;
+    const claimed=isBattlePassTrackClaimed(level,track);
+    const locked=track==='premium' && !playerProfile?.battlePassPremium;
+    return `
+      <article class="pass-reward-card-mini ${track} ${claimed?'claimed':''} ${locked?'locked':''}">
+        <div class="pass-reward-card-icon">${renderBattlePassRewardIcon(descriptor)}</div>
+        <div class="pass-reward-card-copy">
+          <strong>${escapeHtml(descriptor.label)}</strong>
+          <span>${escapeHtml(descriptor.desc)}</span>
+        </div>
+      </article>
+    `;
   }).join('');
 }
 
@@ -3519,6 +3925,7 @@ function renderBrevetPassScreen(){
   const counts=document.getElementById('pass-reward-counts');
   const cards=document.getElementById('pass-cards');
   const nextMilestone=getNextRewardMilestone(info.level+1);
+  const rewardLevels=Object.keys(BREVET_PASS_LEVELS).map(Number).sort((a,b)=>a-b);
   const freeClaimed=(playerProfile.battlePassClaimedFree||[]).length;
   const premiumClaimed=(playerProfile.battlePassClaimedPremium||[]).length;
   if(fill) fill.style.width=`${getBattlePassProgressPercent(info)}%`;
@@ -3530,7 +3937,7 @@ function renderBrevetPassScreen(){
   }
   if(nextNode){
     nextNode.textContent=nextMilestone
-      ? `Prochain palier : niveau ${nextMilestone.level}`
+      ? `Prochain palier : niveau ${nextMilestone.level} · ${nextMilestone.rewards.map(reward=>reward.shortLabel).join(' · ')}`
       : 'Dernier palier atteint';
   }
   if(balance) balance.innerHTML=renderCoinAmount(playerProfile.coins||0);
@@ -3555,39 +3962,70 @@ function renderBrevetPassScreen(){
     counts.innerHTML=`
       <span class="pass-stat-pill">🎯 ${freeClaimed} paliers gratuits récupérés</span>
       <span class="pass-stat-pill premium">💎 ${premiumClaimed} paliers premium récupérés</span>
+      <span class="pass-stat-pill">🪜 ${rewardLevels.length} paliers à récompense</span>
       <span class="pass-stat-pill">🎨 ${playerProfile.unlockedThemes.length} thèmes possédés</span>
     `;
   }
   if(!cards) return;
-  cards.innerHTML=Array.from({length:XP_RULES.maxLevel},(_,index)=>{
-    const level=index+1;
-    const hasFree=getBattlePassTrackRewards(level,'free').length>0;
-    const hasPremium=getBattlePassTrackRewards(level,'premium').length>0;
+  cards.innerHTML=rewardLevels.map(level=>{
+    const freeRewards=getBattlePassTrackRewards(level,'free');
+    const premiumRewards=getBattlePassTrackRewards(level,'premium');
     const current=level===info.level;
     const reached=level<=info.level;
+    const isNext=!!nextMilestone && level===nextMilestone.level;
     const freeClaimedHere=isBattlePassTrackClaimed(level,'free');
     const premiumClaimedHere=isBattlePassTrackClaimed(level,'premium');
-    const premiumLocked=!playerProfile.battlePassPremium;
-    const levelStatus=current?'En cours':freeClaimedHere||premiumClaimedHere?'Réclamé':reached?'Atteint':'À venir';
+    const levelStatus=current
+      ? 'Niveau actuel'
+      : isNext
+        ? 'Prochain palier'
+        : reached
+          ? 'Atteint'
+          : 'À venir';
+    const freeState=freeClaimedHere?'Récupéré':reached?'Disponible':'Verrouillé';
+    const premiumState=premiumClaimedHere
+      ? 'Récupéré'
+      : playerProfile.battlePassPremium
+        ? (reached?'Disponible':'À venir')
+        : 'Premium requis';
     return `
-      <article class="pass-level-card ${current?'current':''} ${reached?'reached':'future'} ${(hasFree||hasPremium)?'rewarded':'plain'}">
+      <article class="pass-level-card ${current?'current':''} ${reached?'reached':'future'} ${isNext?'next':''}">
         <div class="pass-level-head">
-          <div class="pass-level-number">Niv. ${level}</div>
-          <div class="pass-level-state">${levelStatus}</div>
-        </div>
-        <div class="pass-track-row free ${freeClaimedHere?'claimed':reached?'ready':'future'}">
-          <div class="pass-track-label">
-            <strong>Gratuit</strong>
-            <span>${hasFree?(freeClaimedHere?'Récupéré':reached?'Débloqué':'Verrouillé'):'Pas de récompense'}</span>
+          <div>
+            <div class="pass-level-kicker">${isNext?'Ton prochain objectif':reached?'Palier Brevet Pass':'Bientôt disponible'}</div>
+            <div class="pass-level-number">Niveau ${level}</div>
           </div>
-          <div class="pass-track-rewards">${renderBrevetPassRewardPills(level,'free')}</div>
+          <div class="pass-level-state ${current?'current':''} ${isNext?'next':''}">${levelStatus}</div>
         </div>
-        <div class="pass-track-row premium ${(premiumClaimedHere && playerProfile.battlePassPremium)?'claimed':(reached && playerProfile.battlePassPremium)?'ready':premiumLocked?'locked':'future'}">
-          <div class="pass-track-label">
-            <strong>Premium</strong>
-            <span>${hasPremium?(premiumClaimedHere?'Récupéré':playerProfile.battlePassPremium?(reached?'Débloqué':'À venir'):'Verrouillé'):'Pas de récompense'}</span>
-          </div>
-          <div class="pass-track-rewards">${renderBrevetPassRewardPills(level,'premium')}</div>
+        <div class="pass-track-stack">
+          ${freeRewards.length?`
+            <section class="pass-track-row free ${freeClaimedHere?'claimed':reached?'ready':'future'}">
+              <div class="pass-track-label">
+                <div>
+                  <strong>Voie gratuite</strong>
+                  <span class="pass-track-state">${freeState}</span>
+                </div>
+                <span class="pass-track-chip free">Gratuit</span>
+              </div>
+              <div class="pass-reward-grid">
+                ${renderBrevetPassRewardCards(level,'free')}
+              </div>
+            </section>
+          `:''}
+          ${premiumRewards.length?`
+            <section class="pass-track-row premium ${(premiumClaimedHere && playerProfile.battlePassPremium)?'claimed':(reached && playerProfile.battlePassPremium)?'ready':(!playerProfile.battlePassPremium?'locked':'future')}">
+              <div class="pass-track-label">
+                <div>
+                  <strong>Voie premium</strong>
+                  <span class="pass-track-state">${premiumState}</span>
+                </div>
+                <span class="pass-track-chip premium">Premium</span>
+              </div>
+              <div class="pass-reward-grid">
+                ${renderBrevetPassRewardCards(level,'premium')}
+              </div>
+            </section>
+          `:''}
         </div>
       </article>
     `;
@@ -3602,6 +4040,9 @@ function applyTheme(themeKey,shouldPersist=true){
   }
   playerProfile.currentTheme=themeKey;
   document.body.setAttribute('data-theme',themeKey);
+  syncBrowserThemeColor(themeKey);
+  syncThemeAmbience(true);
+  playEffect('toggle');
   if(shouldPersist) savePlayerProfile();
   renderThemeSelector();
 }
@@ -3912,7 +4353,7 @@ function renderSettingsPanel(){
   }
   if(desc){
     const pack=getSoundPack(playerProfile.soundPack);
-    desc.textContent=`${pack.label} — ${pack.desc}`;
+    desc.textContent=`${pack.label} — ${pack.desc} Les clics, transitions, combos, duels et pièces suivent ce pack.`;
   }
   if(status){
     status.textContent=`${playerProfile.unlockedSoundPacks.length} pack${playerProfile.unlockedSoundPacks.length>1?'s':''} sonore${playerProfile.unlockedSoundPacks.length>1?'s':''} disponible${playerProfile.unlockedSoundPacks.length>1?'s':''}`;
@@ -3948,8 +4389,11 @@ function selectSoundPack(value){
 }
 
 function previewSoundPack(){
-  playSound('success');
-  setTimeout(()=>playSound('error'),180);
+  playSound('click');
+  setTimeout(()=>playSound('toggle'),150);
+  setTimeout(()=>playSound('success'),320);
+  setTimeout(()=>playCoinSound(),520);
+  setTimeout(()=>playSound('error'),760);
 }
 
 function toggleOpenSelfEvalMode(){
@@ -4036,6 +4480,7 @@ function handleImportProgress(event){
       }
       saveDailyChallenges();
       document.body.setAttribute('data-theme',playerProfile.currentTheme||'dark');
+      syncBrowserThemeColor(playerProfile.currentTheme||'dark');
       refreshPlayerUI();
       renderSettingsPanel();
       renderThemeSelector();
@@ -4094,8 +4539,6 @@ function renderXpModal(){
   const currentLevel=info.level;
   const nextLevel=Math.min(currentLevel+1,XP_RULES.maxLevel);
   const remainingXp=currentLevel>=XP_RULES.maxLevel ? 0 : Math.max(0,info.nextLevelXp-info.currentLevelXp);
-  const currentRewards=currentLevel>=XP_RULES.maxLevel ? getLevelRewardItems(currentLevel) : getLevelRewardItems(nextLevel);
-  const fallbackMilestone=currentLevel>=XP_RULES.maxLevel ? null : (!currentRewards.length ? getNextRewardMilestone(nextLevel+1) : null);
   const setText=(id,value)=>{
     const node=document.getElementById(id);
     if(node) node.textContent=value;
@@ -4120,44 +4563,18 @@ function renderXpModal(){
   setText('xp-modal-total-xp',`${playerProfile.totalXp} XP`);
   setText('xp-modal-remaining-xp',currentLevel>=XP_RULES.maxLevel?'0 XP':`${remainingXp} XP`);
   setText('xp-modal-bonus',`x${getStreakMultiplier().toFixed(1)}`);
-  setText(
-    'xp-modal-reward-heading',
-    currentLevel>=XP_RULES.maxLevel
-      ? 'Récompenses visibles au niveau maximum'
-      : `Récompenses Brevet Pass du niveau ${nextLevel}`
-  );
   const fill=document.getElementById('xp-modal-track-fill');
   if(fill) fill.style.width=info.progressPct+'%';
-  const rewardsNode=document.getElementById('xp-modal-rewards');
-  if(rewardsNode) rewardsNode.innerHTML=renderXpRewardCards(currentRewards);
-  const emptyNode=document.getElementById('xp-modal-empty');
-  if(emptyNode){
-    const shouldShowEmpty=!currentRewards.length;
-    emptyNode.hidden=!shouldShowEmpty;
-    if(shouldShowEmpty){
-      emptyNode.textContent=currentLevel>=XP_RULES.maxLevel
-        ? 'Tous les paliers de ton Brevet Pass ont déjà été parcourus.'
-        : `Le niveau ${nextLevel} n’ajoute pas de récompense majeure au Brevet Pass.`;
-    }
-  }
-  const upcomingNode=document.getElementById('xp-modal-upcoming');
-  if(upcomingNode){
-    if(fallbackMilestone){
-      upcomingNode.hidden=false;
-      upcomingNode.innerHTML=`<strong>Palier marquant suivant : niveau ${fallbackMilestone.level}</strong><br>${renderXpRewardCards(fallbackMilestone.rewards)}`;
-    }else{
-      upcomingNode.hidden=true;
-      upcomingNode.innerHTML='';
-    }
-  }
 }
 
 function openXpModal(){
+  playEffect('click');
   renderXpModal();
   document.getElementById('xp-modal')?.classList.add('open');
 }
 
 function closeXpModal(){
+  playEffect('click');
   document.getElementById('xp-modal')?.classList.remove('open');
 }
 
@@ -4213,7 +4630,7 @@ function refreshPlayerUI(){
   }
   const streakNode=document.getElementById('player-streak');
   if(streakNode){
-    streakNode.innerHTML=`<span class="streak-flame ${streakStatus.isToday?'ready':'idle'}">🔥</span>Série : ${streakStatus.displayCount} jour${streakStatus.displayCount>1?'s':''}`;
+    streakNode.innerHTML=`${renderStreakFlameMarkup(streakStatus.isToday)}Série : ${streakStatus.displayCount} jour${streakStatus.displayCount>1?'s':''}`;
   }
   document.getElementById('player-shields').textContent=`🛡 ${playerProfile.streakShields} bouclier${playerProfile.streakShields>1?'s':''}`;
   document.getElementById('player-sound-pack').textContent=`🔊 Son : ${getSoundPack(playerProfile.soundPack).label}`;
@@ -4251,6 +4668,8 @@ function refreshPlayerUI(){
     vipSubtitle.textContent=`Progression globale, historique récent, temps de révision et rang classé dans un seul menu.`;
   }
   document.body.setAttribute('data-theme',playerProfile.currentTheme||'dark');
+  syncBrowserThemeColor(playerProfile.currentTheme||'dark');
+  syncThemeAmbience();
   if(activeScreenId==='screen-themes') renderThemeSelector();
   if(activeScreenId==='screen-titles') renderTitleSelector();
   if(activeScreenId==='screen-settings') renderSettingsPanel();
@@ -4436,6 +4855,9 @@ function updateStreak(){
   playerProfile.inventory=normalizeInventory(playerProfile.inventory||{});
   playerProfile.inventory.shield=Math.max(0,playerProfile.streakShields||0);
   syncProfileComputedData();
+  if(streakState.count!==previousDisplay){
+    state.pendingStreakCelebration=buildStreakCelebrationPayload(previousDisplay,streakState.count);
+  }
   saveStreakState();
   savePlayerProfile();
   refreshPlayerUI();
@@ -4457,7 +4879,7 @@ function updateStreak(){
 }
 
 function updateStreakAfterCompletedQuiz(){
-  updateStreak();
+  return updateStreak();
 }
 
 function addXP(amount,subject=state.subject,applyMultiplier=true){
@@ -4743,12 +5165,14 @@ function renderChapters(subj){
 }
 
 function toggleChapter(ch,btn){
+  playEffect('click');
   if(state.chapters.includes(ch)){state.chapters=state.chapters.filter(c=>c!==ch);btn.classList.remove('selected');}
   else{state.chapters.push(ch);btn.classList.add('selected');}
   updateDifficultyOptions();
 }
 
 function selectAllChapters(){
+  playEffect('toggle');
   state.chapters=Object.keys(DB[state.subject]);
   document.querySelectorAll('.chapter-btn').forEach(b=>b.classList.add('selected'));
   showToast('Tout le programme sélectionné.','success');
@@ -4756,18 +5180,21 @@ function selectAllChapters(){
 }
 
 function goToDifficulty(){
+  playEffect('click');
   if(!state.chapters.length){showToast('Sélectionnez au moins un chapitre.','warning');return;}
   updateDifficultyOptions();
   showScreen('screen-difficulty');
 }
 
 function selectDiff(d,btn){
+  playEffect('toggle');
   state.difficulty=d;
   document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
 }
 
 function toggleOption(opt,btn){
+  playEffect('toggle');
   state.options[opt]=!state.options[opt];
   btn.classList.toggle('active');
   if(opt==='duel' && state.options.duel){
@@ -4780,6 +5207,7 @@ function toggleOption(opt,btn){
     state.options.timer=false;
     document.getElementById('btn-timer')?.classList.remove('active');
   }
+  renderDuelDifficultyRow();
 }
 
 function getQuestionsForDifficulty(subject,chapters,difficulty){
@@ -4886,11 +5314,12 @@ function startQuiz(){
 
   const m=SUBJ_META[state.subject];
   const diffLabel={facile:'🌱 Facile',normal:'🎯 Normal',difficile:'🔥 Difficile'}[state.difficulty];
+  const duelLabel=getDuelDifficultyConfig().label;
   const st=document.getElementById('q-subject-tag');
   st.textContent=m.icon+' '+m.name; st.className='quiz-tag '+m.tagClass;
   document.getElementById('q-chapter-tag').textContent=state.chapters.length===1?state.chapters[0]:state.chapters.length+' chapitres';
   document.getElementById('q-diff-tag').textContent=state.mode==='duel'
-    ? `🤖 Duel · ${diffLabel}`
+    ? `🤖 Duel · ${duelLabel} · ${diffLabel}`
     : diffLabel;
   document.getElementById('q-total').textContent=state.questions.length;
   document.getElementById('timer-display').style.display=state.options.timer?'flex':'none';
@@ -5387,9 +5816,6 @@ function finalizeRunMilestones(total,elapsed,isBB=false){
       `Perfect 10/10 · niveau ${playerProfile.levelInfo?.level||1}`
     );
   }
-  if(state.runXpBoostActive && (playerProfile.inventory.xpBoostRuns||0)>0){
-    playerProfile.inventory.xpBoostRuns=Math.max(0,(playerProfile.inventory.xpBoostRuns||0)-1);
-  }
   if(isSurvivalRun()){
     playerProfile.stats.bestSurvivalTime=Math.max(playerProfile.stats.bestSurvivalTime||0,elapsed);
     playerProfile.stats.bestSurvivalScore=Math.max(playerProfile.stats.bestSurvivalScore||0,state.score||0);
@@ -5564,9 +5990,11 @@ function showResults(isBB=false){
   }
 
   showScreen('screen-results');
+  schedulePendingStreakCelebration();
 }
 
 function showErrors(){
+  playEffect('click');
   const list=document.getElementById('errors-list');list.innerHTML='';
   document.getElementById('error-count-subtitle').textContent=state.errors.length===0?'Aucune erreur — parfait !':state.errors.length+' erreur(s) à retravailler';
   state.errors.forEach(err=>{
@@ -5578,6 +6006,7 @@ function showErrors(){
 }
 
 function restartQuiz(){
+  playEffect('click');
   resetDuelState();
   clearSurvivalTimer();
   showScreen('screen-difficulty');
@@ -5692,10 +6121,10 @@ function renderFlashcard(){
   flashState.flipped=false;
 }
 
-function flipCard(){flashState.flipped=!flashState.flipped;document.getElementById('flashcard').classList.toggle('flipped',flashState.flipped);}
-function nextCard(){flashState.idx=(flashState.idx+1)%flashState.cards.length;renderFlashcard();}
-function prevCard(){flashState.idx=(flashState.idx-1+flashState.cards.length)%flashState.cards.length;renderFlashcard();}
-function shuffleCards(){flashState.cards=shuffle(flashState.cards);flashState.idx=0;renderFlashcard();showToast('Cartes mélangées !','shuffle');}
+function flipCard(){playEffect('click');flashState.flipped=!flashState.flipped;document.getElementById('flashcard').classList.toggle('flipped',flashState.flipped);}
+function nextCard(){playEffect('click');flashState.idx=(flashState.idx+1)%flashState.cards.length;renderFlashcard();}
+function prevCard(){playEffect('click');flashState.idx=(flashState.idx-1+flashState.cards.length)%flashState.cards.length;renderFlashcard();}
+function shuffleCards(){playEffect('toggle');flashState.cards=shuffle(flashState.cards);flashState.idx=0;renderFlashcard();showToast('Cartes mélangées !','shuffle');}
 
 /* ============================================================
    THÈME
@@ -5726,12 +6155,9 @@ document.addEventListener('keydown',e=>{
 /* ============================================================
    INIT
    ============================================================ */
-window.addEventListener('load',async()=>{
-  updateBootSplash('Chargement du profil joueur...',24);
-  if(needsMobileBootSplash()) await waitForNextFrame();
+window.addEventListener('load',()=>{
   playerProfile=loadPlayerProfile();
   syncProfileComputedData();
-  updateBootSplash('Synchronisation du Brevet Pass...',42);
   initializeBrevetPassProgress(true);
   streakState=loadStreakState();
   rankedProfile=loadRankedProfile();
@@ -5747,16 +6173,13 @@ window.addEventListener('load',async()=>{
   }
   saveDailyChallenges();
   document.body.setAttribute('data-theme',playerProfile.currentTheme||'dark');
-  updateBootSplash('Préparation de l accueil...',74);
-  if(needsMobileBootSplash()) await waitForNextFrame();
+  syncBrowserThemeColor(playerProfile.currentTheme||'dark');
   refreshPlayerUI();
+  installAudioUnlockBridge();
   scheduleQuestionBankWarmup();
   document.getElementById('progress-import-input')?.addEventListener('change',handleImportProgress);
   bindAdminLogoAccess();
   maybeOpenOnboarding();
-  updateBootSplash('C est prêt !',100);
-  if(needsMobileBootSplash()) await waitForNextFrame();
-  hideBootSplash();
 });
 
 if ('serviceWorker' in navigator) {
