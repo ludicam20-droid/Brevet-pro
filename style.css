@@ -4915,20 +4915,23 @@ body .title-chip.effect-rainbow{
   margin-bottom:10px;
   color:var(--white);
 }
-.pass-progress-bar{
-  height:18px;
-  border-radius:999px;
-  overflow:hidden;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.06);
+.pass-progress-bar {
+  height: 15px; /* On réduit de 10px à 6px */
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .04); /* Bordure un peu plus discrète */
+  margin: 12px 0; /* Ajoute un peu d'air autour puisque la barre est plus fine */
 }
-.pass-progress-fill{
-  height:100%;
-  width:0;
-  border-radius:999px;
-  background:linear-gradient(90deg,var(--gold),var(--gold2));
-  box-shadow:0 0 26px rgba(232,184,75,.32);
-  transition:width .45s ease;
+
+.pass-progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  /* On réduit un peu l'ombre pour qu'elle reste proportionnée à la finesse de la barre */
+  box-shadow: 0 0 15px rgba(232, 184, 75, .4); 
+  transition: width .8s cubic-bezier(0.4, 0, 0.2, 1); /* Animation plus fluide */
 }
 .pass-progress-caption{
   margin-top:10px;
@@ -4972,7 +4975,7 @@ body .title-chip.effect-rainbow{
   border-radius:999px;
 }
 .pass-level-card{
-  padding:20px;
+  padding:10px;
   border-radius:24px;
   border:1px solid var(--card-border);
   background:
@@ -5025,13 +5028,13 @@ body .title-chip.effect-rainbow{
 }
 .pass-track-stack{
   display:grid;
-  gap:12px;
+  gap:8px;
 }
-.pass-track-row{
-  padding:14px;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.04);
+.pass-track-row {
+  padding: 4px 4px; /* Plus fin verticalement */
+  border-radius: 10px; /* On réduit un peu l'arrondi pour matcher la finesse */
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
 }
 .pass-track-row.free.ready{
   border-color:rgba(111,228,177,.24);
@@ -5093,15 +5096,11 @@ body .title-chip.effect-rainbow{
   display:grid;
   gap:10px;
 }
-.pass-reward-card-mini{
-  display:grid;
-  grid-template-columns:44px minmax(0,1fr);
-  gap:10px;
-  align-items:start;
-  padding:12px;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.06);
+.pass-reward-card-mini {
+  display: flex;      /* On passe en flex pour un alignement plus simple */
+  align-items: center; /* Aligne le rond et le texte sur le même axe central */
+  padding: 4px 8px;
+  gap: 10px;
 }
 .pass-reward-card-mini.free{
   border-color:rgba(111,228,177,.2);
@@ -5118,36 +5117,45 @@ body .title-chip.effect-rainbow{
   filter:saturate(.78);
   opacity:.76;
 }
-.pass-reward-card-icon{
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.08);
-  color:var(--white);
-  font-size:1rem;
+.pass-reward-card-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;     /* Empêche le rond de s'écraser */
+  font-size: 1.1rem;
 }
-.pass-reward-card-icon img{
-  width:24px;
-  height:24px;
-  object-fit:contain;
-  display:block;
+.pass-reward-card-icon {
+  font-weight: bold;
 }
-.pass-reward-card-copy{
-  min-width:0;
+.pass-reward-card-icon img {
+  width: 45px;       /* On réduit la taille de l'image (ajuste à 14px si besoin) */
+  height: 45px;
+  object-fit: contain; /* Évite que l'image soit déformée */
+  display: block;      /* Enlève l'espace vide sous l'image */
 }
-.pass-reward-card-copy strong{
-  display:block;
-  color:var(--white);
-  font-size:.85rem;
-  margin-bottom:4px;
+.pass-reward-card-icon i, 
+.pass-reward-card-icon span {
+  font-size: 0.9rem; /* On réduit la taille du symbole de la pièce */
+  transform: scale(0.9); /* On réduit encore un peu si besoin */
+  display: block;
 }
-.pass-reward-card-copy span{
-  color:var(--gray);
-  font-size:.74rem;
-  line-height:1.5;
+.pass-reward-card-copy {
+  display: flex;
+  align-items: baseline; /* Aligne le bas des lettres du titre et de la description */
+  gap: 6px;
+  line-height: 1.2;
+}
+.pass-reward-card-copy strong {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+.pass-reward-card-copy span {
+  font-size: 0.68rem;
+  vertical-align: middle;
 }
 .pass-hero-title,
 .pass-progress-head,
